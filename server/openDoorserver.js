@@ -95,11 +95,24 @@ function generatePassphrase()
 	else return ""
 }
 
-function serverThread(request, response)
-{
-	console.log("received request");
-	response.writeHead(200, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*',
-	"Access-Control-Allow-Credentials": "true"});
+function serverThread(request, response) {
+  headers = {
+    'Content-Type': 'application/json',
+    "Access-Control-Max-Age": "300",
+    "Access-Control-Allow-Origin": request.headers['origin'],
+    "Access-Control-Allow-Credentials": "true"
+  };
+
+  if(request.headers.hasOwnProperty("Access-Control-Request-Method")) {
+    headers["Access-Control-Allow-Methods"] = request.headers['Access-Control-Request-Method'];
+  }
+
+  if(request.headers.hasOwnProperty("Access-Control-Request-Headers")) {
+    headers["Access-Control-Allow-Headers"] = request.headers['Access-Control-Request-Headers'];
+  }
+
+  response.writeHead(200, headers);
+
 	parsedURL = url.parse(request.url,true);
 	
 	if(parsedURL.pathname === path+"/login")
@@ -108,7 +121,7 @@ function serverThread(request, response)
 		deviceid = parsedURL.query.deviceId;
 		token = generateToken(passphrase,deviceid, { 
 			error: function (){
-				response.writeHead(501);
+				response.writeHead(501, headers);
 				response.end("sorry bro");
 			},
 			success: function(token){
@@ -144,7 +157,7 @@ function serverThread(request, response)
 		}
 		else
 		{
-			response.writeHead(501, {'Access-Control-Allow-Origin': '*'});
+			response.writeHead(501, headers);
 			response.end("sorry bro");
 		}
 	}
