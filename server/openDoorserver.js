@@ -121,7 +121,7 @@ function serverThread(request, response) {
 		deviceid = parsedURL.query.deviceId;
 		token = generateToken(passphrase,deviceid, { 
 			error: function (){
-				response.writeHead(501, headers);
+				response.writeHead(401, headers);
 				response.end("sorry bro");
 			},
 			success: function(token){
@@ -157,7 +157,7 @@ function serverThread(request, response) {
 		}
 		else
 		{
-			response.writeHead(501, headers);
+			response.writeHead(401, headers);
 			response.end("sorry bro");
 		}
 	}

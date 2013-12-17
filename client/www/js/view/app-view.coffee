@@ -27,10 +27,17 @@ class app.AppView extends Backbone.View
 
     console.log "login", doorUrl, passphrase, deviceId
 
+    @$(".form-group").removeClass("has-error")
+
     $.ajax
       url: "#{doorUrl}/login?passphrase=#{passphrase}&deviceId=#{deviceId}"
       crossDomain: true
       xhrFields: withCredentials: true
+      statusCode:
+        401: (resp) =>
+          @$(".pass-form-group").addClass("has-error")
+        404: (resp) =>
+          @$(".door-form-group").addClass("has-error")
       success: (resp) =>
         if resp.hasOwnProperty("token")
           doorUrls = @model.get("doorUrls")
