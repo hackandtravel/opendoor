@@ -76,23 +76,28 @@ function generateToken(passphrase, deviceid, options)
 	});	
 }
 
+function rnd(min, max) {
+    return parseInt(Math.random() * (max - min) + min);
+}
 
-function generatePassphrase()
-{
+function generatePassphrase(response) {
+  fs.readFile('linuxwords.txt', "utf8", function (err, data) {
+    if (err) {
+      response.writeHead(500, headers);
+      response.end();
+    }
+    var words = data.split("\n");
+    var max = words.length;
 
-	// generation algorithm
-	var randomBytes = crypto.randomBytes(256);
-	myHasher = crypto.createHash('sha1');
-	myHasher.update(randomBytes);
-	randomPassphrase = myHasher.digest('hex');
-	generatedPassphrase = randomPassphrase;
-	
-	// add to database
-	passphrases.insert({"phrase":generatedPassphrase});
-	
-	success = true;
-	if(success) return generatedPassphrase;
-	else return ""
+    var phrases = [];
+    phrases.push(words[rnd(0, max)].toLowerCase());
+    phrases.push(words[rnd(0, max)].toLowerCase());
+    // phrases.push(rnd(0, 100));
+
+    var passphrase = phrases.join("-");
+
+    response.end(JSON.stringify({"passphrase": passphrase}));
+  });
 }
 
 function serverThread(request, response) {
@@ -151,9 +156,7 @@ function serverThread(request, response) {
 		pw = parsedURL.query.pw;
 		if(pw == masterPW)
 		{
-			generatedPassphrase = generatePassphrase();
-			response.end(JSON.stringify({"token": generatedPassphrase
-					}));
+			generatePassphrase(response, headers);
 		}
 		else
 		{
