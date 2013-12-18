@@ -1,4 +1,7 @@
+.DS_Store
 /opendoor/data
-/merges
-/plugins
-/platforms
+/client/merges
+/client/plugins
+/client/platforms
+/client/.cordova
+/server/tutorial

@@ -23,8 +23,6 @@ _.extend app,
   bindEvents: ->
     document.addEventListener 'deviceready', @onDeviceReady, false
 
+  onDeviceReady: ->
     # TODO: Move this to onDeviceReady in production!
     app.view = new app.AppView
-
-  onDeviceReady: ->
-
