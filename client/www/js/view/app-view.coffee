@@ -40,7 +40,7 @@ class app.AppView extends Backbone.View
     doorUrl = @model.get("prot") + @$("#door-url").val()
     console.log(doorUrl);
     passphrase = @$("#passphrase").val()
-    deviceId = "TEST" #TODO
+    deviceId = window.device.uuid
 
     @$(".form-group").removeClass("has-error")
 
