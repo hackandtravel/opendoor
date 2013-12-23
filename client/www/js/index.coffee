@@ -23,6 +23,9 @@ _.extend app,
   bindEvents: ->
     document.addEventListener 'deviceready', @onDeviceReady, false
 
+    unless window.device
+      app.view = new app.AppView
+
   onDeviceReady: ->
-    # TODO: Move this to onDeviceReady in production!
-    app.view = new app.AppView
+    if window.device
+      app.view = new app.AppView

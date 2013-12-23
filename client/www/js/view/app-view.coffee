@@ -7,25 +7,39 @@ class app.AppView extends Backbone.View
 
   events:
     "click .opendoor-btn": "opendoorClicked"
-    "click .login-btn": "loginClicked"
+    "click #login-btn": "loginClicked"
+    "click #back-btn": "backClicked"
     "change .door-select": "selectedDoorChanged"
+    "click #https": "setHttps"
+    "click #http": "setHttp"
+    "click #btn-new": "btnNewClicked"
 
   initialize: ->
     @listenTo @model, "change:page", @render
     @render()
 
+  btnNewClicked: ->
+    @model.set("page", "newDoor")
+
+  backClicked: ->
+    @model.set("page", "openDoor")
+
   render: ->
-    console.log "render app"
     @$el.html(@template(@model.toJSON()))
 
+    switch @model.get("page")
+      when "openDoor"
+        @$(".new-door-page").hide()
+        @$(".open-door-page").show()
+      when "newDoor"
+        @$(".new-door-page").show()
+        @$(".open-door-page").hide()
+
   loginClicked: ->
-    console.log "loginClicked"
-
-    doorUrl = @$("#door-url").val()
+    doorUrl = @model.get("prot") + @$("#door-url").val()
+    console.log(doorUrl);
     passphrase = @$("#passphrase").val()
-    deviceId = "TEST"
-
-    console.log "login", doorUrl, passphrase, deviceId
+    deviceId = "TEST" #TODO
 
     @$(".form-group").removeClass("has-error")
 
@@ -46,7 +60,7 @@ class app.AppView extends Backbone.View
           localStorage["doorUrls"] = JSON.stringify(doorUrls)
           localStorage[doorUrl] = resp.token
 
-          @render()
+          @model.set("page", "openDoor")
 
   opendoorClicked: ->
     doorUrl = @model.get("doorUrl")
@@ -62,3 +76,11 @@ class app.AppView extends Backbone.View
   selectedDoorChanged: (e) ->
     @model.set "doorUrl", $(e.currentTarget).val()
     console.log @model.get "doorUrl"
+
+  setHttps: -> 
+    @$("#prot-text").text("https://")
+    @model.set "prot", "https://"
+
+  setHttp: -> 
+    @$("#prot-text").text("http://")
+    @model.set "prot", "http://"

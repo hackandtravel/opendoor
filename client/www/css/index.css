@@ -33,6 +33,10 @@ body {
     padding-top: 65px;
 }
 
+a {
+  cursor: pointer;
+}
+
 /* Landscape layout (with min-width) */
 @media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
     .app {
@@ -105,4 +109,10 @@ h1 {
 
 .opendoor-btn span {
   font-size: 34px;
+}
+
+.navbar-brand { 
+  position: absolute;
+  left: 50%;
+  margin-left: -55px;
 }

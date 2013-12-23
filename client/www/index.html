@@ -33,39 +33,53 @@
 
         <script id="app-template" type="text/x-handlebars-template">
           <nav id="header" class="navbar navbar-default navbar-fixed-top" role="navigation">
-            <div class="navbar-header" style="text-align:center">
-              <a class="navbar-brand">Open Door</a>
-            </div>
+            <a class="navbar-brand">OpenDoor</a>
+            <a id="back-btn" class="btn btn-default new-door-page pull-left" style="margin:8px"><span class="glyphicon glyphicon-chevron-left"></span></button>
+            <a id="btn-new" class="btn btn-default pull-right" style="margin:8px"><span class="glyphicon glyphicon-plus"></span></a>
           </nav>
           <div class="row">
             <div class="col-md-12">
-              <div class="door-form-group form-group">
-                <label for="door-select">Add new door URL</label>
-                <input id="door-url" type="text" class="form-control" />
-              </div>
-              <div class="pass-form-group form-group">
-                <label for="passphrase">Passphrase</label>
-                <input id="passphrase" type="password" class="form-control" />
+              <div class="new-door-page">
+                <div class="door-form-group form-group">
+                  <label for="door-select">Door URL</label>
+                  <div class="input-group">
+                    <div class="input-group-btn">
+                      <button id="btn-prot" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span id="prot-text">{{prot}}</span> 
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li><a id="https">https://</a></li>
+                        <li><a id="http">http://</a></li>
+                      </ul>
+                    </div>
+                    <input id="door-url" type="text" class="form-control">
+                  </div>
+                </div>
+                <div class="pass-form-group form-group">
+                  <label for="passphrase">Passphrase</label>
+                  <input id="passphrase" type="password" class="form-control" />
+                </div>
+
+                <div class="btn-toolbar pull-right" style="margin-top: 10px">
+                  <button id="login-btn" type="button" class="btn btn-primary">Login</button>
+                </div>
               </div>
 
-              <div class="btn-toolbar" style="margin-top: 10px">
-                <button type="button" class="login-btn btn btn-default pull-right">
-                  Login
-                </button>
+              <div class="open-door-page">
+                <label for="door-select">Choose a door</label>
+                <select class="door-select form-control">
+                  {{#each doorUrls}}
+                    <option value="{{.}}">{{.}}</option>
+                  {{/each}}
+                </select>
               </div>
-
-              <label for="door-select">Choose a door</label>
-              <select class="door-select form-control">
-                {{#each doorUrls}}
-                  <option value="{{.}}">{{.}}</option>
-                {{/each}}
-              </select>
             </div>
-          </div>
-          <div style="position:absolute; bottom:20px; left:0; width:100%; text-align:center">
-          <button type="button" class="opendoor-btn btn btn-default" {{disabled}}>
-            <span class="glyphicon glyphicon-lock"></span>
-          </button>
+            <div class="open-door-page" style="position:absolute; bottom:20px; left:0; width:100%; text-align:center">
+              <button type="button" class="opendoor-btn btn btn-default" {{disabled}}>
+                <span class="glyphicon glyphicon-lock"></span>
+              </button>
+            </div>
           </div>
         </script>
 
