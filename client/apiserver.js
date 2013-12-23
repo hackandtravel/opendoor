@@ -41,6 +41,6 @@
     res.send("opend door for 5 seconds");
   });
 
-  app.listen(3003);
+  app.listen(3004);
 
 }).call(this);

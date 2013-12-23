@@ -31,6 +31,7 @@ class app.AppView extends Backbone.View
       when "openDoor"
         @$(".new-door-page").hide()
         @$(".open-door-page").show()
+        @$(".door-select").val(@model.get("doorUrl"))
       when "newDoor"
         @$(".new-door-page").show()
         @$(".open-door-page").hide()
@@ -60,9 +61,12 @@ class app.AppView extends Backbone.View
           localStorage["doorUrls"] = JSON.stringify(doorUrls)
           localStorage[doorUrl] = resp.token
 
-          @model.set("page", "openDoor")
+          @model.set
+            doorUrl: doorUrl
+            page: "openDoor"
+            disabled: ""
 
-  opendoorClicked: ->
+  opendoorClicked: (e) ->
     doorUrl = @model.get("doorUrl")
     token = localStorage[doorUrl]
     $.ajax 
@@ -70,12 +74,16 @@ class app.AppView extends Backbone.View
       crossDomain: true
       xhrFields: withCredentials: true
       success: (resp) ->
-        # TODO
-        console.log resp
+        $t = $(e.currentTarget)
+        $t.addClass("disabled")
+        setTimeout -> 
+          $t.removeClass("disabled")
+        , 5000
 
   selectedDoorChanged: (e) ->
-    @model.set "doorUrl", $(e.currentTarget).val()
-    console.log @model.get "doorUrl"
+    doorUrl = $(e.currentTarget).val()
+    @model.set "doorUrl", doorUrl
+    @$(".opendoor-btn").removeClass("disabled")
 
   setHttps: -> 
     @$("#prot-text").text("https://")

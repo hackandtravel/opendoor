@@ -5,6 +5,7 @@ class app.AppModel extends Backbone.Model
     prot: "https://"
     doorUrl: ""
     doorUrls: []
+    disabled: "disabled"
 
   initialize: -> 
     s = localStorage["doorUrls"]
@@ -12,8 +13,9 @@ class app.AppModel extends Backbone.Model
       doorUrls = JSON.parse(s)
       @set 
         page: "openDoor"
-        doorUrl: doorUrls[0]
+        doorUrl: doorUrls[doorUrls.length - 1]
         doorUrls: doorUrls 
+        disabled: ""
     else
       @set
         page: "newDoor"
