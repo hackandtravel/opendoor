@@ -17,17 +17,14 @@
 
  */
 // require
-var crypto = require('crypto');
 var fs = require("fs");
-var http = require("http");
-var url = require("url");
+var express = require('express');
+var crypto = require('crypto');
 var spawn = require('child_process').spawn;
 
 // constants
-var path = "/opendoor";
-const masterPW = "superpasswort";
-const validtoken = "mygeneratedToken";
-const validpassphrase = "123456";
+const path = "/opendoor";
+const masterPW = "superpasswort"; // TODO: do not store in plain text
 
 // read "DB"
 var db;
@@ -45,14 +42,82 @@ fs.exists('db.json', function (exists) {
     }
 });
 
+// TODO make https
+var app = express();
+app.use(express.static('www')); // serve webapp
+app.use(express.bodyParser()); //autoparse json
+app.listen(8000);
+
+var addCORSHeaders = function (req, res) {
+    res.setHeader("Access-Control-Max-Age", "300")
+    res.setHeader("Access-Control-Allow-Origin", req.headers['origin'])
+    res.setHeader("Access-Control-Allow-Credentials", "true")
+
+    if (req.headers.hasOwnProperty("Access-Control-Request-Method")) {
+        res.setHeader("Access-Control-Allow-Methods", req.header['Access-Control-Request-Method']);
+    }
+
+    if (req.headers.hasOwnProperty("Access-Control-Request-Headers")) {
+        res.setHeader("Access-Control-Allow-Headers", req.header['Access-Control-Request-Headers']);
+    }
+};
+
+// add CORS headers to every request
+app.get(path + '/*', function (req, res, next) {
+    addCORSHeaders(req, res);
+    next();
+});
+
+app.get(path + '/login', function (req, res) {
+    var passphrase = req.query.passphrase;
+    var deviceid = req.query.deviceId;
+
+    generateToken(passphrase, deviceid, {
+        error: function () {
+            res.status(401).send();
+        },
+        success: function (token) {
+            res.send({token: token});
+        }
+    });
+});
+
+app.get(path + '/opendoor', function (req, res) {
+    var token = req.query.token;
+
+    // check if token exists
+    var success = db.tokens[token] == true;
+
+    if (!success) {
+        res.status(401).send();
+    } else {
+        // TODO run command on raspberry pi
+        var open = spawn('ping', ['127.0.0.1 > C:\t.txt']);
+        open.stdin.end();
+        res.status(200).send();
+    }
+});
+
+app.get(path + '/generate', function (req, res) {
+    var pw = req.query.pw;
+    if (pw == masterPW) {
+        generatePassphrase({
+            error: function () {
+                res.status(500).send();
+            },
+            success: function (passphrase) {
+                res.status(200).send({"passphrase": passphrase});
+            }
+        });
+    }
+    else {
+        res.status(401).send();
+    }
+});
+
 function commit(db) {
     fs.writeFileSync('db.json', JSON.stringify(db));
 }
-
-// TODO make https
-// create key and sign certificate
-var server = http.createServer(serverThread);
-server.listen(8000);
 
 function generateToken(passphrase, deviceid, options) {
     // check if passphrase exists
@@ -77,8 +142,9 @@ function generateToken(passphrase, deviceid, options) {
     }
 }
 
+// TODO: Okay, this is not safe. Allow only for a limited amount of time or revert to hashes
 function generatePassphrase(options) {
-    var rnd = function(min, max) {
+    var rnd = function (min, max) {
         return parseInt(Math.random() * (max - min) + min);
     };
 
@@ -104,87 +170,3 @@ function generatePassphrase(options) {
         options.success(passphrase);
     });
 }
-
-function generateHeaders(request) {
-    var headers = {
-        'Content-Type': 'application/json',
-        "Access-Control-Max-Age": "300",
-        "Access-Control-Allow-Origin": request.headers['origin'],
-        "Access-Control-Allow-Credentials": "true"
-    };
-
-    if (request.headers.hasOwnProperty("Access-Control-Request-Method")) {
-        headers["Access-Control-Allow-Methods"] = request.headers['Access-Control-Request-Method'];
-    }
-
-    if (request.headers.hasOwnProperty("Access-Control-Request-Headers")) {
-        headers["Access-Control-Allow-Headers"] = request.headers['Access-Control-Request-Headers'];
-    }
-
-    return headers;
-}
-
-function serverThread(request, response) {
-    var headers = generateHeaders(request);
-
-    var parsedURL = url.parse(request.url, true);
-
-    if (parsedURL.pathname === path + "/login") {
-        var passphrase = parsedURL.query.passphrase;
-        var deviceid = parsedURL.query.deviceId;
-
-        generateToken(passphrase, deviceid, {
-            error: function () {
-                response.writeHead(401, headers);
-                response.end("sorry bro");
-            },
-            success: function (token) {
-                response.writeHead(200, headers);
-                response.end(JSON.stringify({"token": token}));
-            }
-        });
-    }
-    else if (parsedURL.pathname === path + "/opendoor") {
-        var token = parsedURL.query.token;
-
-        // check if token exists
-        var success = db.tokens[token] == true;
-
-        if (success) {
-            // TODO run command on raspberry pi
-            var open = spawn('ping', ['127.0.0.1 > C:\t.txt']);
-            open.stdin.end();
-
-            response.writeHead(200, headers);
-        } else {
-            response.writeHead(401, headers);
-        }
-
-        response.end(JSON.stringify({"success": success}));
-
-    }
-    else if (parsedURL.pathname === path + "/generate") {
-        var pw = parsedURL.query.pw;
-        if (pw == masterPW) {
-            generatePassphrase({
-                error: function() {
-                    response.writeHead(500, headers);
-                    response.end();
-                },
-                success: function(passphrase) {
-                    response.writeHead(200, headers);
-                    response.end(JSON.stringify({"passphrase": passphrase}));
-                }
-            });
-        }
-        else {
-            response.writeHead(401, headers);
-            response.end("sorry bro");
-        }
-    } else {
-        response.writeHead(404, headers);
-        response.end("sorry bro");
-    }
-}
-
-
