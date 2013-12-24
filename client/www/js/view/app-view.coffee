@@ -5,98 +5,23 @@ class app.AppView extends Backbone.View
 
   template: Handlebars.compile($("#app-template").html())
 
-  events:
-    "click .opendoor-btn": "opendoorClicked"
-    "click #login-btn": "loginClicked"
-    "click #back-btn": "backClicked"
-    "change .door-select": "selectedDoorChanged"
-    "click #https": "setHttps"
-    "click #http": "setHttp"
-    "click #btn-new": "btnNewClicked"
-
   initialize: ->
-    @listenTo @model, "change:page", @render
+    @listenTo @model, "change:page", @changePage
     @render()
-
-  btnNewClicked: ->
-    @model.set("page", "newDoor")
-
-  backClicked: ->
-    @model.set("page", "openDoor")
 
   render: ->
     @$el.html(@template(@model.toJSON()))
+    @newDoorView = new app.NewDoorView model: @model, el: "#page-new-door"
+    @openDoorView = new app.OpenDoorView model: @model, el: "#page-open-door"
+    @changePage()
 
+  changePage: ->
     switch @model.get("page")
-      when "openDoor"
-        @$(".new-door-page").hide()
-        @$(".open-door-page").show()
-        @$(".door-select").val(@model.get("doorUrl"))
       when "newDoor"
-        @$(".new-door-page").show()
-        @$(".open-door-page").hide()
-
-  loginClicked: ->
-    doorUrl = @model.get("prot") + @$("#door-url").val()
-    console.log(doorUrl);
-    passphrase = @$("#passphrase").val()
-    deviceId = if window.device then window.device.uuid else "itsme"
-
-    @$(".form-group").removeClass("has-error")
-
-    $.ajax
-      url: "#{doorUrl}/login?passphrase=#{passphrase}&deviceId=#{deviceId}"
-      crossDomain: true
-      xhrFields: withCredentials: true
-      statusCode:
-        401: (resp) =>
-          @$(".pass-form-group").addClass("has-error")
-        404: (resp) =>
-          @$(".door-form-group").addClass("has-error")
-      error: (err) =>
-        @$(".navbar-brand").text(err.status)
-      success: (resp) =>
-        if not resp.hasOwnProperty("token")
-          @$(".navbar-brand").text("500")
-        else
-          @$(".navbar-brand").text("OpenDoor")
-          doorUrls = @model.get("doorUrls")
-          doorUrls.push doorUrl
-
-          localStorage["doorUrls"] = JSON.stringify(doorUrls)
-          localStorage[doorUrl] = resp.token
-
-          @model.set
-            doorUrl: doorUrl
-            page: "openDoor"
-            disabled: ""
-
-  opendoorClicked: (e) ->
-    doorUrl = @model.get("doorUrl")
-    token = localStorage[doorUrl]
-    $.ajax 
-      url: "#{doorUrl}/opendoor?token=#{token}"
-      crossDomain: true
-      xhrFields: withCredentials: true
-      success: (resp) =>
-        @$(".navbar-brand").text("OpenDoor")
-        $t = $(e.currentTarget)
-        $t.addClass("disabled")
-        setTimeout -> 
-          $t.removeClass("disabled")
-        , 5000
-      error: (err) =>
-        @$(".navbar-brand").text(err.status)
-
-  selectedDoorChanged: (e) ->
-    doorUrl = $(e.currentTarget).val()
-    @model.set "doorUrl", doorUrl
-    @$(".opendoor-btn").removeClass("disabled")
-
-  setHttps: -> 
-    @$("#prot-text").text("https://")
-    @model.set "prot", "https://"
-
-  setHttp: -> 
-    @$("#prot-text").text("http://")
-    @model.set "prot", "http://"
+        @newDoorView.render()
+        @$("#page-new-door").removeClass("page-right").addClass("page-middle")
+        @$("#page-open-door").removeClass("page-middle").addClass("page-left")
+      when "openDoor"
+        @openDoorView.render()
+        @$("#page-new-door").removeClass("page-middle").addClass("page-right")
+        @$("#page-open-door").removeClass("page-left").addClass("page-middle")

@@ -18,128 +18,35 @@
 
     AppView.prototype.template = Handlebars.compile($("#app-template").html());
 
-    AppView.prototype.events = {
-      "click .opendoor-btn": "opendoorClicked",
-      "click #login-btn": "loginClicked",
-      "click #back-btn": "backClicked",
-      "change .door-select": "selectedDoorChanged",
-      "click #https": "setHttps",
-      "click #http": "setHttp",
-      "click #btn-new": "btnNewClicked"
-    };
-
     AppView.prototype.initialize = function() {
-      this.listenTo(this.model, "change:page", this.render);
+      this.listenTo(this.model, "change:page", this.changePage);
       return this.render();
-    };
-
-    AppView.prototype.btnNewClicked = function() {
-      return this.model.set("page", "newDoor");
-    };
-
-    AppView.prototype.backClicked = function() {
-      return this.model.set("page", "openDoor");
     };
 
     AppView.prototype.render = function() {
       this.$el.html(this.template(this.model.toJSON()));
+      this.newDoorView = new app.NewDoorView({
+        model: this.model,
+        el: "#page-new-door"
+      });
+      this.openDoorView = new app.OpenDoorView({
+        model: this.model,
+        el: "#page-open-door"
+      });
+      return this.changePage();
+    };
+
+    AppView.prototype.changePage = function() {
       switch (this.model.get("page")) {
-        case "openDoor":
-          this.$(".new-door-page").hide();
-          this.$(".open-door-page").show();
-          return this.$(".door-select").val(this.model.get("doorUrl"));
         case "newDoor":
-          this.$(".new-door-page").show();
-          return this.$(".open-door-page").hide();
+          this.newDoorView.render();
+          this.$("#page-new-door").removeClass("page-right").addClass("page-middle");
+          return this.$("#page-open-door").removeClass("page-middle").addClass("page-left");
+        case "openDoor":
+          this.openDoorView.render();
+          this.$("#page-new-door").removeClass("page-middle").addClass("page-right");
+          return this.$("#page-open-door").removeClass("page-left").addClass("page-middle");
       }
-    };
-
-    AppView.prototype.loginClicked = function() {
-      var deviceId, doorUrl, passphrase,
-        _this = this;
-      doorUrl = this.model.get("prot") + this.$("#door-url").val();
-      console.log(doorUrl);
-      passphrase = this.$("#passphrase").val();
-      deviceId = window.device ? window.device.uuid : "itsme";
-      this.$(".form-group").removeClass("has-error");
-      return $.ajax({
-        url: "" + doorUrl + "/login?passphrase=" + passphrase + "&deviceId=" + deviceId,
-        crossDomain: true,
-        xhrFields: {
-          withCredentials: true
-        },
-        statusCode: {
-          401: function(resp) {
-            return _this.$(".pass-form-group").addClass("has-error");
-          },
-          404: function(resp) {
-            return _this.$(".door-form-group").addClass("has-error");
-          }
-        },
-        error: function(err) {
-          return _this.$(".navbar-brand").text(err.status);
-        },
-        success: function(resp) {
-          var doorUrls;
-          if (!resp.hasOwnProperty("token")) {
-            return _this.$(".navbar-brand").text("500");
-          } else {
-            _this.$(".navbar-brand").text("OpenDoor");
-            doorUrls = _this.model.get("doorUrls");
-            doorUrls.push(doorUrl);
-            localStorage["doorUrls"] = JSON.stringify(doorUrls);
-            localStorage[doorUrl] = resp.token;
-            return _this.model.set({
-              doorUrl: doorUrl,
-              page: "openDoor",
-              disabled: ""
-            });
-          }
-        }
-      });
-    };
-
-    AppView.prototype.opendoorClicked = function(e) {
-      var doorUrl, token,
-        _this = this;
-      doorUrl = this.model.get("doorUrl");
-      token = localStorage[doorUrl];
-      return $.ajax({
-        url: "" + doorUrl + "/opendoor?token=" + token,
-        crossDomain: true,
-        xhrFields: {
-          withCredentials: true
-        },
-        success: function(resp) {
-          var $t;
-          _this.$(".navbar-brand").text("OpenDoor");
-          $t = $(e.currentTarget);
-          $t.addClass("disabled");
-          return setTimeout(function() {
-            return $t.removeClass("disabled");
-          }, 5000);
-        },
-        error: function(err) {
-          return _this.$(".navbar-brand").text(err.status);
-        }
-      });
-    };
-
-    AppView.prototype.selectedDoorChanged = function(e) {
-      var doorUrl;
-      doorUrl = $(e.currentTarget).val();
-      this.model.set("doorUrl", doorUrl);
-      return this.$(".opendoor-btn").removeClass("disabled");
-    };
-
-    AppView.prototype.setHttps = function() {
-      this.$("#prot-text").text("https://");
-      return this.model.set("prot", "https://");
-    };
-
-    AppView.prototype.setHttp = function() {
-      this.$("#prot-text").text("http://");
-      return this.model.set("prot", "http://");
     };
 
     return AppView;

@@ -120,3 +120,78 @@ h1 {
   margin-left: -75px;
   text-align: center;
 }
+
+.page {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 65px 10px;
+  -webkit-transition: -webkit-transform 0.25s;
+  -moz-transition: -moz-transform 0.25s;
+  -ms-transition: -ms-transform 0.25s;
+  -o-transition: -o-transform 0.25s;
+  transition: transform 0.25s;
+}
+
+.page-left {
+  -webkit-transform: translateX(-100%);
+  -moz-transform: translateX(-100%);
+  -ms-transform: translateX(-100%);
+  -o-transform: translateX(-100%);
+  transform: translateX(-100%);
+}
+
+.page-middle {
+  -webkit-transform: translateX(0);
+  -moz-transform: translateX(0);
+  -ms-transform: translateX(0);
+  -o-transform: translateX(0);
+  transform: translateX(0);
+}
+
+.page-right {
+  -webkit-transform: translateX(100%);
+  -moz-transform: translateX(100%);
+  -ms-transform: translateX(100%);
+  -o-transform: translateX(100%);
+  transform: translateX(100%);
+}
+
+.navbar {
+  position: absolute;
+}
+
+@media screen and (min-width:1024px) {
+  .page {
+    -webkit-transform: translateX(0);
+    -moz-transform: translateX(0);
+    -ms-transform: translateX(0);
+    -o-transform: translateX(0);
+    transform: translateX(0);
+    padding: 65px 20px;
+  }
+
+  #page-open-door {
+    width: 50%;
+    top:0;
+    left:0;
+    border-right: 1px solid #e7e7e7;
+  }
+
+  #page-new-door {
+    width: 50%;
+    top:0;
+    left:50%;
+  }
+
+  #btn-new, #back-btn {
+    display: none;
+  }
+}
+
+.btn-danger {
+  text-shadow: none;
+}
+
