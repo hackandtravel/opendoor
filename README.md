@@ -5,5 +5,5 @@ opendoor
 
     cd server
     npm install express
-    node openDoorserver.js
+    node server.js
     open http://localhost:8000
