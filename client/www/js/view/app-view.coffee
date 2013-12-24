@@ -40,7 +40,7 @@ class app.AppView extends Backbone.View
     doorUrl = @model.get("prot") + @$("#door-url").val()
     console.log(doorUrl);
     passphrase = @$("#passphrase").val()
-    deviceId = window.device.uuid
+    deviceId = if window.device then window.device.uuid else "itsme"
 
     @$(".form-group").removeClass("has-error")
 
@@ -53,8 +53,13 @@ class app.AppView extends Backbone.View
           @$(".pass-form-group").addClass("has-error")
         404: (resp) =>
           @$(".door-form-group").addClass("has-error")
+      error: (err) =>
+        @$(".navbar-brand").text(err.status)
       success: (resp) =>
-        if resp.hasOwnProperty("token")
+        if not resp.hasOwnProperty("token")
+          @$(".navbar-brand").text("500")
+        else
+          @$(".navbar-brand").text("OpenDoor")
           doorUrls = @model.get("doorUrls")
           doorUrls.push doorUrl
 
@@ -73,12 +78,15 @@ class app.AppView extends Backbone.View
       url: "#{doorUrl}/opendoor?token=#{token}"
       crossDomain: true
       xhrFields: withCredentials: true
-      success: (resp) ->
+      success: (resp) =>
+        @$(".navbar-brand").text("OpenDoor")
         $t = $(e.currentTarget)
         $t.addClass("disabled")
         setTimeout -> 
           $t.removeClass("disabled")
         , 5000
+      error: (err) =>
+        @$(".navbar-brand").text(err.status)
 
   selectedDoorChanged: (e) ->
     doorUrl = $(e.currentTarget).val()

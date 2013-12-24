@@ -112,7 +112,11 @@ h1 {
 }
 
 .navbar-brand { 
+  display: inline-block;
   position: absolute;
+  width: 150px;
+  top: 0px;
   left: 50%;
-  margin-left: -55px;
+  margin-left: -75px;
+  text-align: center;
 }
