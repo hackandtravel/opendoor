@@ -8,7 +8,7 @@ class app.AppModel extends Backbone.Model
     disabled: "disabled"
 
   initialize: -> 
-    s = localStorage["doorUrls"]
+    s = localStorage.getItem("doorUrls")
     if s?
       doorUrls = JSON.parse(s)
       @set 

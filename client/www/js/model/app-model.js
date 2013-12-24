@@ -23,7 +23,7 @@
 
     AppModel.prototype.initialize = function() {
       var doorUrls, s;
-      s = localStorage["doorUrls"];
+      s = localStorage.getItem("doorUrls");
       if (s != null) {
         doorUrls = JSON.parse(s);
         return this.set({

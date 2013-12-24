@@ -32,13 +32,17 @@
   app.get('/login', function(req, res) {
     addCORSHeaders(req, res);
     console.log("request");
-    res.send({token: "abc"});
+    setTimeout(function() { 
+      res.send({token: "abc"});
+    }, 3000);
   });
 
   app.get('/opendoor', function(req, res) {
     addCORSHeaders(req, res);
     console.log("request");
-    res.send("opend door for 5 seconds");
+    setTimeout(function() { 
+      res.send("opend door for 5 seconds");
+    }, 3000);
   });
 
   app.listen(3003);

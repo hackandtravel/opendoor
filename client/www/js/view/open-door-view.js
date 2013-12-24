@@ -17,8 +17,8 @@
     OpenDoorView.prototype.template = Handlebars.compile($("#open-door-template").html());
 
     OpenDoorView.prototype.events = {
-      "click .opendoor-btn": "opendoorClicked",
-      "change .door-select": "selectedDoorChanged",
+      "click #btn-open-door": "opendoorClicked",
+      "change #select-door": "selectedDoorChanged",
       "click #btn-new": "btnNewClicked"
     };
 
@@ -28,14 +28,15 @@
 
     OpenDoorView.prototype.render = function() {
       this.$el.html(this.template(this.model.toJSON()));
-      return this.$(".door-select").val(this.model.get("doorUrl"));
+      return this.$("#select-door").val(this.model.get("doorUrl"));
     };
 
     OpenDoorView.prototype.opendoorClicked = function(e) {
       var doorUrl, token,
         _this = this;
+      this.$("#open-door-brand").html('<div class="loading spin"></div>');
       doorUrl = this.model.get("doorUrl");
-      token = localStorage[doorUrl];
+      token = localStorage.getItem(doorUrl);
       return $.ajax({
         url: "" + doorUrl + "/opendoor?token=" + token,
         crossDomain: true,
@@ -44,7 +45,7 @@
         },
         success: function(resp) {
           var $t;
-          _this.$(".navbar-brand").text("OpenDoor");
+          _this.$("#open-door-brand").text("OpenDoor");
           $t = $(e.currentTarget);
           $t.addClass("disabled");
           return setTimeout(function() {
@@ -52,7 +53,7 @@
           }, 5000);
         },
         error: function(err) {
-          return _this.$(".navbar-brand").text(err.status);
+          return _this.$("#open-door-brand").text(err.status);
         }
       });
     };
@@ -61,11 +62,14 @@
       var doorUrl;
       doorUrl = $(e.currentTarget).val();
       this.model.set("doorUrl", doorUrl);
-      return this.$(".opendoor-btn").removeClass("disabled");
+      return this.$("#btn-open-door").removeClass("disabled");
     };
 
     OpenDoorView.prototype.btnNewClicked = function() {
-      return this.model.set("page", "newDoor");
+      return this.model.set({
+        "page": "newDoor",
+        "prot": "https://"
+      });
     };
 
     return OpenDoorView;

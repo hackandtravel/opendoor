@@ -28,16 +28,21 @@
     };
 
     NewDoorView.prototype.render = function() {
-      return this.$el.html(this.template(this.model.toJSON()));
+      this.$el.html(this.template(this.model.toJSON()));
+      if (this.model.get("prot") === "https://") {
+        return this.setHttps();
+      } else {
+        return this.setHttp();
+      }
     };
 
     NewDoorView.prototype.loginClicked = function() {
       var deviceId, doorUrl, passphrase,
         _this = this;
       doorUrl = this.model.get("prot") + this.$("#door-url").val();
-      console.log(doorUrl);
       passphrase = this.$("#passphrase").val();
       deviceId = window.device ? window.device.uuid : "itsme";
+      this.$("#new-door-brand").html('<div class="loading spin"></div>');
       this.$(".form-group").removeClass("has-error");
       return $.ajax({
         url: "" + doorUrl + "/login?passphrase=" + passphrase + "&deviceId=" + deviceId,
@@ -59,17 +64,23 @@
         success: function(resp) {
           var doorUrls;
           if (!resp.hasOwnProperty("token")) {
-            return _this.$(".navbar-brand").text("500");
+            return _this.$("#new-door-brand").text("500");
           } else {
-            _this.$(".navbar-brand").text("OpenDoor");
+            _this.$("#new-door-brand").text("Add a door");
+            _this.$("#door-url").val("");
+            _this.$("#passphrase").val("");
             doorUrls = _this.model.get("doorUrls");
-            doorUrls.push(doorUrl);
-            localStorage["doorUrls"] = JSON.stringify(doorUrls);
-            localStorage[doorUrl] = resp.token;
+            if (!_.contains(doorUrls, doorUrl)) {
+              doorUrls.push(doorUrl);
+              localStorage.setItem("doorUrls", JSON.stringify(doorUrls));
+              localStorage.setItem(doorUrl, resp.token);
+            }
+            _this.setHttps();
             return _this.model.set({
               doorUrl: doorUrl,
               page: "openDoor",
-              disabled: ""
+              disabled: "",
+              prot: "https://"
             });
           }
         }

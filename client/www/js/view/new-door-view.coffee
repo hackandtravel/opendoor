@@ -14,13 +14,14 @@ class app.NewDoorView extends Backbone.View
 
   render: ->
     @$el.html(@template(@model.toJSON()))
+    if @model.get("prot") is "https://" then @setHttps() else @setHttp()
 
   loginClicked: ->
     doorUrl = @model.get("prot") + @$("#door-url").val()
-    console.log(doorUrl);
     passphrase = @$("#passphrase").val()
     deviceId = if window.device then window.device.uuid else "itsme"
 
+    @$("#new-door-brand").html('<div class="loading spin"></div>')
     @$(".form-group").removeClass("has-error")
 
     $.ajax
@@ -36,19 +37,25 @@ class app.NewDoorView extends Backbone.View
         @$(".navbar-brand").text(err.status)
       success: (resp) =>
         if not resp.hasOwnProperty("token")
-          @$(".navbar-brand").text("500")
+          @$("#new-door-brand").text("500")
         else
-          @$(".navbar-brand").text("OpenDoor")
+          @$("#new-door-brand").text("Add a door")
+          @$("#door-url").val("")
+          @$("#passphrase").val("")
+
           doorUrls = @model.get("doorUrls")
-          doorUrls.push doorUrl
 
-          localStorage["doorUrls"] = JSON.stringify(doorUrls)
-          localStorage[doorUrl] = resp.token
+          if not _.contains(doorUrls, doorUrl)
+            doorUrls.push doorUrl
+            localStorage.setItem("doorUrls", JSON.stringify(doorUrls))
+            localStorage.setItem(doorUrl, resp.token)
 
+          @setHttps()
           @model.set
             doorUrl: doorUrl
             page: "openDoor"
             disabled: ""
+            prot: "https://"
 
   backClicked: ->
     @model.set("page", "openDoor")

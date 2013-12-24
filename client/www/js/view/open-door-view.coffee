@@ -4,8 +4,8 @@ class app.OpenDoorView extends Backbone.View
   template: Handlebars.compile($("#open-door-template").html())
 
   events:
-    "click .opendoor-btn": "opendoorClicked"
-    "change .door-select": "selectedDoorChanged"
+    "click #btn-open-door": "opendoorClicked"
+    "change #select-door": "selectedDoorChanged"
     "click #btn-new": "btnNewClicked"
 
   initialize: ->
@@ -13,30 +13,34 @@ class app.OpenDoorView extends Backbone.View
 
   render: ->
     @$el.html(@template(@model.toJSON()))
-    @$(".door-select").val(@model.get("doorUrl"))
+    @$("#select-door").val(@model.get("doorUrl"))
 
   opendoorClicked: (e) ->
+    @$("#open-door-brand").html('<div class="loading spin"></div>')
+
     doorUrl = @model.get("doorUrl")
-    token = localStorage[doorUrl]
+    token = localStorage.getItem(doorUrl)
     $.ajax 
       url: "#{doorUrl}/opendoor?token=#{token}"
       crossDomain: true
       xhrFields: withCredentials: true
       success: (resp) =>
-        @$(".navbar-brand").text("OpenDoor")
+        @$("#open-door-brand").text("OpenDoor")
         $t = $(e.currentTarget)
         $t.addClass("disabled")
         setTimeout -> 
           $t.removeClass("disabled")
         , 5000
       error: (err) =>
-        @$(".navbar-brand").text(err.status)
+        @$("#open-door-brand").text(err.status)
 
   selectedDoorChanged: (e) ->
     doorUrl = $(e.currentTarget).val()
     @model.set "doorUrl", doorUrl
-    @$(".opendoor-btn").removeClass("disabled")
+    @$("#btn-open-door").removeClass("disabled")
 
   btnNewClicked: ->
-    @model.set("page", "newDoor")
+    @model.set 
+      "page": "newDoor"
+      "prot": "https://"
 

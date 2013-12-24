@@ -26,25 +26,19 @@ body {
     -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
     font-family:'HelveticaNeue-Light', 'HelveticaNeue', Helvetica, Arial, sans-serif;
     font-size:12px;
-    height:100%;
-    margin:0px;
-    padding:10px;
-    width:100%;
-    padding-top: 65px;
+}
+
+#app {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
 }
 
 a {
   cursor: pointer;
-}
-
-/* Landscape layout (with min-width) */
-@media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
-    .app {
-        background-position:left center;
-        padding:75px 0px 75px 170px;  /* padding-top + padding-bottom + text area = image height */
-        margin:-90px 0px 0px -198px;  /* offset vertical: half of image height */
-                                      /* offset horizontal: half of image width and text area width */
-    }
 }
 
 .row {
@@ -102,12 +96,13 @@ h1 {
     -webkit-animation:fade 3000ms infinite;
 }
 
-.opendoor-btn {
+#btn-open-door {
   margin: auto;
   padding: 15px 20px;
+  border-radius:8px
 }
 
-.opendoor-btn span {
+#btn-open-door span {
   font-size: 34px;
 }
 
@@ -128,11 +123,11 @@ h1 {
   top: 0;
   left: 0;
   padding: 65px 10px;
-  -webkit-transition: -webkit-transform 0.25s;
-  -moz-transition: -moz-transform 0.25s;
-  -ms-transition: -ms-transform 0.25s;
-  -o-transition: -o-transform 0.25s;
-  transition: transform 0.25s;
+  -webkit-transition: -webkit-transform 0.2s;
+  -moz-transition: -moz-transform 0.2s;
+  -ms-transition: -ms-transform 0.2s;
+  -o-transition: -o-transform 0.2s;
+  transition: transform 0.2s;
 }
 
 .page-left {
@@ -163,7 +158,7 @@ h1 {
   position: absolute;
 }
 
-@media screen and (min-width:1024px) {
+@media screen and (min-width:768px) {
   .page {
     -webkit-transform: translateX(0);
     -moz-transform: translateX(0);
@@ -195,3 +190,35 @@ h1 {
   text-shadow: none;
 }
 
+
+.loading { 
+  cursor: wait;
+  border-radius: 100%;
+  margin: 0 auto;
+
+  -webkit-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -ms-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+
+  -webkit-animation: loading .5s infinite linear;
+  -moz-animation: loading .5s infinite linear;
+  -ms-animation: loading .5s infinite linear;
+  -o-animation: loading .5s infinite linear;
+  animation: loading .5s infinite linear;
+}
+
+.spin {
+  border: 5px solid #777;
+  border-top: 5px solid rgba(0,0,0,0);
+  border-left: 5px solid rgba(0,0,0,0);
+  width: 18px;
+  height: 18px; 
+}
+
+@-webkit-keyframes loading { 0% { -webkit-transform: rotate(0deg); } 100% { -webkit-transform: rotate(360deg); }; }
+@-moz-keyframes loading { 0% { -moz-transform: rotate(0deg); } 100% { -moz-transform: rotate(360deg); }; }
+@-ms-keyframes loading { 0% { -ms-transform: rotate(0deg); } 100% { -ms-transform: rotate(360deg); }; }
+@-o-keyframes loading { 0% { -o-transform: rotate(0deg); } 100% { -o-transform: rotate(360deg); }; }
+@keyframes loading { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }; }
