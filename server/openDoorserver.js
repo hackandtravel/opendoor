@@ -1,169 +1,190 @@
 // openDoor server
 
 /* json api server
-GET Methods:
+ GET Methods:
 
--login { passphrase : servergenerated phassphrase
-		 deviceid : deviceid from device}
-		 return: token which can be used to open the door
-		 
--opendoor { generated token in server handshake }
-		return error or success message
-		
--generate: this generates a new passphrase which can be handed out to users
-		{ master password }
-		return passphrase
+ -login { passphrase : servergenerated phassphrase
+ deviceid : deviceid from device}
+ return: token which can be used to open the door
+
+ -opendoor { generated token in server handshake }
+ return error or success message
+
+ -generate: this generates a new passphrase which can be handed out to users
+ { master password }
+ return passphrase
 
 
-*/
+ */
 // require
 var crypto = require('crypto');
 var fs = require("fs");
 var http = require("http");
 var url = require("url");
-var mongo = require("mongodb");
-var monk = require("monk");
 var spawn = require('child_process').spawn;
-
-// connect to MongoDB
-var db = monk('localhost:27017/opendoor');
 
 // constants
 var path = "/opendoor";
 const masterPW = "superpasswort";
-const validtoken = "mygeneratedToken"
-const validpassphrase ="123456";
+const validtoken = "mygeneratedToken";
+const validpassphrase = "123456";
 
-// collections
-const passphrases = db.get('passphrase');
-const tokenCollection = db.get('token');
+// read "DB"
+var db;
 
-// TODO make https 
+fs.exists('db.json', function (exists) {
+    if (exists) {
+        db = JSON.parse(fs.readFileSync('db.json', "utf8"));
+    }
+    else {
+        db = {
+            passphrases: {},
+            tokens: {}
+        };
+        commit(db);
+    }
+});
+
+function commit(db) {
+    fs.writeFileSync('db.json', JSON.stringify(db));
+}
+
+// TODO make https
 // create key and sign certificate
 var server = http.createServer(serverThread);
 server.listen(8000);
 
+function generateToken(passphrase, deviceid, options) {
+    // check if passphrase exists
+    var phrase = db.passphrases[passphrase];
 
+    // check if the passphrase is used already
+    if (phrase && phrase.deviceid == null) {
+        //generate token and store it and update device id
+        var hasher = crypto.createHash('sha1');
+        hasher.update(passphrase + deviceid);
+        var token = hasher.digest('hex');
 
+        phrase.deviceid = deviceid;
+        db.tokens[token] = true;
+        commit(db);
 
-
-function generateToken(passphrase, deviceid, options)
-{
-	// check if passphrase exists
-
-	passphrases.findOne({phrase : passphrase}, function (err, phrase)
-	{
-		// check if the passphrase is used already
-		console.log(phrase)
-		if(phrase && phrase.deviceid == null)
-		{
-			//generate token and store it and update device id
-			hasher = crypto.createHash('sha1');
-			hasher.update(passphrase+deviceid);
-			token = hasher.digest('hex');
-			passphrases.update({"_id":phrase._id},
-			{
-				$set: {"deviceid":deviceid}
-			});
-			tokenCollection.insert({"token":token});
-			options.success(token)
-		}
-		else
-		{
-		// does not exist or already used
-			options.error()
-		}
-	});	
-}
-
-function rnd(min, max) {
-    return parseInt(Math.random() * (max - min) + min);
-}
-
-function generatePassphrase(response) {
-  fs.readFile('linuxwords.txt', "utf8", function (err, data) {
-    if (err) {
-      response.writeHead(500, headers);
-      response.end();
+        options.success(token)
     }
-    var words = data.split("\n");
-    var max = words.length;
+    else {
+        // does not exist or already used
+        options.error()
+    }
+}
 
-    var phrases = [];
-    phrases.push(words[rnd(0, max)].toLowerCase());
-    phrases.push(words[rnd(0, max)].toLowerCase());
-    // phrases.push(rnd(0, 100));
+function generatePassphrase(options) {
+    var rnd = function(min, max) {
+        return parseInt(Math.random() * (max - min) + min);
+    };
 
-    var passphrase = phrases.join("-");
+    fs.readFile('linuxwords.txt', "utf8", function (err, data) {
+        if (err) {
+            options.error();
+        }
+        var words = data.split("\n");
+        var max = words.length;
 
-    response.end(JSON.stringify({"passphrase": passphrase}));
-  });
+        var phrases = [];
+        phrases.push(words[rnd(0, max)].toLowerCase());
+        phrases.push(words[rnd(0, max)].toLowerCase());
+        // phrases.push(rnd(0, 100));
+
+        var passphrase = phrases.join("-");
+
+        db.passphrases[passphrase] = {
+            deviceid: null
+        };
+        commit(db);
+
+        options.success(passphrase);
+    });
+}
+
+function generateHeaders(request) {
+    var headers = {
+        'Content-Type': 'application/json',
+        "Access-Control-Max-Age": "300",
+        "Access-Control-Allow-Origin": request.headers['origin'],
+        "Access-Control-Allow-Credentials": "true"
+    };
+
+    if (request.headers.hasOwnProperty("Access-Control-Request-Method")) {
+        headers["Access-Control-Allow-Methods"] = request.headers['Access-Control-Request-Method'];
+    }
+
+    if (request.headers.hasOwnProperty("Access-Control-Request-Headers")) {
+        headers["Access-Control-Allow-Headers"] = request.headers['Access-Control-Request-Headers'];
+    }
+
+    return headers;
 }
 
 function serverThread(request, response) {
-  headers = {
-    'Content-Type': 'application/json',
-    "Access-Control-Max-Age": "300",
-    "Access-Control-Allow-Origin": request.headers['origin'],
-    "Access-Control-Allow-Credentials": "true"
-  };
+    var headers = generateHeaders(request);
 
-  if(request.headers.hasOwnProperty("Access-Control-Request-Method")) {
-    headers["Access-Control-Allow-Methods"] = request.headers['Access-Control-Request-Method'];
-  }
+    var parsedURL = url.parse(request.url, true);
 
-  if(request.headers.hasOwnProperty("Access-Control-Request-Headers")) {
-    headers["Access-Control-Allow-Headers"] = request.headers['Access-Control-Request-Headers'];
-  }
+    if (parsedURL.pathname === path + "/login") {
+        var passphrase = parsedURL.query.passphrase;
+        var deviceid = parsedURL.query.deviceId;
 
-  response.writeHead(200, headers);
+        generateToken(passphrase, deviceid, {
+            error: function () {
+                response.writeHead(401, headers);
+                response.end("sorry bro");
+            },
+            success: function (token) {
+                response.writeHead(200, headers);
+                response.end(JSON.stringify({"token": token}));
+            }
+        });
+    }
+    else if (parsedURL.pathname === path + "/opendoor") {
+        var token = parsedURL.query.token;
 
-	parsedURL = url.parse(request.url,true);
-	
-	if(parsedURL.pathname === path+"/login")
-	{
-		passphrase = parsedURL.query.passphrase;
-		deviceid = parsedURL.query.deviceId;
-		token = generateToken(passphrase,deviceid, { 
-			error: function (){
-				response.writeHead(401, headers);
-				response.end("sorry bro");
-			},
-			success: function(token){
-				response.end(JSON.stringify({"token": token}));
-			}
-		});
-			
-	}
-	else if(parsedURL.pathname === path+"/opendoor")
-	{
-			token = parsedURL.query.token;
-			// check if token exists
-			success = tokenCollection.findOne({"token":token})!=null;
-			
-			if(success)
-			{
-				// TODO run command on raspberry pi	
-				open = spawn('ping', ['127.0.0.1 > C:\t.txt']);
-				
-				open.stdin.end();
-			}
-			response.end(JSON.stringify({"success": success
-					}));
-	}
-	else if(parsedURL.pathname === path+"/generate")
-	{
-		pw = parsedURL.query.pw;
-		if(pw == masterPW)
-		{
-			generatePassphrase(response, headers);
-		}
-		else
-		{
-			response.writeHead(401, headers);
-			response.end("sorry bro");
-		}
-	}
+        // check if token exists
+        var success = db.tokens[token] == true;
+
+        if (success) {
+            // TODO run command on raspberry pi
+            var open = spawn('ping', ['127.0.0.1 > C:\t.txt']);
+            open.stdin.end();
+
+            response.writeHead(200, headers);
+        } else {
+            response.writeHead(401, headers);
+        }
+
+        response.end(JSON.stringify({"success": success}));
+
+    }
+    else if (parsedURL.pathname === path + "/generate") {
+        var pw = parsedURL.query.pw;
+        if (pw == masterPW) {
+            generatePassphrase({
+                error: function() {
+                    response.writeHead(500, headers);
+                    response.end();
+                },
+                success: function(passphrase) {
+                    response.writeHead(200, headers);
+                    response.end(JSON.stringify({"passphrase": passphrase}));
+                }
+            });
+        }
+        else {
+            response.writeHead(401, headers);
+            response.end("sorry bro");
+        }
+    } else {
+        response.writeHead(404, headers);
+        response.end("sorry bro");
+    }
 }
 
 
