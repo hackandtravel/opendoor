@@ -3,10 +3,7 @@ opendoor
 
 ### Install
 
-    npm install mongodb
-    npm install monk
-    (npm install express) (only for dummy server)
-
-### Start MongoDB
-
-    mongod --dbpath opendoor/data
+    cd server
+    npm install express
+    node openDoorserver.js
+    open http://localhost:8000
