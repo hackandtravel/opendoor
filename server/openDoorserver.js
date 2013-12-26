@@ -26,6 +26,11 @@ var spawn = require('child_process').spawn;
 const path = "/opendoor";
 const masterPW = "superpasswort"; // TODO: do not store in plain text
 
+var init = spawn('plink', ['-i','pi.ppk','pi@192.168.1.130','gpio','mode','7','out']);
+init.stdout.on('data', function (data) {
+  console.log('stdout: ' + data);
+});
+
 // read "DB"
 var db;
 
@@ -91,9 +96,25 @@ app.get(path + '/opendoor', function (req, res) {
     if (!success) {
         res.status(401).send();
     } else {
-        // TODO run command on raspberry pi
-        var open = spawn('ping', ['127.0.0.1 > C:\t.txt']);
-        open.stdin.end();
+				//  run open door command on raspberry pi	
+				//open = spawn('plink', ['-i','pi.ppk','pi@192.168.1.130']);
+				var open = spawn('plink', ['-i','pi.ppk','pi@192.168.1.130','gpio','write','7','1']);
+				open.stdout.on('data', function (data) {
+				  console.log('stdout: ' + data);
+				});
+
+				open.on('close', function (code) {
+				  console.log('child process exited with code ' + code);
+				});
+				
+				// close door after 8 seconds
+				setTimeout(function() {
+          var close = spawn('plink', ['-i','pi.ppk','pi@192.168.1.130','gpio','write','7','0']);
+				  close.on('close', function (code) {
+				    console.log('Closed code:' + code);
+				  });
+        }, 8000);
+
         res.status(200).send();
     }
 });
@@ -142,31 +163,18 @@ function generateToken(passphrase, deviceid, options) {
     }
 }
 
-// TODO: Okay, this is not safe. Allow only for a limited amount of time or revert to hashes
 function generatePassphrase(options) {
-    var rnd = function (min, max) {
-        return parseInt(Math.random() * (max - min) + min);
+    // generation algorithm
+    var randomBytes = crypto.randomBytes(256);
+    var hasher = crypto.createHash('sha1');
+    hasher.update(randomBytes);
+    var randomPassphrase = hasher.digest('hex');
+    var passphrase = randomPassphrase.substring(0,6);
+
+    db.passphrases[passphrase] = {
+        deviceid: null
     };
+    commit(db);
 
-    fs.readFile('linuxwords.txt', "utf8", function (err, data) {
-        if (err) {
-            options.error();
-        }
-        var words = data.split("\n");
-        var max = words.length;
-
-        var phrases = [];
-        phrases.push(words[rnd(0, max)].toLowerCase());
-        phrases.push(words[rnd(0, max)].toLowerCase());
-        // phrases.push(rnd(0, 100));
-
-        var passphrase = phrases.join("-");
-
-        db.passphrases[passphrase] = {
-            deviceid: null
-        };
-        commit(db);
-
-        options.success(passphrase);
-    });
+    options.success(passphrase);
 }
