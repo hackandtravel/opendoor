@@ -32,12 +32,14 @@ var db = monk('localhost:27017/opendoor');
 var path = "/opendoor";
 const masterPW = "superpasswort";
 const validtoken = "mygeneratedToken"
-const validpassphrase ="123456";
 
 // collections
 const passphrases = db.get('passphrase');
 const tokenCollection = db.get('token');
-
+// set up port 7
+init = spawn('plink', ['-i','pi.ppk','pi@192.168.1.130','gpio','mode','7','out']);
+				init.stdout.on('data', function (data) {
+				  console.log('stdout: ' + data);});
 // TODO make https 
 // create key and sign certificate
 var server = http.createServer(serverThread);
@@ -143,10 +145,21 @@ function serverThread(request, response) {
 			
 			if(success)
 			{
-				// TODO run command on raspberry pi	
-				open = spawn('ping', ['127.0.0.1 > C:\t.txt']);
+				//  run open door command on raspberry pi	
+				//open = spawn('plink', ['-i','pi.ppk','pi@192.168.1.130']);
+				open = spawn('plink', ['-i','pi.ppk','pi@192.168.1.130','gpio','write','7','1']);
+				open.stdout.on('data', function (data) {
+				  console.log('stdout: ' + data);
+				});
+				open.on('close', function (code) {
+				  console.log('child process exited with code ' + code);
+				});
 				
-				open.stdin.end();
+				// close door after 8 seconds
+				setTimeout(function(){close = spawn('plink', ['-i','pi.ppk','pi@192.168.1.130','gpio','write','7','0']);
+				close.on('close', function (code) {
+				  console.log('Closed code:' + code);
+				});},8000);
 			}
 			response.end(JSON.stringify({"success": success
 					}));
