@@ -83,23 +83,19 @@ function rnd(min, max) {
 }
 
 function generatePassphrase(response) {
-  fs.readFile('linuxwords.txt', "utf8", function (err, data) {
-    if (err) {
-      response.writeHead(500, headers);
-      response.end();
-    }
-    var words = data.split("\n");
-    var max = words.length;
 
-    var phrases = [];
-    phrases.push(words[rnd(0, max)].toLowerCase());
-    phrases.push(words[rnd(0, max)].toLowerCase());
-    // phrases.push(rnd(0, 100));
 
-    var passphrase = phrases.join("-");
 
-    response.end(JSON.stringify({"passphrase": passphrase}));
-  });
+         // generation algorithm
+        var randomBytes = crypto.randomBytes(256);
+        myHasher = crypto.createHash('sha1');
+        myHasher.update(randomBytes);
+        randomPassphrase = myHasher.digest('hex');
+        generatedPassphrase = randomPassphrase.substring(0,6);
+        
+    // add to database
+        passphrases.insert({"phrase":generatedPassphrase});
+        response.end(JSON.stringify({"passphrase": generatedPassphrase}));
 }
 
 function serverThread(request, response) {
