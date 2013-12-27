@@ -107,13 +107,13 @@ app.get(path + '/opendoor', function (req, res) {
 				  console.log('child process exited with code ' + code);
 				});
 				
-				// close door after 8 seconds
+				// close door after 5 seconds
 				setTimeout(function() {
           var close = spawn('plink', ['-i','pi.ppk','pi@192.168.1.130','gpio','write','7','0']);
 				  close.on('close', function (code) {
 				    console.log('Closed code:' + code);
 				  });
-        }, 8000);
+        }, 5000);
 
         res.status(200).send();
     }
