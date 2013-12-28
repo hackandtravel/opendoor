@@ -3,19 +3,21 @@
 /* json api server
  GET Methods:
 
- -login { passphrase : servergenerated phassphrase
- deviceid : deviceid from device}
- return: token which can be used to open the door
+ -login this registers a new user {
+ passphrase : servergenerated phassphrase
+ deviceid : deviceid from device }
+ returns: token which can be used to open the door
 
- -opendoor { generated token in server handshake }
- return error or success message
+ -opendoor this opens the door { 
+ token : generated token in server handshake }
+ returns: error or success message
 
- -generate: this generates a new passphrase which can be handed out to users
- { master password }
- return passphrase
-
-
+ -generate: this generates a new passphrase which can be handed out to users { 
+ pw : master password 
+ name : name the person who's password this is, so you can later revoke the access }
+ returns: the new passphrase
  */
+
 // require
 var fs = require("fs");
 var express = require('express');
@@ -31,9 +33,9 @@ init.stdout.on('data', function (data) {
   console.log('stdout: ' + data);
 });
 
-// read "DB"
 var db;
 
+// read "DB"
 fs.exists('db.json', function (exists) {
     if (exists) {
         db = JSON.parse(fs.readFileSync('db.json', "utf8"));
@@ -77,42 +79,43 @@ app.get(path + '/login', function (req, res) {
     var passphrase = req.query.passphrase;
     var deviceid = req.query.deviceId;
 
-    generateToken(passphrase, deviceid, {
-        error: function () {
-            res.status(401).send();
-        },
-        success: function (token) {
-            res.send({token: token});
-        }
-    });
+    var phrase = db.passphrases[passphrase];
+
+    if (phrase && phrase.deviceid == null) {
+        var token = generateToken(passphrase, deviceid);
+        saveToken(token, phrase, deviceid);
+        res.send({token: token});
+    } else {
+        res.status(401).send();
+    }
 });
 
 app.get(path + '/opendoor', function (req, res) {
     var token = req.query.token;
 
     // check if token exists
-    var success = db.tokens[token] == true;
+    var success = db.tokens[token] != null;
 
     if (!success) {
         res.status(401).send();
     } else {
-				//  run open door command on raspberry pi	
-				//open = spawn('plink', ['-i','pi.ppk','pi@192.168.1.130']);
-				var open = spawn('plink', ['-i','pi.ppk','pi@192.168.1.130','gpio','write','7','1']);
-				open.stdout.on('data', function (data) {
-				  console.log('stdout: ' + data);
-				});
+        //  run open door command on raspberry pi 
+        //open = spawn('plink', ['-i','pi.ppk','pi@192.168.1.130']);
+        var open = spawn('plink', ['-i','pi.ppk','pi@192.168.1.130','gpio','write','7','1']);
+        open.stdout.on('data', function (data) {
+          console.log('stdout: ' + data);
+        });
 
-				open.on('close', function (code) {
-				  console.log('child process exited with code ' + code);
-				});
-				
-				// close door after 5 seconds
-				setTimeout(function() {
+        open.on('close', function (code) {
+          console.log('child process exited with code ' + code);
+        });
+        
+        // close door after 5 seconds
+        setTimeout(function() {
           var close = spawn('plink', ['-i','pi.ppk','pi@192.168.1.130','gpio','write','7','0']);
-				  close.on('close', function (code) {
-				    console.log('Closed code:' + code);
-				  });
+          close.on('close', function (code) {
+            console.log('Closed code:' + code);
+          });
         }, 5000);
 
         res.status(200).send();
@@ -121,18 +124,22 @@ app.get(path + '/opendoor', function (req, res) {
 
 app.get(path + '/generate', function (req, res) {
     var pw = req.query.pw;
-    if (pw == masterPW) {
-        generatePassphrase({
-            error: function () {
-                res.status(500).send();
-            },
-            success: function (passphrase) {
-                res.status(200).send({"passphrase": passphrase});
+    var name = req.query.name;
+
+    if (pw == null) {
+        res.status(500).send("pw query parameter missing");
+    } else {
+        if (pw != masterPW) {
+          res.status(401).send("wrong password");
+        } else {
+            if (name == null) {
+                res.status(500).send("name query parameter missing");
+            } else {
+                var passphrase = generatePassphrase(name);
+                savePassphrase(passphrase, name);
+                res.status(200).send({passphrase: passphrase});
             }
-        });
-    }
-    else {
-        res.status(401).send();
+        }
     }
 });
 
@@ -140,41 +147,36 @@ function commit(db) {
     fs.writeFileSync('db.json', JSON.stringify(db));
 }
 
-function generateToken(passphrase, deviceid, options) {
-    // check if passphrase exists
-    var phrase = db.passphrases[passphrase];
+function generateToken(passphrase, deviceid) {
+    var hasher = crypto.createHash('sha1');
+    hasher.update(passphrase + deviceid);
+    var token = hasher.digest('hex');
 
-    // check if the passphrase is used already
-    if (phrase && phrase.deviceid == null) {
-        //generate token and store it and update device id
-        var hasher = crypto.createHash('sha1');
-        hasher.update(passphrase + deviceid);
-        var token = hasher.digest('hex');
-
-        phrase.deviceid = deviceid;
-        db.tokens[token] = true;
-        commit(db);
-
-        options.success(token)
-    }
-    else {
-        // does not exist or already used
-        options.error()
-    }
+    return token;
 }
 
-function generatePassphrase(options) {
-    // generation algorithm
+// dao function
+function saveToken(token, phrase, deviceid) {
+    db.tokens[token] = phrase.name;
+    phrase.deviceid = deviceid;
+    commit(db);
+}
+
+function generatePassphrase(name) {
     var randomBytes = crypto.randomBytes(256);
     var hasher = crypto.createHash('sha1');
     hasher.update(randomBytes);
     var randomPassphrase = hasher.digest('hex');
     var passphrase = randomPassphrase.substring(0,6);
 
+    return passphrase;
+}
+
+// dao function
+function savePassphrase(passphrase, name) {
     db.passphrases[passphrase] = {
+        name: name,
         deviceid: null
     };
     commit(db);
-
-    options.success(passphrase);
 }
