@@ -26,11 +26,16 @@ class app.OpenDoorView extends Backbone.View
       xhrFields: withCredentials: true
       success: (resp) =>
         @$("#open-door-brand").text("OpenDoor")
+        
         $t = $(e.currentTarget)
         $t.addClass("disabled")
         setTimeout -> 
           $t.removeClass("disabled")
         , 5000
+
+        if navigator and navigator.notification
+          navigator.notification.vibrate(5000)
+
       error: (err) =>
         @$("#open-door-brand").text(err.status)
 

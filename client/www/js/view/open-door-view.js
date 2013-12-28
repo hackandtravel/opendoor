@@ -48,9 +48,12 @@
           _this.$("#open-door-brand").text("OpenDoor");
           $t = $(e.currentTarget);
           $t.addClass("disabled");
-          return setTimeout(function() {
+          setTimeout(function() {
             return $t.removeClass("disabled");
           }, 5000);
+          if (navigator && navigator.notification) {
+            return navigator.notification.vibrate(5000);
+          }
         },
         error: function(err) {
           return _this.$("#open-door-brand").text(err.status);
