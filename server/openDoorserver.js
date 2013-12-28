@@ -80,8 +80,10 @@ app.get(path + '/login', function (req, res) {
     var deviceid = req.query.deviceId;
 
     var phrase = db.passphrases[passphrase];
+    var oneDay = 100*60*60*24;
+    var now = new Date().getTime();
 
-    if (phrase && phrase.deviceid == null) {
+    if (phrase && phrase.deviceid == null && phrase.date + oneDay > now) {
         var token = generateToken(passphrase, deviceid);
         saveToken(token, phrase, deviceid);
         res.send({token: token});
@@ -176,7 +178,8 @@ function generatePassphrase(name) {
 function savePassphrase(passphrase, name) {
     db.passphrases[passphrase] = {
         name: name,
-        deviceid: null
+        deviceid: null,
+        date: new Date().getTime()
     };
     commit(db);
 }
