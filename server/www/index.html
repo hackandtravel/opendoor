@@ -24,7 +24,7 @@
         <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1" />
         <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
-        <!--<link rel="stylesheet" type="text/css" href="css/bootstrap-theme.css" />-->
+        <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.css" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
         <title>OpenDoor</title>
     </head>
@@ -38,8 +38,8 @@
           </nav>
           <div class="row">
             <div class="col-md-12">
-              <div class="open-door-page">
-                <label for="door-select">Choose a door</label>
+              <div >
+                <label for="door-select">Choose a door:</label>
                 <select id="select-door" class="form-control">
                   {{#each doorUrls}}
                     <option value="{{.}}">{{.}}</option>
@@ -47,11 +47,9 @@
                 </select>
               </div>
             </div>
-            <div class="open-door-page" style="position:absolute; bottom:20px; left:0; width:100%; text-align:center;">
-              <button id="btn-open-door" type="button" class="btn btn-default {{disabled}}">
-                <span class="glyphicon glyphicon-lock"></span>
-              </button>
-            </div>
+            <button id="btn-open-door" type="button" class="btn btn-default {{disabled}}">
+              <span class="glyphicon glyphicon-lock"></span>
+            </button>
           </div>
         </script>
 
@@ -65,7 +63,7 @@
             <div class="col-md-12">
               <div class="new-door-page">
                 <div class="door-form-group form-group">
-                  <label for="door-select">Door URL</label>
+                  <label for="door-select">Door URL:</label>
                   <div class="input-group">
                     <div class="input-group-btn">
                       <button id="btn-prot" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -81,7 +79,7 @@
                   </div>
                 </div>
                 <div class="pass-form-group form-group">
-                  <label for="passphrase">Passphrase</label>
+                  <label for="passphrase">Passphrase:</label>
                   <input id="passphrase" type="password" class="form-control" />
                 </div>
               </div>
