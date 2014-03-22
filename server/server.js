@@ -1,12 +1,4 @@
-// var spawn = require('child_process').spawn;
-
-/*
- var init = spawn('plink', ['-i', 'pi.ppk', 'pi@192.168.1.130', 'gpio', 'mode', '7', 'out']);
- init.stdout.on('data', function (data) {
- console.log('stdout: ' + data);
- });
- */
-
+var http = require('http');
 var https = require('https');
 var fs = require('fs');
 
@@ -23,10 +15,9 @@ try {
   throw new Error("SSL key missing. Create your own: http://nodejs.org/api/tls.html")
 }
 
-var app = https.createServer(options,function (req, res) {
-  res.writeHead(200);
-  res.end("hello world!!!11\n");
-}).listen(3000);
+var app = https.createServer(options, function (req, res) {
+  res.send(200);
+}).listen(3001);
 
 var io = require('socket.io').listen(app);
 
