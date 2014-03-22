@@ -62,7 +62,6 @@ h1 {
 
 .event {
     border-radius:4px;
-    -webkit-border-radius:4px;
     color:#FFFFFF;
     font-size:12px;
     margin:0px 30px;
@@ -92,8 +91,8 @@ h1 {
 }
  
 .blink {
-    animation:fade 3000ms infinite;
     -webkit-animation:fade 3000ms infinite;
+    animation:fade 3000ms infinite;
 }
 
 label {
@@ -133,33 +132,24 @@ label {
   left: 0;
   padding: 65px 10px;
   -webkit-transition: -webkit-transform 0.2s;
-  -moz-transition: -moz-transform 0.2s;
-  -ms-transition: -ms-transform 0.2s;
-  -o-transition: -o-transform 0.2s;
   transition: transform 0.2s;
 }
 
 .page-left {
   -webkit-transform: translateX(-100%);
-  -moz-transform: translateX(-100%);
   -ms-transform: translateX(-100%);
-  -o-transform: translateX(-100%);
   transform: translateX(-100%);
 }
 
 .page-middle {
   -webkit-transform: translateX(0);
-  -moz-transform: translateX(0);
   -ms-transform: translateX(0);
-  -o-transform: translateX(0);
   transform: translateX(0);
 }
 
 .page-right {
   -webkit-transform: translateX(100%);
-  -moz-transform: translateX(100%);
   -ms-transform: translateX(100%);
-  -o-transform: translateX(100%);
   transform: translateX(100%);
 }
 
@@ -170,9 +160,7 @@ label {
 @media screen and (min-width:768px) {
   .page {
     -webkit-transform: translateX(0);
-    -moz-transform: translateX(0);
     -ms-transform: translateX(0);
-    -o-transform: translateX(0);
     transform: translateX(0);
     padding: 65px 20px;
   }
@@ -204,17 +192,9 @@ label {
   cursor: wait;
   border-radius: 100%;
   margin: 0 auto;
-
   -webkit-animation-fill-mode: forwards;
-  -moz-animation-fill-mode: forwards;
-  -ms-animation-fill-mode: forwards;
-  -o-animation-fill-mode: forwards;
   animation-fill-mode: forwards;
-
   -webkit-animation: loading .5s infinite linear;
-  -moz-animation: loading .5s infinite linear;
-  -ms-animation: loading .5s infinite linear;
-  -o-animation: loading .5s infinite linear;
   animation: loading .5s infinite linear;
 }
 
@@ -226,8 +206,26 @@ label {
   height: 18px; 
 }
 
-@-webkit-keyframes loading { 0% { -webkit-transform: rotate(0deg); } 100% { -webkit-transform: rotate(360deg); }; }
-@-moz-keyframes loading { 0% { -moz-transform: rotate(0deg); } 100% { -moz-transform: rotate(360deg); }; }
-@-ms-keyframes loading { 0% { -ms-transform: rotate(0deg); } 100% { -ms-transform: rotate(360deg); }; }
-@-o-keyframes loading { 0% { -o-transform: rotate(0deg); } 100% { -o-transform: rotate(360deg); }; }
-@keyframes loading { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }; }
+@-webkit-keyframes loading { 
+    0% { 
+        -webkit-transform: rotate(0deg); 
+        transform: rotate(0deg); 
+    } 
+    100% { 
+        -webkit-transform: rotate(360deg); 
+        transform: rotate(360deg); 
+    }
+}
+
+@keyframes loading { 
+    0% { 
+        -webkit-transform: rotate(0deg); 
+        -ms-transform: rotate(0deg); 
+        transform: rotate(0deg); 
+    } 
+    100% { 
+        -webkit-transform: rotate(360deg); 
+        -ms-transform: rotate(360deg); 
+        transform: rotate(360deg); 
+    }
+}

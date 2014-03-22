@@ -5,6 +5,9 @@ var coffee = require('gulp-coffee');
 var less = require('gulp-less');
 var imagemin = require('gulp-imagemin');
 
+var prefix = require('gulp-autoprefixer');
+var rename = require('gulp-rename');
+
 var SOURCE_FOLDER = 'src';
 var BUILD_FOLDER = 'www';
 
@@ -13,7 +16,7 @@ var paths = {
   coffee: SOURCE_FOLDER + '/js/**/*.coffee',
   
   js: SOURCE_FOLDER + '/js/**/*.js',
-  css: SOURCE_FOLDER + '/css/**/*.css',
+  css: SOURCE_FOLDER + '/css/**/*-noprefix.css',
   index: SOURCE_FOLDER + '/index.html',
   config: SOURCE_FOLDER + '/config.xml'
 };
@@ -37,6 +40,11 @@ gulp.task('js', ['coffee'], function() {
 
 gulp.task('css', function () {
   return gulp.src(paths.css)
+    .pipe(prefix("last 1 version", "> 1%", "ie 8", "ie 7"))
+    .pipe(rename(function(path) {
+      path.basename = path.basename.replace('-noprefix', '')
+    }))
+    .pipe(gulp.dest(SOURCE_FOLDER + '/css'))
     .pipe(gulp.dest(BUILD_FOLDER + '/css'))
 });
 
@@ -49,4 +57,5 @@ gulp.task('default', ['bower', 'copy', 'js', 'css']);
 
 gulp.task('watch', function () {
   gulp.watch(paths.coffee, ['coffee']);
+  gulp.watch(paths.css, ['css']);
 });
