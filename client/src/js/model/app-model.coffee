@@ -8,7 +8,7 @@ class app.AppModel extends Backbone.Model
     disabled: "disabled"
 
   initialize: ->
-    socket = io.connect('ws://localhost:80')
+    socket = io.connect(app.location, {secure: true})
     socket.on 'news', (data) ->
       console.log(data)
       socket.emit('my other event', { my: 'my data' })
