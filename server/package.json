@@ -3,8 +3,10 @@
   "version": "0.0.1",
   "author": "Hack & Travel <hackandtravel@gmail.com>",
   "description": "",
-  "dependencies" : {
-    "socket.io":  "0.9.16"
+  "dependencies": {
+    "socket.io": "0.9.16",
+    "mongo": "^0.1.0",
+    "monk": "^0.8.1"
   },
   "license": "MIT",
   "engines": {
