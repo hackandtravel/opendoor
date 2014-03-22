@@ -19,16 +19,7 @@
     };
 
     AppModel.prototype.initialize = function() {
-      var doorUrls, s, socket;
-      socket = io.connect(app.location, {
-        secure: true
-      });
-      socket.on('news', function(data) {
-        console.log(data);
-        return socket.emit('my other event', {
-          my: 'my data'
-        });
-      });
+      var doorUrls, s;
       s = localStorage.getItem("doorUrls");
       if (s != null) {
         doorUrls = JSON.parse(s);
