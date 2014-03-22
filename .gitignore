@@ -3,6 +3,5 @@
 /client/merges
 /client/plugins
 /client/platforms
-/client/.cordova
-/server/tutorial
-/server/db.json
+.idea
+*.iml
