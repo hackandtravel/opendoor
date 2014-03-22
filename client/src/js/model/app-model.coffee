@@ -7,7 +7,12 @@ class app.AppModel extends Backbone.Model
     doorUrls: []
     disabled: "disabled"
 
-  initialize: -> 
+  initialize: ->
+    socket = io.connect('ws://localhost:80')
+    socket.on 'news', (data) ->
+      console.log(data)
+      socket.emit('my other event', { my: 'my data' })
+
     s = localStorage.getItem("doorUrls")
     if s?
       doorUrls = JSON.parse(s)
