@@ -1,0 +1,13 @@
+{
+  "name": "opendoor-server",
+  "version": "0.0.1",
+  "author": "Hack & Travel <hackandtravel@gmail.com>",
+  "description": "",
+  "dependencies" : {
+    "socket.io":  "0.9.16"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.10"
+  }
+}

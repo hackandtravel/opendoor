@@ -6,3 +6,4 @@
 .idea
 *.iml
 secret/
+node_modules/
