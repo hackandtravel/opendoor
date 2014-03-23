@@ -29,12 +29,13 @@ function generateToken(deviceid, key)
 		hasher.update(crypto.randomBytes(256));
 		token = hasher.digest('hex');
 		deviceCollection.update({deviceid: deviceid, 'keys.key':key},
-				{ 	$push: {'keys.$.token': token}	});
+				{ 	$push: {'keys.$.token': {token:token}}	});
 		return token;
 }
 // conditions matchin key, deviceid and limit and expire valid
 exports.login = function (deviceid, key, cb)
 {
+	var deviceInfo;
 	var now = new Date().getTime();
 	var promise = deviceCollection.findOne(
 	{deviceid: deviceid, 'keys.key':key, 'keys.limit':{$gt:1},'keys.expire':{$gt:now}},
@@ -58,7 +59,6 @@ exports.login = function (deviceid, key, cb)
 				limit = filteredKeys[0].limit; 
 			}
 			token = generateToken(deviceid, key);
-			
 			deviceInfo =  buildDeviceInfo(device, token, expire, limit);		
 		}
 		cb(deviceInfo);
