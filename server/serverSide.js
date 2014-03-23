@@ -43,7 +43,7 @@ exports.login = function (deviceid, key)
 		if(err) return null;
 		if(device)
 		{
-			winston.info("login from user");
+			
 			deviceCollection.update({deviceid: deviceid, 'keys.key':key},
 			{ $inc: {'keys.$.limit': -1}} );
 			
@@ -56,7 +56,7 @@ exports.login = function (deviceid, key)
 			}
 			token = generateToken(deviceid, key);
 			
-			return buildDeviceInfo(token);
+			return buildDeviceInfo(device, token, expire, limit);
 		}
 	});
 };
@@ -72,6 +72,7 @@ function buildDeviceInfo(device, token, expire, limit)
 		expire : expire,
 		limit : limit
 	};
+	winston.info(deviceInfo);
 	return deviceInfo;
 }
 // doors must be array
