@@ -8,10 +8,10 @@ var imagemin = require('gulp-imagemin');
 var prefix = require('gulp-autoprefixer');
 var rename = require('gulp-rename');
 
-var SOURCE_FOLDER = 'src';
-var BUILD_FOLDER = 'www';
+const SOURCE_FOLDER = 'src';
+const BUILD_FOLDER = 'www';
 
-var paths = {
+const paths = {
   bower: SOURCE_FOLDER + '/bower_components/**/*',
   coffee: SOURCE_FOLDER + '/js/**/*.coffee',
   

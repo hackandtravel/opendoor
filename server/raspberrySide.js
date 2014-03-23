@@ -1,39 +1,17 @@
-// openDoor server
+function getIO(server) {
+  var io = require('socket.io').listen(server);
 
-/* json api server
-GET Methods:
+  io.sockets.on('connection', function (socket) {
+    setTimeout(function () {
+      socket.emit('openDoor', { doorNumber: 1 });
+    }, 5000);
 
--login { passphrase : servergenerated phassphrase
-		 deviceid : deviceid from device}
-		 return: token which can be used to open the door
-		 
--opendoor { generated token in server handshake }
-		return error or success message
-		
--generate: this generates a new passphrase which can be handed out to users
-		{ master password }
-		return passphrase
+    socket.on('status', function (data) {
+      console.log(data);
+    });
+  });
 
-
-*/
-// require
-
-var http = require("http");
-var url = require("url");
-
-
-const masterPW = "blechturmgasseopendoor";
-const validtoken = "mygeneratedToken";
-function getIO(server)
-{
-	var io = require('socket.io').listen(server);
-	io.sockets.on('connection', function (socket) {
-	  socket.emit('news', { hello: 'world' });
-	  socket.on('my other event', function (data) {
-		console.log(data);
-	  });
-	});
-	return io;
+  return io;
 }
 
 exports.getIO = getIO

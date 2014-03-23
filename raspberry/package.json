@@ -4,10 +4,16 @@
   "author": "Hack & Travel <hackandtravel@gmail.com>",
   "description": "",
   "dependencies": {
-    "socket.io-client": "0.9.16"
+    "socket.io-client": "0.9.16",
+    "pi-gpio": "0.0.2"
   },
   "license": "MIT",
   "engines": {
     "node": ">=0.10"
+  },
+  "devDependencies": {
+    "gulp": "^3.5.6",
+    "gulp-util": "^2.2.14",
+    "nodemon": "^1.0.17"
   }
 }
