@@ -27,7 +27,7 @@ var client = https.createServer(options, clientside.app).listen(config.portClien
 
 winston.info('Startup');
 // call if you want to generate data
-// clientside.start();
+ //clientside.start();
 var rasp = https.createServer(options);
 var io = raspberry.getIO(rasp);
 rasp.listen(config.portRasp);
