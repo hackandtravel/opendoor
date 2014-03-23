@@ -11,7 +11,7 @@ var gpio = require("pi-gpio");
 const HIGH = 1;
 const LOW = 0;
 
-/*
+/**
  * On which gpio pin are the doors connected?
  * Must be one of the keys in PIN_MAPPING.
  */
@@ -21,7 +21,21 @@ const DOOR_PINS = {
   3: undefined  // TODO
 };
 
-/*
+/**
+ * How long should the door buzz? In milliseconds.
+ *
+ * @type {number}
+ */
+const BUZZ_TIME = 4000;
+
+/**
+ * How log should the time between reconnects be? In milliseconds.
+ *
+ * @type {number}
+ */
+const RECONNECT_INTERVAL = 10000;
+
+/**
  * Pin mapping of the Raspberry Pi
  * 'pin' is the number of the pin if counted form the top
  * 'bcm' is the number used by the underlying Broadcom chip
@@ -34,18 +48,9 @@ const PIN_MAPPING = {
   gpio6: {pin: 25, bcm: 25}
 };
 
-/**
- * How long sould the door buzz? In milliseconds.
- *
- * @type {number}
- */
-const BUZZ_TIME = 4000;
-
-const RECONNECT_INTERVAL = 1000;
-
 configurePins(function () {
   console.log('configured pins');
-  listen(config.location);
+  connect(config.location);
 });
 
 /**
@@ -53,8 +58,11 @@ configurePins(function () {
  *
  * @param location The url of the socket.io endpoint.
  */
-function listen(location) {
-  var socket = io.connect(location, { secure: true });
+function connect(location) {
+  var options = {
+    secure: true
+  };
+  var socket = io.connect(location, options);
 
   socket.on('connect', function () {
     console.log('socket.io connected.');
@@ -87,6 +95,7 @@ function listen(location) {
  * Handles a socket.io 'openDoor' event.
  *
  * @param msg Must contain a field 'doorNumber' that matches on of the keys in DOOR_PINS.
+ * @param cb Callback function that takes a string as argument.
  */
 function onOpenDoor(msg, cb) {
   if (msg.hasOwnProperty('doorNumber')) {
@@ -101,6 +110,8 @@ function onOpenDoor(msg, cb) {
  *
  * @param doorNumber The door number of the door to open.
  * @param time The time the door should buzz in milliseconds.
+ * @param cb Callback function that takes a string as argument. 
+ *           Will 
  */
 function openDoor(doorNumber, time, cb) {
   const gpioPin = PIN_MAPPING[DOOR_PINS[doorNumber]];
