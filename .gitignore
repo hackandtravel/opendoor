@@ -7,3 +7,4 @@
 *.iml
 secret/
 node_modules/
+*.bat
