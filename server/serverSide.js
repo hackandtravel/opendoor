@@ -31,6 +31,7 @@ function rnd(min, max)
 function generateToken(deviceid, key)
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
 // TODO check if doesnt exist
 		//generate token and store it and update device id
 		hasher = crypto.createHash('sha1');
@@ -40,6 +41,8 @@ function generateToken(deviceid, key)
 				{ 	$push: {'keys.$.token': token}	});
 		return token;
 =======
+=======
+>>>>>>> bad6b60d35c24e449225b193c42c91c84ef4e41f
 	// TODO check if doesnt exist
 	//generate token and store it and update device id
 	hasher = crypto.createHash('sha1');
@@ -58,11 +61,15 @@ function generateToken(deviceid, key)
 	}
 	);
 	return token;
+<<<<<<< HEAD
 >>>>>>> work in progress
+=======
+>>>>>>> bad6b60d35c24e449225b193c42c91c84ef4e41f
 }
 // conditions matching key, deviceid and limit and expire valid
 exports.login = function (deviceid, key, cb)
 {
+	var deviceInfo;
 	var now = new Date().getTime();
 	deviceCollection.findOne(
 	{
@@ -140,6 +147,7 @@ exports.opendoor = function (deviceid, doorNumber, token, cb)
 	}
 	);
 }
+
 // only hand back door the key has access to
 function buildDeviceInfo(device, key, token)
 {
@@ -159,10 +167,6 @@ function buildDeviceInfo(device, key, token)
 		expire : key.expire,
 		limit : key.limit
 	};
-<<<<<<< HEAD
-=======
-
->>>>>>> work in progress
 	return deviceInfo;
 }
 // doors must be array
