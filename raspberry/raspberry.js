@@ -2,7 +2,7 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 // XXX: Works where I am...
-var config = { location: '192.168.1.213:3001' };
+var config = { location: '192.168.1.213:3000' };
 
 var fs = require("fs");
 var io = require('socket.io-client');
@@ -28,12 +28,9 @@ const DOOR_PINS = {
  */
 const PIN_MAPPING = {
   gpio7: {pin: 7, bcm: 4},
-
   gpio0: {pin: 11, bcm: 17}, gpio1: {pin: 12, bcm: 18},
-
   gpio3: {pin: 15, bcm: 22}, gpio4: {pin: 16, bcm: 23},
   gpio5: {pin: 18, bcm: 24},
-
   gpio6: {pin: 25, bcm: 25}
 };
 
@@ -58,7 +55,7 @@ configurePins(function () {
  */
 function listen(location) {
   var socket = io.connect(location, { secure: true });
-  
+
   socket.on('connect', function () {
     console.log('socket.io connected.');
   });
