@@ -1,23 +1,25 @@
 {
-  "name": "opendoor-server",
-  "version": "0.0.1",
-  "author": "Hack & Travel <hackandtravel@gmail.com>",
-  "description": "",
-  "dependencies": {
-    "socket.io": "0.9.16",
-    "mongo": "^0.1.0",
-    "monk": "^0.8.1",
-    "express": "^3.5.0",
-    "winston": "^0.7.2",
-    "mong.socket.io": "^0.9.0"
-  },
-  "license": "MIT",
-  "engines": {
-    "node": ">=0.10"
-  },
-  "devDependencies": {
-    "gulp": "^3.5.6",
-    "gulp-jasmine": "^0.2.0",
-    "proxyquire": "^0.5.3"
-  }
+    "name": "opendoor-server",
+    "version": "0.0.1",
+    "author": "Hack & Travel <hackandtravel@gmail.com>",
+    "description": "",
+    "dependencies": {
+        "socket.io": "0.9.16",
+        "mongo": "^0.1.0",
+        "monk": "^0.8.1",
+        "express": "^3.5.0",
+        "winston": "^0.7.2",
+        "mong.socket.io": "^0.9.0",
+        "password-hash": "^1.2.1",
+        "hat": "0.0.3"
+    },
+    "license": "MIT",
+    "engines": {
+        "node": ">=0.10"
+    },
+    "devDependencies": {
+        "gulp": "^3.5.6",
+        "gulp-jasmine": "^0.2.0",
+        "proxyquire": "^0.5.3"
+    }
 }
