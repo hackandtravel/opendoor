@@ -56,9 +56,7 @@ exports.login = function (deviceid, key, cb)
 				limit = filteredKeys[0].limit; 
 			}
 			token = generateToken(deviceid, key);
-			
 			deviceInfo =  buildDeviceInfo(device, token, expire, limit);
-			
 			cb(deviceInfo);
 		}
 	});
@@ -86,7 +84,6 @@ function buildDeviceInfo(device, token, expire, limit)
 		expire : expire,
 		limit : limit
 	};
-	
 	return deviceInfo;
 }
 // doors must be array
