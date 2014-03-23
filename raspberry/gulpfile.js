@@ -3,8 +3,6 @@ var gutil = require('gulp-util');
 var coffee = require('gulp-coffee');
 var jasmine = require('gulp-jasmine');
 
-var spawn = require('child_process').spawn;
-
 const RASPBERRY_USERNAME = 'pi';
 const RASPBERRY_IP = '192.168.1.108';
 const RASPBERRY_FOLDER_NAME = 'raspberry';
@@ -16,6 +14,7 @@ const paths = {
 
 gulp.task('scp', function () {
   // http://www.pauljoyceuk.com/codex/2013/raspberry-pi-configuring-and-connecting-with-ssh/
+  var spawn = require('child_process').spawn;
   var params = [paths.js, RASPBERRY_USERNAME + '@' + RASPBERRY_IP + ':' + RASPBERRY_FOLDER_NAME];
   var child = spawn('scp', params, { cwd: process.cwd() });
   var stdout = '';
@@ -50,3 +49,5 @@ gulp.task('test', function () {
     .pipe(gulp.dest('spec'))
     .pipe(jasmine({verbose: true, includeStackTrace: true}));
 });
+
+gulp.task('development', ['watch']);

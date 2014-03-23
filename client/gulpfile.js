@@ -1,9 +1,7 @@
 var gulp = require('gulp');
 
-var react = require('gulp-react');
 var coffee = require('gulp-coffee');
 var less = require('gulp-less');
-var imagemin = require('gulp-imagemin');
 
 var prefix = require('gulp-autoprefixer');
 var rename = require('gulp-rename');
@@ -53,9 +51,18 @@ gulp.task('copy', function() {
     .pipe(gulp.dest(BUILD_FOLDER))
 });
 
-gulp.task('default', ['bower', 'copy', 'js', 'css']);
+gulp.task('http', function () {
+  // https://github.com/gulpjs/gulp/issues/100
+  require('http').createServer(
+    require('ecstatic')({ root: './src' })
+  ).listen(8000);
+});
+
+gulp.task('build', ['bower', 'copy', 'js', 'css']);
 
 gulp.task('watch', function () {
   gulp.watch(paths.coffee, ['coffee']);
   gulp.watch(paths.css, ['css']);
 });
+
+gulp.task('development', ['http', 'watch']);

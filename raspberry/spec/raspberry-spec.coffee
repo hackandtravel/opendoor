@@ -17,6 +17,8 @@ helpers = proxyquire '../helpers.js',
       
 CALLBACK_JITTER = 100
 
+jitter = (cb) -> setTimeout cb, CALLBACK_JITTER * Math.random()
+
 describe 'raspberry', ->
   it 'should not contradict universal laws', ->
     expect(true).toBe(true)
@@ -24,22 +26,22 @@ describe 'raspberry', ->
   describe 'configurePins', ->
     it 'should configure 3 pins', (done) ->
       gpioStub.open = (pin, inputOrOutput, cb) ->
-        expect(inputOrOutput).toBe('output');
-        setTimeout cb, CALLBACK_JITTER * Math.random()
-        
+        expect(inputOrOutput).toBe('output')
+        jitter cb
+
       gpioStub.write = (pin, highOrLow, cb) ->
         expect(highOrLow).toBe(LOW);
-        setTimeout cb, CALLBACK_JITTER * Math.random()
+        jitter cb
           
       helpers.configurePins ->
         done()
       
     it 'should also return when an error occurs', (done) ->
       gpioStub.open = (pin, inputOrOutput, cb) ->
-        setTimeout cb.bind(undefined, new Error('Mock error')), CALLBACK_JITTER * Math.random()
+        jitter cb.bind(undefined, new Error('Mock error'))
 
       gpioStub.write = (pin, highOrLow, cb) ->
-        setTimeout cb.bind(undefined, new Error('Mock error')), CALLBACK_JITTER * Math.random()
+        jitter cb.bind(undefined, new Error('Mock error'))
 
       helpers.configurePins ->
         done()
@@ -57,11 +59,11 @@ describe 'raspberry', ->
     it 'should open the door', (done) ->
       gpioStub.write = (pin, highOrLow, cb) ->
         expect(highOrLow).toBe(HIGH)
-        setTimeout cb, CALLBACK_JITTER * Math.random()
+        jitter cb
         
         gpioStub.write = (pin, highOrLow, cb) ->
           expect(highOrLow).toBe(LOW)
-          setTimeout cb, CALLBACK_JITTER * Math.random()
+          jitter cb
         
       i = 2
       helpers.openDoor 1, 500, (status) ->
@@ -71,7 +73,7 @@ describe 'raspberry', ->
         
   describe 'onOpenDoor', ->
     it 'expects a doorNumber parameter', ->
-      gpioStub.write = (x, y, cb) -> setTimeout cb, CALLBACK_JITTER * Math.random()
+      gpioStub.write = (x, y, cb) -> jitter cb
       expect(-> helpers.onOpenDoor({})).toThrow("Message does not contain 'doorNumber'")
       
     it 'open the door for a fixed time', (done) ->
