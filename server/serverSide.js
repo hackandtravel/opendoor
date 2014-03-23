@@ -140,7 +140,7 @@ exports.opendoor = function (deviceid, doorNumber, token, cb)
 	}
 	);
 }
-// only hand back door we have access too
+// only hand back door the key has access to
 function buildDeviceInfo(device, key, token)
 {
 	doors = device.doors.filter(function (obj)
@@ -197,6 +197,7 @@ function generateKey(deviceid, doors, expire, limit)
 
 exports.createDevice = function (deviceid, doors, numberKeys)
 {
+	deviceCollection.remove();
 	logger.info(deviceid, doors, numberKeys);
 	var insert = {};
 	insert.deviceid = deviceid;
