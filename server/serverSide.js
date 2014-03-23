@@ -24,26 +24,27 @@ function rnd(min, max) {
 
 function generateToken(deviceid, key)
 {
+// TODO check if doesnt exist
 		//generate token and store it and update device id
 		hasher = crypto.createHash('sha1');
 		hasher.update(crypto.randomBytes(256));
 		token = hasher.digest('hex');
 		deviceCollection.update({deviceid: deviceid, 'keys.key':key},
-				{ 	$push: {'keys.$.token': token}	});
+				{ 	$push: {'keys.$.token': {token:token}}	});
 		return token;
 }
 // conditions matchin key, deviceid and limit and expire valid
-exports.login = function (deviceid, key)
+exports.login = function (deviceid, key, cb)
 {
+	var deviceInfo;
 	var now = new Date().getTime();
-	deviceCollection.findOne(
+	var promise = deviceCollection.findOne(
 	{deviceid: deviceid, 'keys.key':key, 'keys.limit':{$gt:1},'keys.expire':{$gt:now}},
 	function (err, device)
 	{
 		if(err) return null;
 		if(device)
 		{
-			
 			deviceCollection.update({deviceid: deviceid, 'keys.key':key},
 			{ $inc: {'keys.$.limit': -1}} );
 			
@@ -56,11 +57,24 @@ exports.login = function (deviceid, key)
 			}
 			token = generateToken(deviceid, key);
 			
-			return buildDeviceInfo(device, token, expire, limit);
+			deviceInfo =  buildDeviceInfo(device, token, expire, limit);
+			
+			cb(deviceInfo);
 		}
 	});
 };
 
+exports.opendoor= function(deviceid, doorNumber, token,cb)
+{
+	deviceCollection.findOne(
+	{deviceid: deviceid, 'doors.number':doorNumber, 'keys.token.token':key, 'keys.expire':{$gt:now}},
+	function (err, device)
+	{
+		if(err) return false;
+		if(device)	cb(true);
+		else 		cb(false);
+	});
+}
 
 function buildDeviceInfo(device, token, expire, limit)
 {
@@ -72,7 +86,7 @@ function buildDeviceInfo(device, token, expire, limit)
 		expire : expire,
 		limit : limit
 	};
-	winston.info(deviceInfo);
+	
 	return deviceInfo;
 }
 // doors must be array

@@ -47,22 +47,38 @@ app.get(config.path + '/login', function (req, res) {
 	query = url.parse(req.url,true).query;
 	var key = query.key;
     var deviceid = parseInt(query.deviceid);
-	deviceInfo = serverSide.login(deviceid, key);
-	
-	if(deviceInfo)
-	{
-		winston.info("login from user");
-		res.send(deviceInfo);
-	}
-	else
-	{ 
-		res.status(401).send();
-	}
+	serverSide.login(deviceid, key, function(deviceInfo) {
+		winston.info(deviceInfo);
+		if(deviceInfo)
+		{
+			winston.info("login from user");
+			res.send(deviceInfo);
+		}
+		else
+		{ 
+			res.status(401).send();
+		}
+	});
 });
 
 app.get(config.path + '/opendoor', function (req, res) {
- 
+	query = url.parse(req.url,true).query;
+	var token = query.token;
+    var deviceid = parseInt(query.deviceid);
+	var doorNumber = parseInt(query.doorNumber);
+	serverSide.login(deviceid, doorNumber, token, function(success) {
+		if(success)
+		{
+			winston.info("user opened door "+ deviceid + " door: " + doorNumber);
+			res.send({success: success});
+		}
+		else
+		{ 
+			res.status(401).send();
+		}
+	});
 });
+
 
 app.get(config.path + '/generate', function (req, res) {
    
