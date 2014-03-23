@@ -3,6 +3,7 @@ var gutil = require('gulp-util');
 var coffee = require('gulp-coffee');
 var jasmine = require('gulp-jasmine');
 
+// TODO: Call parameters?
 const RASPBERRY_USERNAME = 'pi';
 const RASPBERRY_IP = '192.168.1.108';
 const RASPBERRY_FOLDER_NAME = 'raspberry';
