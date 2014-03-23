@@ -1,7 +1,9 @@
-var spawn = require('child_process').spawn;
-
 var gulp = require('gulp');
 var gutil = require('gulp-util');
+var coffee = require('gulp-coffee');
+var jasmine = require('gulp-jasmine');
+
+var spawn = require('child_process').spawn;
 
 const RASPBERRY_USERNAME = 'pi';
 const RASPBERRY_IP = '192.168.1.108';
@@ -9,6 +11,7 @@ const RASPBERRY_FOLDER_NAME = 'raspberry';
 
 const paths = {
   js: '**/*.js*',
+  specCoffee: 'spec/**/*.coffee'
 };
 
 gulp.task('scp', function () {
@@ -39,4 +42,11 @@ gulp.task('scp', function () {
 
 gulp.task('watch', function() {
   gulp.watch(paths.js, ['scp']);
+});
+
+gulp.task('test', function () {
+  gulp.src(paths.specCoffee)
+    .pipe(coffee())
+    .pipe(gulp.dest('spec'))
+    .pipe(jasmine({verbose: true, includeStackTrace: true}));
 });
