@@ -56,7 +56,13 @@ exports.login = function (deviceid, key, cb)
 				limit = filteredKeys[0].limit; 
 			}
 			token = generateToken(deviceid, key);
+<<<<<<< HEAD
 			deviceInfo =  buildDeviceInfo(device, token, expire, limit);
+=======
+			
+			deviceInfo =  buildDeviceInfo(device, token, expire, limit);
+			
+>>>>>>> added mong.socket.io and implemented login (small bug)
 			cb(deviceInfo);
 		}
 	});
