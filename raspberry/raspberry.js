@@ -59,10 +59,10 @@ configurePins(function () {
  * @param location The url of the socket.io endpoint.
  */
 function connect(location) {
-  var options = {
-    secure: true
-  };
-  var socket = io.connect(location, options);
+  var socket = io.connect(location, {
+    secure: true,
+    reconnect: false
+  });
 
   socket.on('connect', function () {
     console.log('socket.io connected.');
@@ -111,7 +111,6 @@ function onOpenDoor(msg, cb) {
  * @param doorNumber The door number of the door to open.
  * @param time The time the door should buzz in milliseconds.
  * @param cb Callback function that takes a string as argument. 
- *           Will 
  */
 function openDoor(doorNumber, time, cb) {
   const gpioPin = PIN_MAPPING[DOOR_PINS[doorNumber]];
