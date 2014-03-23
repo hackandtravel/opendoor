@@ -16,7 +16,6 @@ else
 }
 // collection
 var deviceCollection = db.get('device');
-var deviceCollection = db.get('device');
 function rnd(min, max) {
     return parseInt(Math.random() * (max - min) + min);
 }
@@ -30,19 +29,22 @@ function generateToken(deviceid, key)
 		hasher.update(crypto.randomBytes(256));
 		token = hasher.digest('hex');
 		deviceCollection.update({deviceid: deviceid, 'keys.key':key},
-				{ 	$push: {'keys.$.token': {token:token}}	});
+				{ 	$push: {'keys.$.token': token}	});
 		return token;
 }
 // conditions matchin key, deviceid and limit and expire valid
 exports.login = function (deviceid, key, cb)
 {
-	var deviceInfo;
 	var now = new Date().getTime();
 	var promise = deviceCollection.findOne(
 	{deviceid: deviceid, 'keys.key':key, 'keys.limit':{$gt:1},'keys.expire':{$gt:now}},
 	function (err, device)
 	{
-		if(err) return null;
+		var deviceInfo = null;
+		if(err) {
+			winston.info(err);
+			cb(null);
+		}
 		if(device)
 		{
 			deviceCollection.update({deviceid: deviceid, 'keys.key':key},
@@ -57,20 +59,20 @@ exports.login = function (deviceid, key, cb)
 			}
 			token = generateToken(deviceid, key);
 			
-			deviceInfo =  buildDeviceInfo(device, token, expire, limit);
-			
-			cb(deviceInfo);
+			deviceInfo =  buildDeviceInfo(device, token, expire, limit);		
 		}
+		cb(deviceInfo);
 	});
 };
 
 exports.opendoor= function(deviceid, doorNumber, token,cb)
 {
+	var now = new Date().getTime();
 	deviceCollection.findOne(
-	{deviceid: deviceid, 'doors.number':doorNumber, 'keys.token.token':key, 'keys.expire':{$gt:now}},
+	{deviceid: deviceid, 'doors.number':doorNumber, 'keys.token':token, 'keys.expire':{$gt:now}},
 	function (err, device)
 	{
-		if(err) return false;
+		if(err) cb(false);
 		if(device)	cb(true);
 		else 		cb(false);
 	});

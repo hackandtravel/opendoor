@@ -9,10 +9,10 @@ var monk = require('monk');
 
 // CONSTANTS
 
-
 // The 'secret' folder is not shared in git.
 // Follow these instructions to create your own:
 // http://nodejs.org/api/tls.html
+// easier http://www.selfsignedcertificate.com/
 var options;
 try {
   options = {

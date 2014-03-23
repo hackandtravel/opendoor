@@ -66,7 +66,7 @@ app.get(config.path + '/opendoor', function (req, res) {
 	var token = query.token;
     var deviceid = parseInt(query.deviceid);
 	var doorNumber = parseInt(query.doorNumber);
-	serverSide.login(deviceid, doorNumber, token, function(success) {
+	serverSide.opendoor(deviceid, doorNumber, token, function(success) {
 		if(success)
 		{
 			winston.info("user opened door "+ deviceid + " door: " + doorNumber);
@@ -74,7 +74,7 @@ app.get(config.path + '/opendoor', function (req, res) {
 		}
 		else
 		{ 
-			res.status(401).send();
+			res.status(401).send({success: success});
 		}
 	});
 });
