@@ -18,6 +18,8 @@
     "gulp": "^3.5.6",
     "gulp-jasmine": "^0.2.0",
     "proxyquire": "^0.5.3",
-    "gulp-nodemon": "^1.0.2"
+    "gulp-nodemon": "^1.0.2",
+    "gulp-coffee": "^1.4.1",
+    "frisby": "^0.7.9"
   }
 }

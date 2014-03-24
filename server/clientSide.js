@@ -34,6 +34,9 @@ app.all(config.path + '/*', function (req, res, next) {
         next();
     }
 );
+app.get(config.path + '/api', function (req, res) {
+    res.send('OpenDoor API up and running');
+});
 
 app.get(config.path + '/login', function (req, res) {
         var query = url.parse(req.url, true).query;
@@ -90,6 +93,27 @@ app.get(config.path + '/generate', function (req, res) {
                 devices = helpers.createDevices(numDevices);
             res.send(devices);
         }
+    }
+);
+
+
+app.get(config.path + '/createDevice', function (req, res) {
+        var query = url.parse(req.url, true).query;
+        var doors = parseInt(query.doors);
+        var user =  query.user;
+        var pwd = query.pwd;
+        if(doors < 1)
+        {
+            res.status(401).send('must be more doors than 0');
+        }
+        serverSide.loginAdmin(user,pwd, function(success) {
+            //TODO change pwd to hash
+            if(success) {
+                var device = serverSide.createDevice(doors);
+                res.send(device);
+            }
+            else res.status(401).send('Wrong password or user');
+        });
     }
 );
 

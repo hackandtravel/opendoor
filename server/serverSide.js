@@ -24,6 +24,7 @@ else {
 }
 // collection
 var deviceCollection = db.get('device');
+var adminCollection = db.get('admin');
 exports.devices = deviceCollection;
 
 
@@ -198,19 +199,33 @@ exports.createDevice = function (doors) {
     insert.name = 'new Device';
     insert.masterpwdhash = passwordHash.generate(randompw);
     insert.doors = [];
-    for (i = 0; i < doors.length; i++) {
+    for (var i = 1; i <= doors; i++) {
         var door = {};
-        door.name = 'Neue Tür ' + doors[i];
-        door.number = doors[i];
+        door.name = 'Neue Tür ' + i;
+        door.number = i;
         door.buzztime = config.defaultBuzzTime;
         insert.doors.push(door);
     }
     insert.keys = [];
     deviceCollection.insert(insert);
-
+    delete insert.masterpwdhash;
     // add after so it won't get stored in db
     insert.pw = randompw;
 
     return insert;
 };
 
+exports.loginAdmin = function(user, pwd,cb)
+{
+    adminCollection.findOne({user: user},
+        function(err,success)
+        {
+            if(success)
+            {
+                if(passwordHash.verify(pwd,success.pwd))
+                    cb(true);
+                else    cb(false);
+            }
+            else        cb(false);
+        });
+};
