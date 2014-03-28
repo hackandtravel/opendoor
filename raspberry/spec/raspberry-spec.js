@@ -1,5 +1,5 @@
 (function() {
-  var CALLBACK_JITTER, HIGH, LOW, gpioStub, helpers, proxyquire;
+  var CALLBACK_JITTER, HIGH, LOW, gpioStub, helpers, jitter, proxyquire;
 
   proxyquire = require('proxyquire');
 
@@ -24,6 +24,10 @@
 
   CALLBACK_JITTER = 100;
 
+  jitter = function(cb) {
+    return setTimeout(cb, CALLBACK_JITTER * Math.random());
+  };
+
   describe('raspberry', function() {
     it('should not contradict universal laws', function() {
       return expect(true).toBe(true);
@@ -32,11 +36,11 @@
       it('should configure 3 pins', function(done) {
         gpioStub.open = function(pin, inputOrOutput, cb) {
           expect(inputOrOutput).toBe('output');
-          return setTimeout(cb, CALLBACK_JITTER * Math.random());
+          return jitter(cb);
         };
         gpioStub.write = function(pin, highOrLow, cb) {
           expect(highOrLow).toBe(LOW);
-          return setTimeout(cb, CALLBACK_JITTER * Math.random());
+          return jitter(cb);
         };
         return helpers.configurePins(function() {
           return done();
@@ -44,10 +48,10 @@
       });
       it('should also return when an error occurs', function(done) {
         gpioStub.open = function(pin, inputOrOutput, cb) {
-          return setTimeout(cb.bind(void 0, new Error('Mock error')), CALLBACK_JITTER * Math.random());
+          return jitter(cb.bind(void 0, new Error('Mock error')));
         };
         gpioStub.write = function(pin, highOrLow, cb) {
-          return setTimeout(cb.bind(void 0, new Error('Mock error')), CALLBACK_JITTER * Math.random());
+          return jitter(cb.bind(void 0, new Error('Mock error')));
         };
         return helpers.configurePins(function() {
           return done();
@@ -66,10 +70,10 @@
         var i;
         gpioStub.write = function(pin, highOrLow, cb) {
           expect(highOrLow).toBe(HIGH);
-          setTimeout(cb, CALLBACK_JITTER * Math.random());
+          jitter(cb);
           return gpioStub.write = function(pin, highOrLow, cb) {
             expect(highOrLow).toBe(LOW);
-            return setTimeout(cb, CALLBACK_JITTER * Math.random());
+            return jitter(cb);
           };
         };
         i = 2;
@@ -85,7 +89,7 @@
     describe('onOpenDoor', function() {
       it('expects a doorNumber parameter', function() {
         gpioStub.write = function(x, y, cb) {
-          return setTimeout(cb, CALLBACK_JITTER * Math.random());
+          return jitter(cb);
         };
         return expect(function() {
           return helpers.onOpenDoor({});
