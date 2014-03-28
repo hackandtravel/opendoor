@@ -8,7 +8,9 @@
     "mongo": "^0.1.0",
     "monk": "^0.8.1",
     "express": "^3.5.0",
-    "winston": "^0.7.2"
+    "winston": "^0.7.2",
+    "hat": "0.0.3",
+    "password-hash": "~1.2.1"
   },
   "license": "MIT",
   "engines": {

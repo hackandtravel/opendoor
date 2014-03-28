@@ -5,28 +5,26 @@
  * createDevice
  */
 
-var mongo = require('mongodb');
-var monk = require('monk');
+var mongo = require('mongodb').MongoClient;
 var config = require('./config.js');
 var crypto = require('crypto');
 var logger = require('winston');
 var passwordHash = require('password-hash');
 var hat = require('hat').rack(32, 16, 2);
 
-var db = monk(config.mongoURL);
-
-if (db) {
-    logger.info('connected successfully to ' + config.mongoURL);
+var deviceCollection, adminCollection;
+exports.init = function(cb)
+{
+	logger.info("init called");
+	mongo.connect(config.mongoURL, function(err, db) {
+		if(err) throw err;
+		// collection
+		adminCollection = db.collection('admin');
+		deviceCollection = db.collection('device');
+		exports.devices = deviceCollection;
+		cb();
+	});
 }
-else {
-    logger.error('couldnt connect to db');
-    throw new Error('couldnt connect to db')
-}
-// collection
-var deviceCollection = db.get('device');
-var adminCollection = db.get('admin');
-exports.devices = deviceCollection;
-
 
 function generateToken(deviceid, key) {
     // TODO check if doesnt exist
@@ -175,7 +173,8 @@ exports.generateKey = function (deviceid, doors, expire, limit) {
             $push: {
                 keys: key
             }
-        }
+        },
+		function(err,suc){}
     );
     return key;
 }
@@ -207,7 +206,7 @@ exports.createDevice = function (doors) {
         insert.doors.push(door);
     }
     insert.keys = [];
-    deviceCollection.insert(insert);
+    deviceCollection.insert(insert,function (err,success){logger.info("wrote to db")});
     delete insert.masterpwdhash;
     // add after so it won't get stored in db
     insert.pw = randompw;
@@ -217,11 +216,13 @@ exports.createDevice = function (doors) {
 
 exports.loginAdmin = function(user, pwd,cb)
 {
-    adminCollection.findOne({user: user},
+	adminCollection.findOne({user: user},
         function(err,success)
         {
+			logger.info(success);
             if(success)
             {
+				logger.info(success.pwd);
                 if(passwordHash.verify(pwd,success.pwd))
                     cb(true);
                 else    cb(false);

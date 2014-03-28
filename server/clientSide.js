@@ -79,7 +79,12 @@ app.get(config.path + '/opendoor', function (req, res) {
         );
     }
 );
-
+/**
+*	generates new devices, expected params:
+*   TODO only use in test/dev
+* 	@param numDevices has to be a number
+*	@param withKeys	 boolean
+*/
 app.get(config.path + '/generate', function (req, res) {
         var query = url.parse(req.url, true).query;
         var numDevices = parseInt(query.numDevices);
@@ -96,6 +101,12 @@ app.get(config.path + '/generate', function (req, res) {
     }
 );
 
+/**
+*	generates new devices, expected params:
+* 	@param user
+*	@param pwd
+*	@param doors  : amount of dooors
+*/
 
 app.get(config.path + '/createDevice', function (req, res) {
         var query = url.parse(req.url, true).query;

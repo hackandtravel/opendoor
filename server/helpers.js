@@ -8,7 +8,7 @@ var logger = require("winston");
  */
 exports.createDevices = function (numDevices, withKeys) {
     // TODO remove for production
-    serverSide.devices.remove();
+    serverSide.devices.remove({},function(err,suc){});
     var doors = [1];
     var devices = [];
     for (var i = 0; i < numDevices; i++) {

@@ -3,6 +3,7 @@ var https = require('https');
 var fs = require('fs');
 var raspberry = require('./raspberrySide.js');
 var clientside = require('./clientSide.js');
+var serverSide = require('./serverSide.js');
 var helpers = require('./helpers.js');
 var config = require('./config.js');
 var winston = require('winston');
@@ -22,7 +23,9 @@ try {
 } catch (ex) {
     throw new Error("SSL key missing. Create your own: http://nodejs.org/api/tls.html")
 }
-
+serverSide.init(cb);
+function cb()
+{
 var client = https.createServer(options, clientside.app).listen(config.portClient);
 
 winston.info('Startup');
@@ -31,3 +34,4 @@ winston.info('Startup');
 var rasp = https.createServer(options);
 var io = raspberry.getIO(rasp);
 rasp.listen(config.portRasp);
+}
