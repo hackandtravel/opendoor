@@ -1,5 +1,5 @@
 // XXX: Works where I am...
-exports.location =  '192.168.1.213:3000';
+exports.location =  '192.168.1.113:3000';
 
 /**
  * On which gpio pin are the doors connected?

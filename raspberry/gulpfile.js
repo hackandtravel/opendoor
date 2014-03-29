@@ -2,6 +2,9 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var coffee = require('gulp-coffee');
 var jasmine = require('gulp-jasmine');
+var tap = require('gulp-tap');
+
+var fs = require('fs');
 
 // TODO: Call parameters?
 const RASPBERRY_USERNAME = 'pi';
@@ -9,18 +12,35 @@ const RASPBERRY_IP = '192.168.1.108';
 const RASPBERRY_FOLDER_NAME = 'raspberry';
 
 const paths = {
-  js: '**/*.js*',
+  js: '*.js',
   specCoffee: 'spec/**/*.coffee'
 };
 
-gulp.task('scp', function () {
+var files = [];
+
+gulp.task('hack', function () {
+  files = [];
+  return gulp.src(paths.js)
+    .pipe(tap(function (file) {
+      files.push(file.path);
+    }));
+});
+
+Array.prototype.flatten = function () {
+  return this.reduce(function (a, b) {
+    return a.concat(b);
+  }, []);
+};
+
+gulp.task('scp', ['hack'], function () {
+
   // http://www.pauljoyceuk.com/codex/2013/raspberry-pi-configuring-and-connecting-with-ssh/
   var spawn = require('child_process').spawn;
-  var params = [paths.js, RASPBERRY_USERNAME + '@' + RASPBERRY_IP + ':' + RASPBERRY_FOLDER_NAME];
+  var params = [files, RASPBERRY_USERNAME + '@' + RASPBERRY_IP + ':' + RASPBERRY_FOLDER_NAME].flatten();
   var child = spawn('scp', params, { cwd: process.cwd() });
   var stdout = '';
   var stderr = '';
-  
+
   child.stdout.setEncoding('utf8');
   child.stdout.on('data', function (data) {
     stdout += data;
@@ -36,11 +56,14 @@ gulp.task('scp', function () {
 
   child.on('close', function (code) {
     gutil.log("Done with exit code", code);
-    gutil.log("You access complete stdout and stderr from here"); // stdout, stderr
+    gutil.log("Sent files to server:");
+    files.forEach(function (file) {
+      gutil.log(file)
+    });
   });
 });
 
-gulp.task('watch', function() {
+gulp.task('watch', function () {
   gulp.watch(paths.js, ['scp']);
 });
 

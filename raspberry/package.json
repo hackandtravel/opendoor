@@ -17,6 +17,7 @@
     "gulp-util": "^2.2.14",
     "gulp-jasmine": "^0.2.0",
     "gulp-coffee": "^1.4.1",
-    "proxyquire": "^0.5.3"
+    "proxyquire": "^0.5.3",
+    "gulp-tap": "^0.1.1"
   }
 }
