@@ -1,5 +1,7 @@
 // XXX: Works where I am...
-exports.location =  '192.168.1.113:3000';
+exports.location =  'https://blechturm.us:3000';
+
+exports.DEVICE_ID = 'a826e446';
 
 /**
  * On which gpio pin are the doors connected?
@@ -16,7 +18,7 @@ exports.DOOR_PINS = {
  *
  * @type {number}
  */
-exports.BUZZ_TIME = 4000;
+exports.MAX_BUZZ_TIME = 30000;
 
 /**
  * How log should the time between reconnects be? In milliseconds.

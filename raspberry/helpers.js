@@ -7,6 +7,13 @@ var config = require('./config.js');
 // XXX: hack to accept self signed certificates
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
+// https://twitter.com/cell303/status/450060094383075329
+function a(k,j){return k.every(function(x){return x in j})}
+
+Object.prototype.hasKeys = function (keys) {
+  return a(keys, this)
+};
+
 const HIGH = 1;
 const LOW = 0;
 
@@ -22,14 +29,15 @@ function connect(location) {
   });
 
   socket.on('connect', function () {
-    console.log('socket.io connected.');
+    console.log('socket.io connected');
+    socket.emit('whoami', { deviceid: config.DEVICE_ID});
   });
 
   socket.on('openDoor', function (data) {
-    console.log("socket.io received 'openDoor' event.", data);
+    console.log("socket.io received 'openDoor' event", data);
     onOpenDoor(data, function (status) {
       console.log(status);
-      socket.emit('status', {status: status});
+      socket.emit('status', status);
     });
   });
 
@@ -46,9 +54,15 @@ function connect(location) {
 
     reconnect();
   });
-  
+
   return socket;
 }
+
+/**
+ * True if somebody else is currently opening the door.
+ * @type {boolean}
+ */
+var isBuzzing = false;
 
 /**
  * Handles a socket.io 'openDoor' event.
@@ -57,8 +71,10 @@ function connect(location) {
  * @param cb Callback function that takes a string as argument. Gets called twice.
  */
 function onOpenDoor(msg, cb) {
-  if (msg.hasOwnProperty('doorNumber')) {
-    openDoor(msg['doorNumber'], config.BUZZ_TIME, cb);
+  if (msg.hasKeys(['doorNumber', 'buzzTime'])) {
+    if (!isBuzzing) {
+      openDoor(msg.doorNumber, msg.buzzTime, cb);
+    }
   } else {
     throw {
       name: 'DoorNumberMissingError',
@@ -75,14 +91,19 @@ function onOpenDoor(msg, cb) {
  * @param cb Callback function that takes a string as argument. Gets called twice.
  */
 function openDoor(doorNumber, time, cb) {
-  const gpioPin = config.PIN_MAPPING[config.DOOR_PINS[doorNumber]];
-  
+  if (time > config.MAX_BUZZ_TIME) time = config.MAX_BUZZ_TIME;
+
+  var gpioPin = config.PIN_MAPPING[config.DOOR_PINS[doorNumber]];
+
   gpio.write(gpioPin.pin, HIGH, function (err) {
-    if (!err) cb('door opened');
-    
+    if (!err) cb({status: 'opened', buzzTime: time, message: 'Door opened.'});
+
     setTimeout(function () {
       gpio.write(gpioPin.pin, LOW, function (err) {
-        if (!err) cb('door closed');
+        if (!err) {
+          isBuzzing = false;
+          cb({status: 'closed', buzzTime: time, message: 'Door closed.'});
+        }
       });
     }, time);
   });
@@ -94,37 +115,37 @@ function openDoor(doorNumber, time, cb) {
  * @param cb Callback gets called when all pins in DOOR_PINS have been set.
  */
 function configurePins(cb) {
-  const doorNumbers = Object.keys(config.DOOR_PINS);
+  var doorNumbers = Object.keys(config.DOOR_PINS);
   var c = doorNumbers.length;
 
   doorNumbers.forEach(function (doorNumber) {
-    if (typeof config.DOOR_PINS[doorNumber] == 'undefined') {
+    if (typeof config.DOOR_PINS[doorNumber] === 'undefined') {
       c--;
+      if (c === 0) cb();
       return;
     }
 
     setPinToOut(config.DOOR_PINS[doorNumber], {
-        success: function () {
-          c--;
-          if (c === 0) cb();
-        },
-        error: function (err) {
-          console.log(err);
-          c--;
-          if (c === 0) cb();
-        }
+      success: function () {
+        c--;
+        if (c === 0) cb();
+      },
+      error: function (err) {
+        console.log(err);
+        c--;
+        if (c === 0) cb();
       }
-    );
+    });
   });
 }
 
 /**
  * Checks if a pin has already been configured.
- * 
+ *
  * @param bcm The Broadcom chip number of the pin
  * @param cb A callback function
  */
-function isPinOpen (bcm, cb) {
+function isPinOpen(bcm, cb) {
   fs.exists('/sys/class/gpio/gpio' + bcm, cb);
 }
 
@@ -136,28 +157,48 @@ function isPinOpen (bcm, cb) {
  * @param options An object containing a success and an error callback
  */
 function setPinToOut(gpioNumber, options) {
-  const gpioPin = config.PIN_MAPPING[gpioNumber];
+  var gpioPin = config.PIN_MAPPING[gpioNumber];
 
-  const id = setTimeout(options.error.bind(this, 
-    new Error("Callback hasn't been called after " + config.TIMEOUT + ' milliseconds')), 
-    config.TIMEOUT);
-  
-  isPinOpen(gpioPin.bcm, function (isOpen) {
+  var id = setTimeout(
+    options.error.bind(this, new Error("Callback hasn't been called after " + config.TIMEOUT + ' milliseconds')),
+    config.TIMEOUT
+  );
+
+  isPinOpen(gpioPin.bcm, function (isOpen, b) {
     if (!isOpen) {
       gpio.open(gpioPin.pin, "output", function (err) {
-        clearInterval(id);
+        clearTimeout(id);
         if (err) options.error(err);
         options.success();
       });
     } else {
       // set the pin to 0 first, just to be sure
       gpio.write(gpioPin.pin, LOW, function (err) {
-        clearInterval(id);
+        clearTimeout(id);
         if (err) options.error(err);
         options.success();
       });
     }
   });
+}
+
+var isFailSave = false;
+
+/**
+ * Set the pins to LOW every hour, just to be sure.
+ * Calling this more than once will have no effect.
+ */
+function failSafe() {
+  if (!isFailSave) {
+    console.log("starting failsafe interval");
+    Object.keys(config.DOOR_PINS).forEach(function (id) {
+      var gpioPin = config.DOOR_PINS[id];
+      setInterval(function () {
+        gpio.write(gpioPin.pin, LOW);
+      }, 1000 * 60 * 60);
+    });
+    isFailSave = true;
+  }
 }
 
 exports.connect = connect;
@@ -166,3 +207,4 @@ exports.openDoor = openDoor;
 exports.configurePins = configurePins;
 exports.isPinOpen = isPinOpen;
 exports.setPinToOut = setPinToOut;
+exports.failSafe = failSafe;

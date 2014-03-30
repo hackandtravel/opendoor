@@ -4,4 +4,5 @@ var config = require('./config.js');
 helpers.configurePins(function () {
   console.log('configured pins');
   helpers.connect(config.location);
+  helpers.failSafe();
 });

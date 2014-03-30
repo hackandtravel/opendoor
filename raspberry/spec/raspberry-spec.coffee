@@ -9,7 +9,7 @@ helpers = proxyquire '../helpers.js',
   'pi-gpio': gpioStub
   './config.js': 
     TIMEOUT: 1000
-    BUZZ_TIME: 50
+    MAX_BUZZ_TIME: 50
     DOOR_PINS:
       1: 'gpio0'
       2: 'gpio7'
