@@ -8,7 +8,8 @@ var fs = require('fs');
 
 // TODO: Call parameters?
 const RASPBERRY_USERNAME = 'pi';
-const RASPBERRY_IP = '192.168.1.108';
+//const RASPBERRY_IP = '192.168.1.108';
+const RASPBERRY_IP = '192.168.0.26';
 const RASPBERRY_FOLDER_NAME = 'raspberry';
 
 const paths = {
