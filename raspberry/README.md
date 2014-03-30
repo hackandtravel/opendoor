@@ -58,7 +58,7 @@ The app is placed in `/home/pi/raspberry`. This means the user is called `pi`.
 Put the before `exit 0` in `/etc/rc.local`:
 
     export PATH=$PATH:/opt/node/bin:/usr/local/bin/
-forever start -l /home/pi/forever.log -o /home/pi/forever-out.log -e /home/pi/forever-err.log /home/pi/raspberry/raspberry.js
+    forever start -l /home/pi/forever.log -o /home/pi/forever-out.log -e /home/pi/forever-err.log /home/pi/raspberry/raspberry.js
  
 This will start the server using `forever` on startup.
 
