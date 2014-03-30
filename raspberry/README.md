@@ -58,8 +58,45 @@ The app is placed in `/home/pi/raspberry`. This means the user is called `pi`.
 Put the before `exit 0` in `/etc/rc.local`:
 
     export PATH=$PATH:/opt/node/bin:/usr/local/bin/
-    forever start -l /home/pi/forever.log -o /home/pi/forever-out.log -e /home/pi/forever-err.log /home/pi/raspberry/raspberry.js
+    forever start -a -l /home/pi/forever.log /home/pi/raspberry/raspberry.js
  
 This will start the server using `forever` on startup.
+
+## Wifi
+
+Plugin EDIMAX EW-7811Un.
+More info: http://www.datenreise.de/raspberry-pi-wlan-einrichten-edimax/
+
+### Deaktivate power save
+
+    sudo vi /etc/modprobe.d/8192cu.conf
+
+The content should be:
+
+    options 8192cu rtw_power_mgnt=0 rtw_enusbss=0
+    
+    
+### Set SSID and password
+
+    sudo vi /etc/network/interfaces
+    
+File should look like this, insert between "s
+
+    auto lo
+    iface lo inet loopback
+    iface eth0 inet dhcp
+    
+    auto wlan0
+    allow-hotplug wlan0
+    iface wlan0 inet dhcp
+    wpa-ap-scan 1
+    wpa-scan-ssid 1
+    wpa-ssid "YOUR WIFI SSID"
+    wpa-psk "YOUR WIFI PASSWORD"
+    
+### Restart network
+
+    sudo service networking restart
+    
 
 
