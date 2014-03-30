@@ -5,7 +5,8 @@
   "description": "",
   "dependencies": {
     "socket.io-client": "0.9.16",
-    "pi-gpio": "0.0.2"
+    "pi-gpio": "0.0.2",
+    "winston": "^0.7.3"
   },
   "license": "MIT",
   "engines": {

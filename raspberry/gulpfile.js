@@ -57,10 +57,12 @@ gulp.task('scp', ['hack'], function () {
 
   child.on('close', function (code) {
     gutil.log("Done with exit code", code);
-    gutil.log("Sent files to server:");
-    files.forEach(function (file) {
-      gutil.log(file)
-    });
+    if (code == 0 && child.stderr === '') {
+      gutil.log("Sent files to server:");
+      files.forEach(function (file) {
+        gutil.log(file)
+      });
+    }
   });
 });
 
