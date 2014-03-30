@@ -41,7 +41,7 @@ app.get(config.path + '/api', function (req, res) {
 app.get(config.path + '/login', function (req, res) {
         var query = url.parse(req.url, true).query;
         var key = query.key;
-        var deviceid = parseInt(query.deviceid);
+        var deviceid = query.deviceid;
         serverSide.login(deviceid, key, function (deviceInfo) {
                 if (deviceInfo) {
                     logger.info("user login: successful");
@@ -59,7 +59,7 @@ app.get(config.path + '/login', function (req, res) {
 app.get(config.path + '/opendoor', function (req, res) {
         var query = url.parse(req.url, true).query;
         var token = query.token;
-        var deviceid = parseInt(query.deviceid);
+        var deviceid = query.deviceid;
         var doorNumber = parseInt(query.doorNumber);
 
         serverSide.opendoor(deviceid, doorNumber, token, function (success) {
@@ -93,10 +93,15 @@ app.get(config.path + '/generate', function (req, res) {
         else {
             var devices = {};
             if (withKeys)
-                devices = helpers.createDevices(numDevices, {amount: 5, limit: 3, days: 3});
-            else
-                devices = helpers.createDevices(numDevices);
-            res.send(devices);
+                devices = helpers.createDevices(numDevices, {amount: 5, limit: 3, days: 3},function(err,result)
+                {
+                    if(result) res.send(result);
+                });
+            else {
+                devices = helpers.createDevices(numDevices,false, function(err,result) {
+                    if(result) res.send(result);
+                });
+            }
         }
     }
 );
@@ -127,6 +132,46 @@ app.get(config.path + '/createDevice', function (req, res) {
         });
     }
 );
+
+/**
+*	generates new devices, expected params:
+* 	@param user
+*	@param pwd
+*	@param doors  : amount of dooors
+*/
+
+app.post(config.path + '/generateKey', function (req, res) {
+        var json = req.body;
+        var deviceid = json.deviceid;
+        var expire = json.expire;
+        var limit = json.limit;
+        var masterpwd = json.masterpwd;
+        var doors = json.doors;
+        var name = json.name;
+        var props = ['deviceid', 'doors', 'expire', 'limit', 'name', 'masterpwd'];
+        if(!checkJSON(props, json))
+        {
+            res.status(500).send();
+        }
+        serverSide.generateKey(deviceid,doors, expire, limit,name, masterpwd, function(err,suc)
+        {
+            if(suc)
+                res.json(suc);
+            else
+                res.status(500).send();
+        });
+    }
+);
+
+function checkJSON(properties,json){
+    return properties.every(function(one){return one in json})
+}
+//function i(p,o){return p.every(function(a){return a in o})}
+//function h(p,o){c=1;p.map(function(a){c&=a in o});return c}
+//function j(p,o){c=1;for(a of p)c&=a in o;return c}
+//function c(k,j){return k.reduce(function(a,b){return a&b in j},1)}
+
+//function c(k,j){return k.reduce(function(a,b){return a&j.hasOwnProperty(b)},true)}
 
 exports.app = app;
 
