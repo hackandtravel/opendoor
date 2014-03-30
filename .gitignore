@@ -1,5 +1,6 @@
 .DS_Store
 /opendoor/data
+/server/config.js
 /client/merges
 /client/plugins
 /client/platforms
@@ -7,3 +8,4 @@
 *.iml
 secret/
 node_modules/
+*.bat

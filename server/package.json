@@ -8,7 +8,9 @@
     "mongo": "^0.1.0",
     "monk": "^0.8.1",
     "express": "^3.5.0",
-    "winston": "^0.7.2"
+    "winston": "^0.7.2",
+    "hat": "0.0.3",
+    "password-hash": "~1.2.1"
   },
   "license": "MIT",
   "engines": {
@@ -19,6 +21,8 @@
     "gulp-jasmine": "^0.2.0",
     "gulp-coffee": "^1.4.1",
     "proxyquire": "^0.5.3",
-    "gulp-nodemon": "^1.0.2"
+    "gulp-nodemon": "^1.0.2",
+    "gulp-coffee": "^1.4.1",
+    "frisby": "^0.7.9"
   }
 }
