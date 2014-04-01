@@ -4,7 +4,7 @@
  * generateKey
  * createDevice
  */
-
+var notifications = require('./notifications.js');
 var mongo = require('mongodb').MongoClient;
 var config = require('./config.js');
 var crypto = require('crypto');
