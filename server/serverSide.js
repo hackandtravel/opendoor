@@ -8,8 +8,8 @@ var notifications = require('./notifications.js');
 var mongo = require('mongodb').MongoClient;
 var config = require('./config.js');
 var crypto = require('crypto');
-var logger = require('winston');
 var passwordHash = require('password-hash');
+var logger = require('./logger.js');
 var hat = require('hat').rack(32, 16, 2);
 var raspberry = require('./raspberrySide.js')
 
@@ -25,9 +25,16 @@ exports.init = function (cb) {
         cb();
     });
 }
-
-function generateToken(deviceid, key) {
-    // TODO check if doesnt exist
+/**
+ * token keys
+ * name
+ * notificationid
+ * @param deviceid
+ * @param key
+ * @returns {*}
+ */
+function generateToken(deviceid, key, notificationid) {
+    // TODO check if doesnt exist think about generation
     //generate token and store it and update device id
     var hasher = crypto.createHash('sha1');
     hasher.update(crypto.randomBytes(256));
@@ -39,7 +46,7 @@ function generateToken(deviceid, key) {
         },
         {
             $push: {
-                'keys.$.token': token
+                'keys.$.token': { token: token, notificationid : notificationid}
             }
         },
         function (err, suc) {
@@ -54,7 +61,7 @@ function generateToken(deviceid, key) {
  *    @param key must be valid (not expired and limit not used)
  *    @param cb callback function which gets called with result (device obj)
  */
-exports.login = function (deviceid, key, cb) {
+exports.login = function (deviceid, key, notificationid, cb) {
     var now = new Date().getTime();
     deviceCollection.findOne(
         {
@@ -92,7 +99,7 @@ exports.login = function (deviceid, key, cb) {
                         }
                     );
 
-                    var token = generateToken(deviceid, key);
+                    var token = generateToken(deviceid, key, notificationid);
                     deviceInfo = buildDeviceInfo(device, keyObj, token);
                 }
             }
@@ -114,7 +121,7 @@ exports.opendoor = function (deviceid, doorNumber, token, cb) {
         {
             deviceid: deviceid,
             'doors.number': doorNumber,
-            'keys.token': token,
+            'keys.token.token': token,
             'keys.expire': {
                 $gt: now
             }
@@ -123,13 +130,26 @@ exports.opendoor = function (deviceid, doorNumber, token, cb) {
             if (err)
                 cb(false);
             if (device) {
-                 var door = device.doors.filter(function (obj) {
+                var tokenObject =  device.keys.filter(function(key)
+                {
+                    logger.info(key);
+                    return true; //key.token.token == token;
+                });
+                var door = device.doors.filter(function (obj) {
                         // > -1 found object
-                        return obj.doorNumber == doorNumber;
+                        return obj.number == doorNumber;
                     }
                 );
                 if(door) {
-                    raspberry.openDoor(deviceid, doorNumber, door[0].buzzTime);
+                    raspberry.openDoor(deviceid, doorNumber, door[0].buzztime, function (error, success)
+                    {
+                        if(error) logger.error("couln't open door: " + doorNumber + " on device " + deviceid + " reason: " + error.message);
+                        else if(success)
+                        {
+                            // TODO notifications
+                            //notifications.notifyIDs();
+                        }
+                    });
                     cb(true);
                 }
                 else cb(false);
@@ -188,8 +208,11 @@ function checkDeviceidPwd(deviceid, masterpwd, cb) {
  * @param doors must be array of numbers
  * @param expire date
  * @param limit how many uses
+ * @param name username
+ * @param masterpw
+ * @param notify true false (people with these keys will get notified if the door opens)
  */
-exports.generateKey = function (deviceid, doors, expire, limit, name, masterpwd, cb) {
+exports.generateKey = function (deviceid, doors, expire, limit, name, masterpwd, notify, cb) {
 
     var randomKey = generateRandomString(6);
 
@@ -271,9 +294,7 @@ exports.createDevice = function (doors) {
 exports.loginAdmin = function (user, pwd, cb) {
     adminCollection.findOne({user: user},
         function (err, success) {
-            logger.info(success);
             if (success) {
-                logger.info(success.pwd);
                 if (passwordHash.verify(pwd, success.pwd))
                     cb(true);
                 else    cb(false);
