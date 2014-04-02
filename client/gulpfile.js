@@ -9,6 +9,8 @@ var rename = require('gulp-rename');
 const SOURCE_FOLDER = 'src';
 const BUILD_FOLDER = 'www';
 
+const HTTP_PORT = 8000;
+
 const paths = {
   bower: SOURCE_FOLDER + '/bower_components/**/*',
   coffee: SOURCE_FOLDER + '/js/**/*.coffee',
@@ -51,11 +53,15 @@ gulp.task('copy', function() {
     .pipe(gulp.dest(BUILD_FOLDER))
 });
 
+// https://github.com/gulpjs/gulp/issues/100
 gulp.task('http', function () {
-  // https://github.com/gulpjs/gulp/issues/100
   require('http').createServer(
     require('ecstatic')({ root: './src' })
-  ).listen(8000);
+  ).listen(HTTP_PORT);
+  
+  console.log('Serving files at http://localhost:' + HTTP_PORT);
+  var spawn = require('child_process').spawn;
+  spawn('open', ['http://localhost:' + HTTP_PORT], { cwd: process.cwd() });
 });
 
 gulp.task('build', ['bower', 'copy', 'js', 'css']);
