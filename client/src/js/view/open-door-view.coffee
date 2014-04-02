@@ -9,14 +9,16 @@ class app.OpenDoorView extends Backbone.View
     "click #btn-new": "btnNewClicked"
 
   initialize: ->
-    # @listenTo(@model, 'change', @render)
+    @listenTo(@model, 'change', @render)
     @render()
 
   render: ->
     console.log('render open door view')
     @$el.html(@template(@model.toJSON()))
-    doorNumber = @model.get("doorUrl")?.number
-    @$("#select-door").val(doorNumber)
+    doorNumber = @model.get("doorUrl").number
+    if doorNumber?
+      console.log('select door number ' + doorNumber)
+      @$("#select-door").val(doorNumber)
 
   opendoorClicked: (e) ->
     @$("#open-door-brand").html('<div class="loading spin"></div>')
@@ -31,6 +33,8 @@ class app.OpenDoorView extends Backbone.View
       crossDomain: true
       xhrFields: withCredentials: true
       success: (resp) =>
+        console.log(resp)
+        
         @$("#open-door-brand").text("OpenDoor")
         
         $t = $(e.currentTarget)

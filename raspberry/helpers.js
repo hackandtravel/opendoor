@@ -204,11 +204,11 @@ var isFailSave = false;
 function failSafe() {
   if (!isFailSave) {
     logger.info("Starting failsafe interval");
-    Object.keys(config.DOOR_PINS).forEach(function (id) {
-      if (typeof id !== 'undefined') {
-        var gpioPin = config.DOOR_PINS[id];
+    Object.keys(config.DOOR_PINS).forEach(function (gpioNumber) {
+      var gpioPin = config.DOOR_PINS[gpioNumber];
+      if (typeof gpioPin !== 'undefined') {
         setInterval(function () {
-          logger.info('Failsafe: Setting pin %s to LOW', id);
+          logger.info('Failsafe: Setting pin %s to LOW', gpioPin);
           gpio.write(gpioPin.pin, LOW);
         }, 1000 * 60 * 60);
       }

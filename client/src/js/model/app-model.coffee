@@ -18,16 +18,20 @@ class app.AppModel extends Backbone.Model
       @set page: "newDoor"
     else
       deviceIds = JSON.parse(s)
+
       
       doors = _.map deviceIds, (deviceId) ->
         device = JSON.parse(localStorage.getItem(deviceId))
+        
+        if !device.hasOwnProperty('doors') then throw new Error("Device has no property 'doors'")
+        
         device['doors'].map (door) ->
           name: "#{device.name} - #{door.name}"
           deviceId: deviceId
           number: door.number
-          
+            
       names = @flatten(doors)
-        
+      
       @set 
         page: "openDoor"
         doorUrl: names[deviceIds.length - 1]

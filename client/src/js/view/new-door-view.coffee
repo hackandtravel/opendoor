@@ -38,8 +38,6 @@ class app.NewDoorView extends Backbone.View
         json = localStorage.getItem("deviceIds")
         deviceIds = if json? then JSON.parse(json) else []
           
-        console.log deviceIds
-        
         if not _.contains(deviceIds, deviceId)
           deviceIds.push deviceId
           localStorage.setItem('deviceIds', JSON.stringify(deviceIds))

@@ -15,9 +15,9 @@ var app;
 app = express();
 app.use(express.json());
 var addCORSHeaders = function (req, res) {
-    res.setHeader("Access-Control-Max-Age", "300")
-    res.setHeader("Access-Control-Allow-Origin", req.headers['origin'])
-    res.setHeader("Access-Control-Allow-Credentials", "true")
+    res.setHeader("Access-Control-Max-Age", "300");
+    res.setHeader("Access-Control-Allow-Origin", req.headers['origin']);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
 
     if (req.headers.hasOwnProperty("access-control-request-method")) {
         res.setHeader("Access-Control-Allow-Methods", req.header['access-control-request-method']);

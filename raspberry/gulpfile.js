@@ -6,7 +6,6 @@ var tap = require('gulp-tap');
 
 var fs = require('fs');
 
-// TODO: Call parameters?
 const RASPBERRY_USERNAME = 'pi';
 //const RASPBERRY_IP = '192.168.1.108';
 const RASPBERRY_IP = '192.168.0.26';
@@ -57,7 +56,8 @@ gulp.task('scp', ['hack'], function () {
 
   child.on('close', function (code) {
     gutil.log("Done with exit code", code);
-    if (code == 0 && child.stderr === '') {
+    gutil.log(child.stderr);
+    if (code == 0) {
       gutil.log("Sent files to server:");
       files.forEach(function (file) {
         gutil.log(file)

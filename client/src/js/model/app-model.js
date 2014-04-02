@@ -35,6 +35,9 @@
         doors = _.map(deviceIds, function(deviceId) {
           var device;
           device = JSON.parse(localStorage.getItem(deviceId));
+          if (!device.hasOwnProperty('doors')) {
+            throw new Error("Device has no property 'doors'");
+          }
           return device['doors'].map(function(door) {
             return {
               name: "" + device.name + " - " + door.name,

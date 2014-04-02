@@ -20,15 +20,19 @@
     };
 
     OpenDoorView.prototype.initialize = function() {
+      this.listenTo(this.model, 'change', this.render);
       return this.render();
     };
 
     OpenDoorView.prototype.render = function() {
-      var doorNumber, _ref;
+      var doorNumber;
       console.log('render open door view');
       this.$el.html(this.template(this.model.toJSON()));
-      doorNumber = (_ref = this.model.get("doorUrl")) != null ? _ref.number : void 0;
-      return this.$("#select-door").val(doorNumber);
+      doorNumber = this.model.get("doorUrl").number;
+      if (doorNumber != null) {
+        console.log('select door number ' + doorNumber);
+        return this.$("#select-door").val(doorNumber);
+      }
     };
 
     OpenDoorView.prototype.opendoorClicked = function(e) {
@@ -47,6 +51,7 @@
         success: (function(_this) {
           return function(resp) {
             var $t;
+            console.log(resp);
             _this.$("#open-door-brand").text("OpenDoor");
             $t = $(e.currentTarget);
             $t.addClass("disabled");

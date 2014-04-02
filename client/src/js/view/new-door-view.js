@@ -59,7 +59,6 @@
             _this.$("#passphrase").val("");
             json = localStorage.getItem("deviceIds");
             deviceIds = json != null ? JSON.parse(json) : [];
-            console.log(deviceIds);
             if (!_.contains(deviceIds, deviceId)) {
               deviceIds.push(deviceId);
               localStorage.setItem('deviceIds', JSON.stringify(deviceIds));
