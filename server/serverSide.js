@@ -128,8 +128,11 @@ exports.opendoor = function (deviceid, doorNumber, token, cb) {
                         return obj.doorNumber == doorNumber;
                     }
                 );
-                raspberry.openDoor(deviceid, doorNumber, door[0].buzzTime);
-                cb(true);
+                if(door) {
+                    raspberry.openDoor(deviceid, doorNumber, door[0].buzzTime);
+                    cb(true);
+                }
+                else cb(false);
             }
             else
                 cb(false);
