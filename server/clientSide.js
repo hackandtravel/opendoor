@@ -38,6 +38,27 @@ app.get(config.path + '/api', function (req, res) {
     res.send('OpenDoor API up and running');
 });
 
+/**
+ * TODO
+ * 
+ * Request (query string)
+ *  deviceid: string
+ *  key: string
+ * 
+ * Response (JSON)
+ *  deviceid: string
+ *  doors: array<object>
+ *    buzztime: number
+ *    name: string
+ *    number: number
+ *  expire: number (unix time)
+ *  limit: number
+ *  name: string
+ *  token: string
+ *  
+ * Error Codes:
+ *  401 if invalid deviceid/key
+ */
 app.get(config.path + '/login', function (req, res) {
         var query = url.parse(req.url, true).query;
         var key = query.key;
@@ -56,6 +77,17 @@ app.get(config.path + '/login', function (req, res) {
     }
 );
 
+/**
+ * Opens a door
+ * 
+ * Request: (query string)
+ *  deviceid: string
+ *  doorNumber: number
+ *  token: string
+ *  
+ * Response: JSON
+ *  success: boolean
+ */
 app.get(config.path + '/opendoor', function (req, res) {
         var query = url.parse(req.url, true).query;
         var token = query.token;
@@ -79,12 +111,28 @@ app.get(config.path + '/opendoor', function (req, res) {
         );
     }
 );
+
 /**
-*	generates new devices, expected params:
-*   TODO only use in test/dev
-* 	@param numDevices has to be a number
-*	@param withKeys	 boolean
-*/
+ * Generates new devices, expected params
+ *
+ * Request: (query string)  
+ *  numKeys: number
+ *  withKeys: boolean
+ *  
+ * Response: (JSON)
+ *  deviceid: string
+ *  name: string
+ *  doors: array<object>
+ *    name: string
+ *    number: number
+ *    buzztime: 5000
+ *  keys: array
+ *    expire: number (unix time)
+ *    doors: array<number>
+ *    limit: number
+ *    name: string
+ *    key: string
+ */
 app.get(config.path + '/generate', function (req, res) {
         var query = url.parse(req.url, true).query;
         var numDevices = parseInt(query.numDevices);
@@ -162,6 +210,13 @@ app.post(config.path + '/generateKey', function (req, res) {
         });
     }
 );
+
+/**
+ * 404 if none of the above applies.
+ */
+app.all('*', function (req, res) {
+  res.send(404);
+});
 
 function checkJSON(properties,json){
     return properties.every(function(one){return one in json})
