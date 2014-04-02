@@ -1,3 +1,8 @@
+### Installing OS on raspberry pi
+    
+    install NOOBS from https://github.com/raspberrypi/noobs
+    
+    
 ### Installing 'node' and 'npm'
 
 Run the script in home directory.
