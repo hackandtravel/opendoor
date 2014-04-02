@@ -43,7 +43,7 @@
                 <label for="door-select">Choose a door:</label>
                 <select id="select-door" class="form-control">
                   {{#each doorUrls}}
-                    <option value="{{.}}">{{.}}</option>
+                    <option value="{{number}}" data-deviceid="{{deviceId}}">{{name}}</option>
                   {{/each}}
                 </select>
               </div>
@@ -64,23 +64,12 @@
             <div class="col-md-12">
               <div class="new-door-page">
                 <div class="door-form-group form-group">
-                  <label for="door-select">Door URL:</label>
-                  <div class="input-group">
-                    <div class="input-group-btn">
-                      <button id="btn-prot" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                        <span id="prot-text">{{prot}}</span> 
-                        <span class="caret"></span>
-                      </button>
-                      <ul class="dropdown-menu">
-                        <li><a id="https">https://</a></li>
-                        <li><a id="http">http://</a></li>
-                      </ul>
-                    </div>
+                  <label for="door-select">Device ID:</label>
                     <input id="door-url" type="text" class="form-control">
                   </div>
                 </div>
                 <div class="pass-form-group form-group">
-                  <label for="passphrase">Passphrase:</label>
+                  <label for="passphrase">Key:</label>
                   <input id="passphrase" type="password" class="form-control" />
                 </div>
               </div>
@@ -98,10 +87,9 @@
         <script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
         <script type="text/javascript" src="bower_components/backbone/backbone.js"></script>
         <script type="text/javascript" src="bower_components/handlebars/handlebars.js"></script>
-        <script type="text/javascript" src="bower_components/socket.io-client/dist/socket.io.js"></script>
 
         <!-- HACK: declaring the "namespace" here -->
-        <script type="text/javascript"> var app = { location: 'https://localhost:3001' }; </script>
+        <script type="text/javascript"> var app = { location: 'https://192.168.1.113:3001/opendoor' }; </script>
 
         <script type="text/javascript" src="js/model/app-model.js"></script>
         <script type="text/javascript" src="js/view/new-door-view.js"></script>

@@ -60,8 +60,8 @@ gulp.task('http', function () {
   ).listen(HTTP_PORT);
   
   console.log('Serving files at http://localhost:' + HTTP_PORT);
-  var spawn = require('child_process').spawn;
-  spawn('open', ['http://localhost:' + HTTP_PORT], { cwd: process.cwd() });
+  // var spawn = require('child_process').spawn;
+  // spawn('open', ['http://localhost:' + HTTP_PORT], { cwd: process.cwd() });
 });
 
 gulp.task('build', ['bower', 'copy', 'js', 'css']);

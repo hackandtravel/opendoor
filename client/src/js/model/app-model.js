@@ -12,26 +12,44 @@
     AppModel.prototype.defaults = {
       id: null,
       page: "",
-      prot: "https://",
       doorUrl: "",
       doorUrls: [],
       disabled: "disabled"
     };
 
+    AppModel.prototype.flatten = function(arr) {
+      return arr.reduce(function(sum, a) {
+        return sum.concat(a);
+      }, []);
+    };
+
     AppModel.prototype.initialize = function() {
-      var doorUrls, s;
-      s = localStorage.getItem("doorUrls");
-      if (s != null) {
-        doorUrls = JSON.parse(s);
-        return this.set({
-          page: "openDoor",
-          doorUrl: doorUrls[doorUrls.length - 1],
-          doorUrls: doorUrls,
-          disabled: ""
-        });
-      } else {
+      var deviceIds, doors, names, s;
+      s = localStorage.getItem("deviceIds");
+      if (s == null) {
         return this.set({
           page: "newDoor"
+        });
+      } else {
+        deviceIds = JSON.parse(s);
+        doors = _.map(deviceIds, function(deviceId) {
+          var device;
+          device = JSON.parse(localStorage.getItem(deviceId));
+          return device['doors'].map(function(door) {
+            return {
+              name: "" + device.name + " - " + door.name,
+              deviceId: deviceId,
+              number: door.number
+            };
+          });
+        });
+        names = this.flatten(doors);
+        return this.set({
+          page: "openDoor",
+          doorUrl: names[deviceIds.length - 1],
+          doorDoor: doors[deviceIds.length - 1],
+          doorUrls: names,
+          disabled: ""
         });
       }
     };

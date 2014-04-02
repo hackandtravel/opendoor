@@ -9,19 +9,25 @@ class app.OpenDoorView extends Backbone.View
     "click #btn-new": "btnNewClicked"
 
   initialize: ->
+    # @listenTo(@model, 'change', @render)
     @render()
 
   render: ->
+    console.log('render open door view')
     @$el.html(@template(@model.toJSON()))
-    @$("#select-door").val(@model.get("doorUrl"))
+    doorNumber = @model.get("doorUrl")?.number
+    @$("#select-door").val(doorNumber)
 
   opendoorClicked: (e) ->
     @$("#open-door-brand").html('<div class="loading spin"></div>')
 
-    doorUrl = @model.get("doorUrl")
-    token = localStorage.getItem(doorUrl)
+    doorNumber = @model.get("doorUrl")
+    deviceId = @model.get("deviceId")
+    device = JSON.parse(localStorage.getItem(deviceId))
+    token = device.token
+    
     $.ajax 
-      url: "#{doorUrl}/opendoor?token=#{token}"
+      url: "#{app.location}/openDoor?deviceid=#{deviceId}&doorNumber=#{doorNumber}&token=#{token}"
       crossDomain: true
       xhrFields: withCredentials: true
       success: (resp) =>
@@ -40,12 +46,17 @@ class app.OpenDoorView extends Backbone.View
         @$("#open-door-brand").text(err.status)
 
   selectedDoorChanged: (e) ->
-    doorUrl = $(e.currentTarget).val()
-    @model.set "doorUrl", doorUrl
+    node = $(e.currentTarget)
+    doorNumber = node.val()
+    option = node.find("option[value=#{doorNumber}]")
+    deviceId = option.data('deviceid')
+    
+    @model.set "doorUrl", doorNumber
+    @model.set "deviceId", deviceId
+    
     @$("#btn-open-door").removeClass("disabled")
 
   btnNewClicked: ->
     @model.set 
       "page": "newDoor"
-      "prot": "https://"
 

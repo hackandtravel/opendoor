@@ -24,17 +24,22 @@
     };
 
     OpenDoorView.prototype.render = function() {
+      var doorNumber, _ref;
+      console.log('render open door view');
       this.$el.html(this.template(this.model.toJSON()));
-      return this.$("#select-door").val(this.model.get("doorUrl"));
+      doorNumber = (_ref = this.model.get("doorUrl")) != null ? _ref.number : void 0;
+      return this.$("#select-door").val(doorNumber);
     };
 
     OpenDoorView.prototype.opendoorClicked = function(e) {
-      var doorUrl, token;
+      var device, deviceId, doorNumber, token;
       this.$("#open-door-brand").html('<div class="loading spin"></div>');
-      doorUrl = this.model.get("doorUrl");
-      token = localStorage.getItem(doorUrl);
+      doorNumber = this.model.get("doorUrl");
+      deviceId = this.model.get("deviceId");
+      device = JSON.parse(localStorage.getItem(deviceId));
+      token = device.token;
       return $.ajax({
-        url: "" + doorUrl + "/opendoor?token=" + token,
+        url: "" + app.location + "/openDoor?deviceid=" + deviceId + "&doorNumber=" + doorNumber + "&token=" + token,
         crossDomain: true,
         xhrFields: {
           withCredentials: true
@@ -62,16 +67,19 @@
     };
 
     OpenDoorView.prototype.selectedDoorChanged = function(e) {
-      var doorUrl;
-      doorUrl = $(e.currentTarget).val();
-      this.model.set("doorUrl", doorUrl);
+      var deviceId, doorNumber, node, option;
+      node = $(e.currentTarget);
+      doorNumber = node.val();
+      option = node.find("option[value=" + doorNumber + "]");
+      deviceId = option.data('deviceid');
+      this.model.set("doorUrl", doorNumber);
+      this.model.set("deviceId", deviceId);
       return this.$("#btn-open-door").removeClass("disabled");
     };
 
     OpenDoorView.prototype.btnNewClicked = function() {
       return this.model.set({
-        "page": "newDoor",
-        "prot": "https://"
+        "page": "newDoor"
       });
     };
 
