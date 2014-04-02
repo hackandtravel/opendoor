@@ -4,26 +4,26 @@
  * generateKey
  * createDevice
  */
-
+var notifications = require('./notifications.js');
 var mongo = require('mongodb').MongoClient;
 var config = require('./config.js');
 var crypto = require('crypto');
 var logger = require('winston');
 var passwordHash = require('password-hash');
 var hat = require('hat').rack(32, 16, 2);
+var raspberry = require('./raspberrySide.js')
 
 var deviceCollection, adminCollection;
-exports.init = function(cb)
-{
-	logger.info("init called");
-	mongo.connect(config.mongoURL, function(err, db) {
-		if(err) throw err;
-		// collection
-		adminCollection = db.collection('admin');
-		deviceCollection = db.collection('device');
-		exports.devices = deviceCollection;
-		cb();
-	});
+exports.init = function (cb) {
+    logger.info("init called");
+    mongo.connect(config.mongoURL, function (err, db) {
+        if (err) throw err;
+        // collection
+        adminCollection = db.collection('admin');
+        deviceCollection = db.collection('device');
+        exports.devices = deviceCollection;
+        cb();
+    });
 }
 
 function generateToken(deviceid, key) {
@@ -41,6 +41,8 @@ function generateToken(deviceid, key) {
             $push: {
                 'keys.$.token': token
             }
+        },
+        function (err, suc) {
         }
     );
     return token;
@@ -85,6 +87,8 @@ exports.login = function (deviceid, key, cb) {
                             $inc: {
                                 'keys.$.limit': -1
                             }
+                        },
+                        function (err, suc) {
                         }
                     );
 
@@ -118,8 +122,15 @@ exports.opendoor = function (deviceid, doorNumber, token, cb) {
         function (err, device) {
             if (err)
                 cb(false);
-            if (device)
+            if (device) {
+                 var door = device.doors.filter(function (obj) {
+                        // > -1 found object
+                        return obj.doorNumber == doorNumber;
+                    }
+                );
+                raspberry.openDoor(deviceid, doorNumber, door[0].buzzTime);
                 cb(true);
+            }
             else
                 cb(false);
         }
@@ -133,12 +144,13 @@ exports.opendoor = function (deviceid, doorNumber, token, cb) {
  *    @param token the one used
  */
 function buildDeviceInfo(device, key, token) {
-    doors = device.doors.filter(function (obj) {
+    var doors = device.doors.filter(function (obj) {
+            // > -1 found object
             return key.doors.indexOf(obj.number) > -1;
         }
     );
 
-    deviceInfo =
+    var deviceInfo =
     {
         deviceid: device.deviceid,
         name: device.name,
@@ -149,6 +161,24 @@ function buildDeviceInfo(device, key, token) {
     };
     return deviceInfo;
 }
+
+function checkDeviceidPwd(deviceid, masterpwd, cb) {
+    deviceCollection.findOne({deviceid: deviceid},
+        function (err, device) {
+            if (err)
+            {
+                logger.info("tried to authentificate on non existent device");
+                cb(false);
+            }
+            if (device) {
+                logger.info(masterpwd, device.masterpwdhash);
+                if (passwordHash.verify(masterpwd, device.masterpwdhash))
+                    cb(true);
+                else cb(false);
+            }
+            else cb(false);
+        })
+}
 /**
  *
  * @param deviceid
@@ -156,27 +186,46 @@ function buildDeviceInfo(device, key, token) {
  * @param expire date
  * @param limit how many uses
  */
-exports.generateKey = function (deviceid, doors, expire, limit) {
+exports.generateKey = function (deviceid, doors, expire, limit, name, masterpwd, cb) {
+
     var randomKey = generateRandomString(6);
 
-    // add to database
-    var key = {};
-    key.expire = expire;
-    key.doors = doors;
-    key.limit = limit;
-    key.key = randomKey;
-    deviceCollection.update(
-        {
-            deviceid: deviceid
-        },
-        {
-            $push: {
-                keys: key
-            }
-        },
-		function(err,suc){}
-    );
-    return key;
+    checkDeviceidPwd(deviceid, masterpwd, function (success) {
+        if (success) {
+            // add to database
+            var key = {};
+
+            key.expire = expire;
+            key.doors = doors;
+            key.limit = limit;
+            key.name = name;
+            key.key = randomKey;
+            deviceCollection.update(
+                {
+                    deviceid: deviceid
+                },
+                {
+                    $push: {
+                        keys: key
+                    }
+                },
+                function (err, suc) {
+                    if (err)
+                    {
+                        logger.info(err);
+                        cb(new Error("mongo error"));
+                    }
+                    if (suc) {
+                        logger.info("successfully added key");
+                        cb(null,key);
+                    }
+                    else cb(new Error("update failed"));
+                }
+            );
+        }
+        else
+            cb(false);
+    });
 }
 
 function generateRandomString(length) {
@@ -206,7 +255,9 @@ exports.createDevice = function (doors) {
         insert.doors.push(door);
     }
     insert.keys = [];
-    deviceCollection.insert(insert,function (err,success){logger.info("wrote to db")});
+    deviceCollection.insert(insert, function (err, success) {
+        logger.info("wrote to db")
+    });
     delete insert.masterpwdhash;
     // add after so it won't get stored in db
     insert.pw = randompw;
@@ -214,16 +265,13 @@ exports.createDevice = function (doors) {
     return insert;
 };
 
-exports.loginAdmin = function(user, pwd,cb)
-{
-	adminCollection.findOne({user: user},
-        function(err,success)
-        {
-			logger.info(success);
-            if(success)
-            {
-				logger.info(success.pwd);
-                if(passwordHash.verify(pwd,success.pwd))
+exports.loginAdmin = function (user, pwd, cb) {
+    adminCollection.findOne({user: user},
+        function (err, success) {
+            logger.info(success);
+            if (success) {
+                logger.info(success.pwd);
+                if (passwordHash.verify(pwd, success.pwd))
                     cb(true);
                 else    cb(false);
             }
