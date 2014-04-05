@@ -19,19 +19,17 @@ const BUILD_FOLDER = 'www';
 const HTTP_PORT = 8000;
 
 var paths = {
-  bower: SOURCE_FOLDER + 'bower_components/**/*',
+  bower: SOURCE_FOLDER + '/bower_components/**/*',
 
   js: SOURCE_FOLDER + '/js/src/**/*.js',
   jsx: SOURCE_FOLDER + '/js/src/**/*.jsx',
   coffee: SOURCE_FOLDER + '/js/src/**/*.coffee',
+  requireConfig: SOURCE_FOLDER + '/js/src/require-config.js',
+
   less: SOURCE_FOLDER + '/css/src/**/*.less',
+  css: SOURCE_FOLDER + '/css/build/**/*.css',
+
   images: SOURCE_FOLDER + '/img/*',
-
-  requireConfig: SOURCE_FOLDER + '/js/require-config.js',
-
-  css: SOURCE_FOLDER + '/**/*.css',
-  bootstrapCss: SOURCE_FOLDER + 'bower_components/bootstrap/dist/css/bootstrap.css',
-  fontAwesomeCss: SOURCE_FOLDER + 'bower_components/fontawesome/css/font-awesome.css',
 
   index: SOURCE_FOLDER + '/index.html',
   config: SOURCE_FOLDER + '/config.xml',
