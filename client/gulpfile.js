@@ -24,7 +24,7 @@ var paths = {
   js: SOURCE_FOLDER + '/js/src/**/*.js',
   jsx: SOURCE_FOLDER + '/js/src/**/*.jsx',
   coffee: SOURCE_FOLDER + '/js/src/**/*.coffee',
-  less: SOURCE_FOLDER + '/css/*.less',
+  less: SOURCE_FOLDER + '/css/src/**/*.less',
   images: SOURCE_FOLDER + '/img/*',
 
   requireConfig: SOURCE_FOLDER + '/js/require-config.js',
@@ -66,7 +66,7 @@ gulp.task('less', function () {
   return gulp.src(paths.less)
     .pipe(less())
     .pipe(prefix("last 1 version", "> 1%", "ie 8", "ie 7"))
-    .pipe(gulp.dest(SOURCE_FOLDER + '/css'));
+    .pipe(gulp.dest(SOURCE_FOLDER + '/css/build'));
 });
 
 gulp.task('images', function () {
