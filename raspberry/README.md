@@ -58,6 +58,8 @@ There are dependencies that need to be installed manually:
     
 ### Optional: Starting the app via 'nodemon'
 
+This will only work if you resarted the pi after the last step.
+
     cd /home/pi/raspberry
     node_modules/.bin/nodemon raspberry.js
 
