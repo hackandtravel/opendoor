@@ -48,6 +48,14 @@ Copy the files from your computer to the pi via `scp *.js* pi@YOUR_IP:raspberry`
     cd /home/pi/raspberry
     npm install --release
     
+There are dependencies that need to be installed manually:
+
+    git clone git://github.com/quick2wire/quick2wire-gpio-admin.git
+    cd quick2wire-gpio-admin
+    make
+    sudo make install
+    sudo adduser $USER gpio
+    
 ### Optional: Starting the app via 'nodemon'
 
     cd /home/pi/raspberry
@@ -65,6 +73,7 @@ Put the text below before `exit 0` in `/etc/rc.local`:
     forever start -a -l /home/pi/forever.log /home/pi/raspberry/raspberry.js
  
 This will start the server using `forever` on startup.
+At this point you should reboot the pi via `sudo reboot`.
 
 ## Wifi
 
