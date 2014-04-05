@@ -59,7 +59,7 @@ Copy the files from your computer to the pi via `scp *.js* pi@YOUR_IP:raspberry`
 
 ### Startup script
 
-Put the before `exit 0` in `/etc/rc.local`:
+Put the text below before `exit 0` in `/etc/rc.local`:
 
     export PATH=$PATH:/opt/node/bin:/usr/local/bin/
     forever start -a -l /home/pi/forever.log /home/pi/raspberry/raspberry.js
