@@ -17,6 +17,8 @@ function hasKeys(object, keys) {
 const HIGH = 1;
 const LOW = 0;
 
+var isAttempting = false;
+
 /**
  * Connects to the socket.io server at 'location' and listens for 'openDoor' events on the socket.
  *
@@ -33,13 +35,17 @@ function connect(location) {
   });
 
   socket.on('connect', function () {
+    isAttempting = false;
     logger.info('socket.io connected');
     socket.emit('whoami', { deviceid: config.DEVICE_ID});
   });
 
   socket.on('error', function () {
     logger.error('Connection to ' + location + ' failed');
-    setTimeout(connect.bind(this, location), config.RECONNECT_INTERVAL);
+    if (!isAttempting) {
+      setTimeout(connect.bind(this, location), config.RECONNECT_INTERVAL);
+      isAttempting = true;
+    }
   });
 
   socket.on('openDoor', function (data) {

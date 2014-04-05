@@ -38,7 +38,7 @@
           if (!device.hasOwnProperty('doors')) {
             throw new Error("Device has no property 'doors'");
           }
-          return device['doors'].map(function(door) {
+          return _.map(device['doors'], function(door) {
             return {
               name: "" + device.name + " - " + door.name,
               deviceId: deviceId,
@@ -47,13 +47,17 @@
           });
         });
         names = this.flatten(doors);
-        return this.set({
+        console.log(names);
+        this.set({
           page: "openDoor",
-          doorUrl: names[deviceIds.length - 1],
+          doorUrl: names[deviceIds.length - 1].number,
+          doorUrls: names.map(function(d) {
+            return d.number;
+          }),
           doorDoor: doors[deviceIds.length - 1],
-          doorUrls: names,
           disabled: ""
         });
+        return console.log(this);
       }
     };
 

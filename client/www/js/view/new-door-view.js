@@ -15,9 +15,7 @@
 
     NewDoorView.prototype.events = {
       "click #login-btn": "loginClicked",
-      "click #back-btn": "backClicked",
-      "click #https": "setHttps",
-      "click #http": "setHttp"
+      "click #back-btn": "backClicked"
     };
 
     NewDoorView.prototype.initialize = function() {
@@ -25,48 +23,25 @@
     };
 
     NewDoorView.prototype.render = function() {
-      this.$el.html(this.template(this.model.toJSON()));
-      if (this.model.get("prot") === "https://") {
-        return this.setHttps();
-      } else {
-        return this.setHttp();
-      }
+      return this.$el.html(this.template(this.model.toJSON()));
     };
 
     NewDoorView.prototype.loginClicked = function() {
-      var deviceId, doorUrl, guid, passphrase, s4;
-      doorUrl = this.model.get("prot") + this.$("#door-url").val();
-      passphrase = this.$("#passphrase").val();
-      if (window.device) {
-        deviceId = window.device.uuid;
-      } else {
-        if (!localStorage.getItem("browserId")) {
-          s4 = function() {
-            return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-          };
-          guid = function() {
-            return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-          };
-          localStorage.setItem("browserId", guid());
-        }
-        deviceId = localStorage.getItem("browserId");
-      }
+      var deviceId, key;
+      deviceId = this.$("#door-url").val();
+      key = this.$("#passphrase").val();
       this.$("#new-door-brand").html('<div class="loading spin"></div>');
       this.$(".form-group").removeClass("has-error");
       return $.ajax({
-        url: "" + doorUrl + "/login?passphrase=" + passphrase + "&deviceId=" + deviceId,
+        url: app.location + ("/login?deviceid=" + deviceId + "&key=" + key),
         crossDomain: true,
         xhrFields: {
           withCredentials: true
         },
         statusCode: {
           401: (function(_this) {
-            return function(resp) {
-              return _this.$(".pass-form-group").addClass("has-error");
-            };
-          })(this),
-          404: (function(_this) {
-            return function(resp) {
+            return function() {
+              _this.$(".pass-form-group").addClass("has-error");
               return _this.$(".door-form-group").addClass("has-error");
             };
           })(this)
@@ -78,27 +53,22 @@
         })(this),
         success: (function(_this) {
           return function(resp) {
-            var doorUrls;
-            if (!resp.hasOwnProperty("token")) {
-              return _this.$("#new-door-brand").text("500");
-            } else {
-              _this.$("#new-door-brand").text("Add a door");
-              _this.$("#door-url").val("");
-              _this.$("#passphrase").val("");
-              doorUrls = _this.model.get("doorUrls");
-              if (!_.contains(doorUrls, doorUrl)) {
-                doorUrls.push(doorUrl);
-                localStorage.setItem("doorUrls", JSON.stringify(doorUrls));
-                localStorage.setItem(doorUrl, resp.token);
-              }
-              _this.setHttps();
-              return _this.model.set({
-                doorUrl: doorUrl,
-                page: "openDoor",
-                disabled: "",
-                prot: "https://"
-              });
+            var deviceIds, json;
+            _this.$("#new-door-brand").text("Add a door");
+            _this.$("#door-url").val("");
+            _this.$("#passphrase").val("");
+            json = localStorage.getItem("deviceIds");
+            deviceIds = json != null ? JSON.parse(json) : [];
+            if (!_.contains(deviceIds, deviceId)) {
+              deviceIds.push(deviceId);
+              localStorage.setItem('deviceIds', JSON.stringify(deviceIds));
             }
+            localStorage.setItem(deviceId, JSON.stringify(resp));
+            return _this.model.set({
+              doorUrl: deviceId,
+              page: "openDoor",
+              disabled: ""
+            });
           };
         })(this)
       });
@@ -106,16 +76,6 @@
 
     NewDoorView.prototype.backClicked = function() {
       return this.model.set("page", "openDoor");
-    };
-
-    NewDoorView.prototype.setHttps = function() {
-      this.$("#prot-text").text("https://").parent().removeClass("btn-danger");
-      return this.model.set("prot", "https://");
-    };
-
-    NewDoorView.prototype.setHttp = function() {
-      this.$("#prot-text").text("http://").parent().addClass("btn-danger");
-      return this.model.set("prot", "http://");
     };
 
     return NewDoorView;

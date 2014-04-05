@@ -9,7 +9,7 @@ var rename = require('gulp-rename');
 const SOURCE_FOLDER = 'src';
 const BUILD_FOLDER = 'www';
 
-const HTTP_PORT = 8000;
+const HTTP_PORT = 8001;
 
 const paths = {
   bower: SOURCE_FOLDER + '/bower_components/**/*',
