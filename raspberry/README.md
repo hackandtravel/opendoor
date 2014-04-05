@@ -1,3 +1,7 @@
+### Login
+
+Login to the raspberry via `ssh pi@YOUR_IP`. The default username is `pi` with password is `raspberry`.
+
 ### Installing 'node' and 'npm'
 
 Run the script in home directory.
@@ -29,22 +33,22 @@ Run the script in home directory.
     node -v
     npm -v
     
-### Path 
-
-Adding `node` and `npm` to the path can be tricky. Use this if need be:
+### Path
 
     export PATH=$PATH:/opt/node/bin
    
 ### App placement
     
-The app is placed in `/home/pi/raspberry`. This means the user is called `pi`.
+The app should be placed in `/home/pi/raspberry`. The default user is called `pi`.
+Create the `raspberry` folder in the home directory via `mkdir /home/pi/raspberry`.
+Copy the files from your computer to the pi via `scp *.js* pi@YOUR_IP:raspberry`.
 
 ### Get dependencies
 
     cd /home/pi/raspberry
-    npm install
+    npm install --release
     
-### Starting the app via 'nodemon'
+### Optional: Starting the app via 'nodemon'
 
     cd /home/pi/raspberry
     node_modules/.bin/nodemon raspberry.js
