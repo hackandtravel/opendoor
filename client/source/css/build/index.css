@@ -72,7 +72,7 @@ h1 {
   background-color: #4B946A;
   display: none;
 }
-@keyframes fade {
+@-webkit-keyframes fade {
   from {
     opacity: 1.0;
   }
@@ -83,7 +83,7 @@ h1 {
     opacity: 1.0;
   }
 }
-@-webkit-keyframes fade {
+@keyframes fade {
   from {
     opacity: 1.0;
   }
@@ -109,18 +109,19 @@ label {
   margin-left: -50px;
   height: 100px;
   margin-top: -50px;
-  border-radius: 8px;
+  border-radius: 12px;
+  outline: none;
 }
 #btn-open-door span {
-  font-size: 42px;
+  font-size: 58px;
 }
 .navbar-brand {
   display: inline-block;
   position: absolute;
-  width: 150px;
+  width: 200px;
   top: 0px;
   left: 50%;
-  margin-left: -75px;
+  margin-left: -100px;
   text-align: center;
 }
 .page {
@@ -181,10 +182,13 @@ label {
   cursor: wait;
   border-radius: 100%;
   margin: 0 auto;
-  -webkit-animation-fill-mode: forwards;
-  animation-fill-mode: forwards;
   -webkit-animation: loading .5s infinite linear;
   animation: loading .5s infinite linear;
+  border: 5px solid #777;
+  border-top: 5px solid rgba(0, 0, 0, 0);
+  border-left: 5px solid rgba(0, 0, 0, 0);
+  width: 18px;
+  height: 18px;
 }
 .spin {
   border: 5px solid #777;

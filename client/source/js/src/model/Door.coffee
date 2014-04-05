@@ -3,6 +3,7 @@ define [
 ], (_) ->
   class Door
     defaults: ->
+      deviceid: null
       buzztime: 5000
       name: null
       number: 1

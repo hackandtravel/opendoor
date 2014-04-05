@@ -13,6 +13,11 @@ define [
     constructor: (args) ->
       _.extend this, @defaults(), args
 
-      if not args.hasOwnProperty('doors')
+      unless args.hasOwnProperty('doors')
         console.warn("Device without doors makes no sense")
-        @doors = args.doors.map (door) -> new Door(door)
+      else
+        @doors = args.doors.map (door) ->
+          door.deviceid = args.deviceid
+          unless door.name.startsWith args.name
+            door.name = args.name + ' - ' + door.name
+          new Door(door)

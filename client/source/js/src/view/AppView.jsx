@@ -5,39 +5,55 @@ define([
   'view/page/HomeView',
   'view/page/NewDeviceView',
   'controller/controller'
-], function(React, Router, PAGE, HomeView, NewDeviceView, controller) {
+], function (React, Router, PAGE, HomeView, NewDeviceView, controller) {
   return React.createClass({
-    getInitialState: function() {
+    getInitialState: function () {
       return {
-        page: PAGE.HOME
+        page: PAGE.HOME,
+        doors: controller.getDoors()
       };
     },
 
-    setLoading: function(on) {
+    setPage: function (page) {
       this.setState({
-        loading: on
+        page: page
       });
     },
 
     componentDidMount: function () {
-      var router = Router({
-        '/': function() { this.setState({page: PAGE.HOME})}.bind(this),
-        '/login': function() { this.setState({page: PAGE.LOGIN})}.bind(this)
+      this.router = Router({
+        '/': this.setPage.bind(this, PAGE.HOME),
+        '/home': this.setPage.bind(this, PAGE.HOME),
+        '/login': this.setPage.bind(this, PAGE.LOGIN)
       });
-      router.init('/');
+      this.router.init('/');
+
+      var init = this.state.doors.length > 0 ? PAGE.HOME : PAGE.LOGIN;
+      this.router.setRoute('/' + init)
     },
 
-    render: function() {
+    addDevice: function (device) {
+      this.setState({
+        doors: this.state.doors.concat(device.doors)
+      })
+    },
+
+    setRouteHome: function () {
+      this.router.setRoute('/')
+    },
+
+    render: function () {
+      console.log('AppView: render');
       return (
         <div id='app'>
           <HomeView
-            page={this.state.page}
-            doors={[]}
+          page={this.state.page}
+          doors={this.state.doors}
           />
           <NewDeviceView
-            page={this.state.page}
-            setLoading={this.setLoading}
-            onLoginClicked={controller.login}
+          page={this.state.page}
+          setRouteHome={this.setRouteHome}
+          addDevice={this.addDevice}
           />
         </div>);
     }

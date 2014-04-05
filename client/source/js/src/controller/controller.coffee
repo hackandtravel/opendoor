@@ -1,7 +1,14 @@
 define [
   'controller/loginController'
-], (loginController) ->
-  controller =
+  'controller/initController'
+  'controller/deviceStoreController'
+  'controller/openDoorController'
+], (loginController, initController, deviceStoreController, openDoorController) ->
+  class Controller
     login: loginController.login
+    getDoors: initController.getDoors
+    getToken: (deviceid) -> deviceStoreController.fetch(deviceid)?.token
+    openDoor: openDoorController.openDoor
 
-  Object.freeze controller
+  singleton = -> new Controller
+  singleton()

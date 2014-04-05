@@ -16,7 +16,12 @@
         _.extend(this, this.defaults(), args);
         if (!args.hasOwnProperty('doors')) {
           console.warn("Device without doors makes no sense");
+        } else {
           this.doors = args.doors.map(function(door) {
+            door.deviceid = args.deviceid;
+            if (!door.name.startsWith(args.name)) {
+              door.name = args.name + ' - ' + door.name;
+            }
             return new Door(door);
           });
         }

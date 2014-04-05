@@ -4,6 +4,7 @@
     return Door = (function() {
       Door.prototype.defaults = function() {
         return {
+          deviceid: null,
           buzztime: 5000,
           name: null,
           number: 1,
