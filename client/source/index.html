@@ -35,56 +35,6 @@
         <script type="text/javascript" src="bower_components/requirejs/require.js" data-main="js/build/require-config"></script>
     </head>
     <body>
-        <!-- remove this -->
-        <div id="app"></div>
-
-        <script id="open-door-template" type="text/x-handlebars-template">
-          <nav id="header" class="navbar navbar-default navbar-fixed-top" role="navigation">
-            <a id="open-door-brand" class="navbar-brand open-door-page">OpenDoor</a>
-            <a id="btn-new" class="btn btn-default open-door-page pull-right" style="margin:7px"><span class="glyphicon glyphicon-plus"></span></a>
-          </nav>
-          <div class="row">
-            <div class="col-md-12">
-              <div >
-                <label for="door-select">Choose a door:</label>
-                <select id="select-door" class="form-control">
-                  {{#each doorUrls}}
-                    <option value="{{number}}" data-deviceid="{{deviceId}}">{{name}}</option>
-                  {{/each}}
-                </select>
-              </div>
-            </div>
-            <button id="btn-open-door" type="button" class="btn btn-default {{disabled}}">
-              <span class="glyphicon glyphicon-lock"></span>
-            </button>
-          </div>
-        </script>
-
-        <script id="new-door-template" type="text/x-handlebars-template">
-          <nav id="header" class="navbar navbar-default navbar-fixed-top" role="navigation">
-            <a id="new-door-brand" class="navbar-brand new-door-page">Add a door</a>
-            <a id="back-btn" class="btn btn-default new-door-page pull-left" style="margin:7px"><span class="glyphicon glyphicon-chevron-left"></span></button>
-            <a id="login-btn" class="btn btn-primary new-door-page pull-right" style="margin:7px">Add</a>
-          </nav>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="new-door-page">
-                <div class="door-form-group form-group">
-                  <label for="door-select">Device ID:</label>
-                    <input id="door-url" type="text" class="form-control">
-                  </div>
-                </div>
-                <div class="pass-form-group form-group">
-                  <label for="passphrase">Key:</label>
-                  <input id="passphrase" type="password" class="form-control" />
-                </div>
-              </div>
-          </div>
-        </script>
-
-        <script id="app-template" type="text/x-handlebars-template">
-          <div id="page-open-door" class="page page-middle"></div>
-          <div id="page-new-door" class="page page-right"></div>
-        </script>
+        <!-- Injected by React.js -->
     </body>
 </html>
