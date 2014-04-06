@@ -9,22 +9,26 @@ define([
       return {
         status: 'OpenDoor',
         loading: false,
-        disabled: false
+        disabled: false,
+        unlocked: false
       }
     },
 
     onOpenDoorClicked: function () {
-      var i = this.refs.selectDoor.getDOMNode().selectedIndex;
-      var door = this.props.doors[i];
+      if (!this.state.disabled) {
+        var i = this.refs.selectDoor.getDOMNode().selectedIndex;
+        var door = this.props.doors[i];
 
-      controller.openDoor(door, controller.getToken(door.deviceid), {
-        setStatus: this.setStatus,
-        setLoading: this.setLoading,
-        setDisabled: this.setDisabled
-      });
+        controller.openDoor(door, controller.getToken(door.deviceid), {
+          setStatus: this.setStatus,
+          setLoading: this.setLoading,
+          setDisabled: this.setDisabled,
+          setUnlocked: this.setUnlocked
+        });
+      }
     },
 
-    setStatus: function(status) {
+    setStatus: function (status) {
       if (status === null) {
         status = this.getInitialState().status
       }
@@ -43,6 +47,12 @@ define([
     setDisabled: function (disabled) {
       this.setState({
         disabled: disabled
+      })
+    },
+
+    setUnlocked: function (unlocked) {
+      this.setState({
+        unlocked: unlocked
       })
     },
 
@@ -69,15 +79,15 @@ define([
 
       var buttonIconClasses = cx({
         'fa': true,
-        'fa-lock': !this.state.disabled,
-        'fa-unlock': this.state.disabled
+        'fa-lock': !this.state.unlocked,
+        'fa-unlock': this.state.unlocked
       });
 
       var style = { margin: 7 };
       return (
         <div id='page-open-door' className={classes}>
           <HeaderView loading={this.state.loading} header={this.state.status}>
-            <a id="btn-new" className="btn btn-default open-door-page pull-right" style={style} href="/#/login">
+            <a id="btn-new" className="btn btn-default open-door-page pull-right" style={style} onClick={this.props.route.bind(this, PAGE.LOGIN)}>
               <span className="glyphicon glyphicon-plus"></span>
             </a>
           </HeaderView>

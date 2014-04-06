@@ -15,22 +15,26 @@ define([
       };
     },
 
-    setPage: function (page) {
+    setPage: function(page) {
       this.setState({
         page: page
       });
     },
 
+    route: function (href) {
+      this.router.setRoute(href);
+    },
+
     componentDidMount: function () {
       this.router = Router({
-        '/': this.setPage.bind(this, PAGE.HOME),
-        '/home': this.setPage.bind(this, PAGE.HOME),
-        '/login': this.setPage.bind(this, PAGE.LOGIN)
+        '': this.setPage.bind(this, PAGE.HOME),
+        'home': this.setPage.bind(this, PAGE.HOME),
+        'login': this.setPage.bind(this, PAGE.LOGIN)
       });
-      this.router.init('/');
+      this.router.init('');
 
       var init = this.state.doors.length > 0 ? PAGE.HOME : PAGE.LOGIN;
-      this.router.setRoute('/' + init)
+      this.router.setRoute(init)
     },
 
     addDevice: function (device) {
@@ -49,12 +53,14 @@ define([
         React.DOM.div( {id:"app"}, 
           HomeView(
           {page:this.state.page,
-          doors:this.state.doors}
+          doors:this.state.doors,
+          route:this.route}
           ),
           NewDeviceView(
           {page:this.state.page,
-          setRouteHome:this.setRouteHome,
-          addDevice:this.addDevice}
+          addDevice:this.addDevice,
+          setPage:this.setPage,
+          route:this.route}
           )
         ));
     }

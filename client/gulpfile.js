@@ -13,7 +13,7 @@ var prefix = require('gulp-autoprefixer');
 var minifyHTML = require('gulp-minify-html');
 var minifyCSS = require('gulp-minify-css');
 
-const SOURCE_FOLDER = 'source';
+const SOURCE_FOLDER = 'src';
 const BUILD_FOLDER = 'www';
 
 const HTTP_PORT = 8000;
@@ -32,7 +32,6 @@ var paths = {
   images: SOURCE_FOLDER + '/img/*',
 
   index: SOURCE_FOLDER + '/index.html',
-  config: SOURCE_FOLDER + '/config.xml',
 
   spec: SOURCE_FOLDER + '/spec/*.coffee'
 };
@@ -85,11 +84,6 @@ gulp.task('watch', function () {
   gulp.watch(paths.spec, ['spec']);
 });
 
-// simply copy config.xml
-gulp.task('config', function () {
-  return gulp.src(paths.config).pipe(gulp.dest(BUILD_FOLDER))
-});
-
 gulp.task('index', function () {
   return gulp.src(paths.index)
     .pipe(minifyHTML())
@@ -99,7 +93,7 @@ gulp.task('index', function () {
 gulp.task('css', function () {
   return gulp.src(paths.css)
     .pipe(minifyCSS())
-    .pipe(gulp.dest(BUILD_FOLDER))
+    .pipe(gulp.dest(BUILD_FOLDER + '/css/build'))
 });
 
 gulp.task('rjs', ['compile'], function () {
@@ -151,7 +145,7 @@ gulp.task('requireConfig', function() {
     .pipe(gulp.dest(BUILD_FOLDER + '/js/build'))
 });
 
-gulp.task('copy', ['config', 'bower', 'index', 'css', 'requireConfig']);
+gulp.task('copy', ['bower', 'index', 'css', 'requireConfig']);
 
 gulp.task('build', ['copy', 'rjs']);
 

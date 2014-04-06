@@ -8,9 +8,9 @@ define [
         console.error("Must provide callback functions")
         return
 
+      if fs.setDisabled? then fs.setDisabled(true)
       if fs.setStatus? then fs.setStatus(null)
       if fs.setLoading? then fs.setLoading(true)
-      if fs.setDisabled? then fs.setDisabled(true)
 
       httpRequest
         method: 'GET'
@@ -24,7 +24,9 @@ define [
           buzzTime = door.buzztime or 5000
 
           if fs.setLoading? then fs.setLoading(false)
+          if fs.setUnlocked? then fs.setUnlocked(true)
           if fs.setDisabled? then setTimeout ->
+            if fs.setUnlocked? then fs.setUnlocked(false)
             fs.setDisabled(false)
           , buzzTime
 

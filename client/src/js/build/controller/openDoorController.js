@@ -9,14 +9,14 @@
           console.error("Must provide callback functions");
           return;
         }
+        if (fs.setDisabled != null) {
+          fs.setDisabled(true);
+        }
         if (fs.setStatus != null) {
           fs.setStatus(null);
         }
         if (fs.setLoading != null) {
           fs.setLoading(true);
-        }
-        if (fs.setDisabled != null) {
-          fs.setDisabled(true);
         }
         return httpRequest({
           method: 'GET',
@@ -32,8 +32,14 @@
             if (fs.setLoading != null) {
               fs.setLoading(false);
             }
+            if (fs.setUnlocked != null) {
+              fs.setUnlocked(true);
+            }
             if (fs.setDisabled != null) {
               setTimeout(function() {
+                if (fs.setUnlocked != null) {
+                  fs.setUnlocked(false);
+                }
                 return fs.setDisabled(false);
               }, buzzTime);
             }
