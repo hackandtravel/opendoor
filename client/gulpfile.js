@@ -13,63 +13,71 @@ var prefix = require('gulp-autoprefixer');
 var minifyHTML = require('gulp-minify-html');
 var minifyCSS = require('gulp-minify-css');
 
-const SOURCE_FOLDER = 'src';
-const BUILD_FOLDER = 'www';
+const SRC = 'src';
+const BUILD = 'www';
 
 const HTTP_PORT = 8000;
 
 var paths = {
-  bower: SOURCE_FOLDER + '/bower_components/**/*',
+  bower: [
+      SRC + '/bower_components/**/*.js',
+      SRC + '/bower_components/**/*.css',
+      SRC + '/bower_components/**/*.otf',
+      SRC + '/bower_components/**/*.eot',
+      SRC + '/bower_components/**/*.svg',
+      SRC + '/bower_components/**/*.ttf',
+      SRC + '/bower_components/**/*.woff'
+  ],
 
-  js: SOURCE_FOLDER + '/js/src/**/*.js',
-  jsx: SOURCE_FOLDER + '/js/src/**/*.jsx',
-  coffee: SOURCE_FOLDER + '/js/src/**/*.coffee',
-  requireConfig: SOURCE_FOLDER + '/js/src/require-config.js',
+  js: SRC + '/js/src/**/*.js',
+  jsx: SRC + '/js/src/**/*.jsx',
+  coffee: SRC + '/js/src/**/*.coffee',
+  requireConfig: SRC + '/js/src/require-config.js',
 
-  less: SOURCE_FOLDER + '/css/src/**/*.less',
-  css: SOURCE_FOLDER + '/css/build/**/*.css',
+  less: SRC + '/css/src/**/*.less',
+  css: SRC + '/css/build/**/*.css',
 
-  images: SOURCE_FOLDER + '/img/*',
+  images: SRC + '/img/*',
 
-  index: SOURCE_FOLDER + '/index.html',
+  index: SRC + '/index.html',
 
-  spec: SOURCE_FOLDER + '/spec/*.coffee'
+  spec: SRC + '/spec/*.coffee'
 };
 
 // TODO: don't copy unnecessary stuff
 gulp.task('bower', function () {
   return gulp.src(paths.bower)
-    .pipe(gulp.dest(BUILD_FOLDER + '/bower_components'))
+    .pipe(gulp.dest(BUILD + '/bower_components'))
 });
 
 gulp.task('js', function() {
   return gulp.src(paths.js)
-    .pipe(gulp.dest(SOURCE_FOLDER + '/js/build'))
+    .pipe(gulp.dest(SRC + '/js/build'))
 });
 
 gulp.task('jsx', function () {
   return gulp.src(paths.jsx)
     .pipe(react())
-    .pipe(gulp.dest(SOURCE_FOLDER + '/js/build'));
+    .pipe(gulp.dest(SRC + '/js/build'));
 });
 
 gulp.task('coffee', function () {
   return gulp.src(paths.coffee)
     .pipe(coffee())
-    .pipe(gulp.dest(SOURCE_FOLDER + '/js/build'));
+    .pipe(gulp.dest(SRC + '/js/build'));
 });
 
 gulp.task('less', function () {
   return gulp.src(paths.less)
     .pipe(less())
     .pipe(prefix("last 1 version", "> 1%", "ie 8", "ie 7"))
-    .pipe(gulp.dest(SOURCE_FOLDER + '/css/build'));
+    .pipe(gulp.dest(SRC + '/css/build'));
 });
 
 gulp.task('images', function () {
   return gulp.src(paths.images)
     .pipe(imagemin({optimizationLevel: 5}))
-    .pipe(gulp.dest(BUILD_FOLDER + '/img'));
+    .pipe(gulp.dest(BUILD + '/img'));
 });
 
 gulp.task('compile', ['jsx', 'coffee', 'less', 'images']);
@@ -87,18 +95,18 @@ gulp.task('watch', function () {
 gulp.task('index', function () {
   return gulp.src(paths.index)
     .pipe(minifyHTML())
-    .pipe(gulp.dest(BUILD_FOLDER))
+    .pipe(gulp.dest(BUILD))
 });
 
 gulp.task('css', function () {
   return gulp.src(paths.css)
     .pipe(minifyCSS())
-    .pipe(gulp.dest(BUILD_FOLDER + '/css/build'))
+    .pipe(gulp.dest(BUILD + '/css/build'))
 });
 
 gulp.task('rjs', ['compile'], function () {
   return rjs({
-    baseUrl: SOURCE_FOLDER + '/js/build',
+    baseUrl: SRC + '/js/build',
     paths: {
       backbone: '../../bower_components/backbone/backbone',
       bootstrap: '../../bower_components/bootstrap/dist/js/bootstrap',
@@ -136,13 +144,13 @@ gulp.task('rjs', ['compile'], function () {
     out: 'main.js'
   })
     .pipe(uglify())
-    .pipe(gulp.dest(BUILD_FOLDER + '/js/build'))
+    .pipe(gulp.dest(BUILD + '/js/build'))
 });
 
 gulp.task('requireConfig', function() {
   return gulp.src(paths.requireConfig)
     .pipe(uglify())
-    .pipe(gulp.dest(BUILD_FOLDER + '/js/build'))
+    .pipe(gulp.dest(BUILD + '/js/build'))
 });
 
 gulp.task('copy', ['bower', 'index', 'css', 'requireConfig']);
@@ -158,11 +166,11 @@ function server(root) {
 }
 
 gulp.task('http', function () {
-  server(SOURCE_FOLDER)
+  server(SRC)
 });
 
 gulp.task('http-www', function () {
-  server(BUILD_FOLDER)
+  server(BUILD)
 });
 
 gulp.task('development', ['watch', 'http']);
