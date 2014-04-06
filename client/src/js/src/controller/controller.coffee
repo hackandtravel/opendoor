@@ -5,6 +5,7 @@ define [
   'controller/openDoorController'
 ], (loginController, initController, deviceStoreController, openDoorController) ->
   class Controller
+    init: initController.init
     login: loginController.login
     getDoors: initController.getDoors
     getToken: (deviceid) -> deviceStoreController.fetch(deviceid)?.token

@@ -1,8 +1,15 @@
 (function() {
-  define(['model/Device', 'controller/deviceStoreController'], function(Device, deviceStoreController) {
+  define(['httpRequest', 'model/Device', 'controller/deviceStoreController'], function(httpRequest, Device, deviceStoreController) {
     var InitController, singleton;
     InitController = (function() {
       function InitController() {}
+
+      InitController.prototype.init = function() {
+        return httpRequest({
+          method: 'GET',
+          url: '/api'
+        });
+      };
 
       InitController.prototype.getDoors = function() {
         return deviceStoreController.fetchAll().reduce(function(doors, nextDevice) {

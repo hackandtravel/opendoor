@@ -4,6 +4,8 @@
     Controller = (function() {
       function Controller() {}
 
+      Controller.prototype.init = initController.init;
+
       Controller.prototype.login = loginController.login;
 
       Controller.prototype.getDoors = initController.getDoors;

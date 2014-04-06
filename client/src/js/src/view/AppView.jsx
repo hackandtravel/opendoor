@@ -24,6 +24,10 @@ define([
       this.router.setRoute(href);
     },
 
+    componentWillMount: function () {
+      controller.init()
+    },
+
     componentDidMount: function () {
       this.router = Router({
         '': this.setPage.bind(this, PAGE.HOME),
