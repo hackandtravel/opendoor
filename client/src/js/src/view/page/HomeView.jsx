@@ -87,7 +87,7 @@ define([
       return (
         <div id='page-open-door' className={classes}>
           <HeaderView loading={this.state.loading} header={this.state.status}>
-            <a id="btn-new" className="btn btn-default open-door-page pull-right" style={style} onClick={this.props.route.bind(this, PAGE.LOGIN)}>
+            <a id="btn-new" className="btn btn-default open-door-page pull-right" style={style} href={'#/' + PAGE.LOGIN}>
               <span className="glyphicon glyphicon-plus"></span>
             </a>
           </HeaderView>

@@ -75,7 +75,7 @@ define([
       return (
         React.DOM.div( {id:"page-new-door", className:classes}, 
           HeaderView( {loading:this.state.loading, header:this.state.status}, 
-            React.DOM.a( {id:"back-btn", className:"btn btn-default new-door-page pull-left", style:style, onClick:this.props.route.bind(this, PAGE.HOME)}, 
+            React.DOM.a( {id:"back-btn", className:"btn btn-default new-door-page pull-left", style:style, href:'#/' + PAGE.HOME}, 
               React.DOM.span( {className:"glyphicon glyphicon-chevron-left"})
             ),
             React.DOM.a( {id:"login-btn", className:"btn btn-primary new-door-page pull-right", style:style, onClick:this.onLoginClicked}, "Add")

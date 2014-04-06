@@ -74,7 +74,7 @@ define([
       return (
         <div id='page-new-door' className={classes}>
           <HeaderView loading={this.state.loading} header={this.state.status}>
-            <a id="back-btn" className="btn btn-default new-door-page pull-left" style={style} onClick={this.props.route.bind(this, PAGE.HOME)}>
+            <a id="back-btn" className="btn btn-default new-door-page pull-left" style={style} href={'#/' + PAGE.HOME}>
               <span className="glyphicon glyphicon-chevron-left"></span>
             </a>
             <a id="login-btn" className="btn btn-primary new-door-page pull-right" style={style} onClick={this.onLoginClicked}>Add</a>

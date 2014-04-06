@@ -88,7 +88,7 @@ define([
       return (
         React.DOM.div( {id:"page-open-door", className:classes}, 
           HeaderView( {loading:this.state.loading, header:this.state.status}, 
-            React.DOM.a( {id:"btn-new", className:"btn btn-default open-door-page pull-right", style:style, onClick:this.props.route.bind(this, PAGE.LOGIN)}, 
+            React.DOM.a( {id:"btn-new", className:"btn btn-default open-door-page pull-right", style:style, href:'#/' + PAGE.LOGIN}, 
               React.DOM.span( {className:"glyphicon glyphicon-plus"})
             )
           ),
