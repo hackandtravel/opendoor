@@ -14,16 +14,16 @@ function getIO(server) {
         socket.on('status', function (data) {
             if(socket)
             {
-                //var cb = socket.get("openDoorCallBack");
-                //cb(null, data);
-                // todo make callback somehow to client
-            }
-            if(data && data.status == "opened")
-            {
+            //var cb = socket.get("openDoorCallBack");
+            //cb(null, data);
+            // todo make callback somehow to client
+        }
+        if(data && data.status == "opened")
+        {
 
-                //cb(null, data);
-            }
-           // else //cb(new Error("something went wront opening the door"));
+            //cb(null, data);
+        }
+        // else //cb(new Error("something went wront opening the door"));
 
         });
 

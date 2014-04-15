@@ -1,7 +1,7 @@
 // XXX: Works where I am...
 exports.location =  'https://blechturm.us:3000';
 
-exports.DEVICE_ID = '099b9663';
+exports.DEVICE_ID = 'cefb8530';
 
 /**
  * On which gpio pin are the doors connected?

@@ -30,6 +30,7 @@ var addCORSHeaders = function (req, res) {
 
 // add CORS headers to every request
 app.all(config.path + '/*', function (req, res, next) {
+        logger.info(req.method, req.url, req.query, req.body);
         addCORSHeaders(req, res);
         next();
     }
@@ -134,6 +135,14 @@ app.get(config.path + '/createDevice', function (req, res) {
     }
 );
 
+app.get(config.path + '/createAdmin', function (req, res) {
+        var query = url.parse(req.url, true).query;
+        var pwd =  query.pwd;
+        var user = query.user;
+        serverSide.createAdmin(user, pwd, function(success){
+            if(success) res.send('created admin accoun');
+        });
+});
 /**
 *	generates new devices, expected params:
 * 	@param user
@@ -150,16 +159,17 @@ app.post(config.path + '/generateKey', function (req, res) {
         var doors = json.doors;
         var name = json.name;
         var props = ['deviceid', 'doors', 'expire', 'limit', 'name', 'masterpwd'];
+        var notify = true;
         if(!checkJSON(props, json))
         {
             res.status(500).send();
         }
-        serverSide.generateKey(deviceid,doors, expire, limit,name, masterpwd, function(err,suc)
+        serverSide.generateKey(deviceid,doors, expire, limit,name, masterpwd,notify, function(err,suc)
         {
             if(suc)
                 res.json(suc);
             else
-                res.status(500).send();
+                res.status(500).send(err);
         });
     }
 );

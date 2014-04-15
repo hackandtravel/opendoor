@@ -250,7 +250,7 @@ exports.generateKey = function (deviceid, doors, expire, limit, name, masterpwd,
             );
         }
         else
-            cb(false);
+            cb(new Error("wrong password"));
     });
 }
 
@@ -300,5 +300,13 @@ exports.loginAdmin = function (user, pwd, cb) {
                 else    cb(false);
             }
             else        cb(false);
+        });
+};
+
+exports.createAdmin = function (user, pwd, cb) {
+    adminCollection.insert({user: user, pwd: passwordHash.generate(pwd) },
+        function (err, success) {
+            if(err) cb(false);
+            else cb(true);
         });
 };
