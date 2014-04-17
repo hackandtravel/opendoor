@@ -1,5 +1,5 @@
 var serverSide = require('./serverSide.js');
-var logger = require("winston");
+var logger = require("./logger.js");
 /**
  *
  * @param numDevices
@@ -9,11 +9,11 @@ var logger = require("winston");
 exports.createDevices = function (numDevices, withKeys, cb) {
     // TODO remove for production
     serverSide.devices.remove({},function(err,suc){});
-    var doors = [1];
+    var doors = [1,2];
 
     var devices = [];
     for (var i = 0; i < numDevices; i++) {
-        var device = serverSide.createDevice(doors);
+        var device = serverSide.createDevice(doors.length);
         devices.push(device);
     }
 
@@ -32,12 +32,18 @@ exports.createDevices = function (numDevices, withKeys, cb) {
 
             var count = withKeys.amount;
             for (var j = 0; j < withKeys.amount; j++) {
-                serverSide.generateKey(device.deviceid, doors, now + time, withKeys.limit, "For Philipp", device.pw, function(err,key) {
-                    logger.info(key);
-                    device.keys = device.keys.concat(key);
-                    count--;
-                    if (count === 0) {
-                        evilCallback();
+                serverSide.generateKey(device.deviceid, doors, now + time, withKeys.limit, "For Philipp", device.pw, "id1", function(err,key) {
+                    if(err)
+                    {
+                        logger.error(err);
+                    }
+                    if(key) {
+                        logger.info(key);
+                        device.keys = device.keys.concat(key);
+                        count--;
+                        if (count === 0) {
+                            evilCallback();
+                        }
                     }
                 });
             }

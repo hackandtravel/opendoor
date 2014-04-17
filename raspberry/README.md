@@ -2,6 +2,10 @@
 
 Login to the raspberry via `ssh pi@YOUR_IP`. The default username is `pi` with password is `raspberry`.
 
+### Installing OS on raspberry pi
+    
+    install NOOBS from https://github.com/raspberrypi/noobs
+    
 ### Installing 'node' and 'npm'
 
 Run the script in home directory.

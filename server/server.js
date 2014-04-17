@@ -6,7 +6,7 @@ var clientside = require('./clientSide.js');
 var serverSide = require('./serverSide.js');
 var helpers = require('./helpers.js');
 var config = require('./config.js');
-var winston = require('winston');
+var winston = require('./logger.js');
 
 // CONSTANTS
 

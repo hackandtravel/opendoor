@@ -2,8 +2,8 @@ var url = require("url");
 var express = require('express');
 var config = require('./config.js');
 var serverSide = require('./serverSide.js');
-var logger = require('winston');
 var helpers = require('./helpers');
+var logger = require('./logger.js');
 /** json api server
  *GET Methods:
 
@@ -63,7 +63,8 @@ app.get(config.path + '/login', function (req, res) {
         var query = url.parse(req.url, true).query;
         var key = query.key;
         var deviceid = query.deviceid;
-        serverSide.login(deviceid, key, function (deviceInfo) {
+        var notificationid = query.notificationid;
+        serverSide.login(deviceid, key, notificationid, function (deviceInfo) {
                 if (deviceInfo) {
                     logger.info("user login: successful");
                     res.send(deviceInfo);
@@ -141,7 +142,7 @@ app.get(config.path + '/generate', function (req, res) {
         else {
             var devices = {};
             if (withKeys)
-                devices = helpers.createDevices(numDevices, {amount: 5, limit: 3, days: 3},function(err,result)
+                devices = helpers.createDevices(numDevices, {amount: 5, limit: 999, days: 3},function(err,result)
                 {
                     if(result) res.send(result);
                 });
