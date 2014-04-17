@@ -1,8 +1,6 @@
-# DOCKER-VERSION 0.9.0
 FROM danscan/node
-# RUN mkdir src; cd src
-# RUN npm install socket.io
-EXPOSE 3000
 ADD . /src
-RUN npm install
-CMD ["node", "src/raspberry.js"]
+RUN cd src; npm install --production
+EXPOSE 3000
+EXPOSE 3001
+CMD ["node", "src/server.js"]
