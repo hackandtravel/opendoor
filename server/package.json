@@ -12,7 +12,9 @@
     "hat": "0.0.3",
     "password-hash": "~1.2.1",
     "node-gcm": "~0.9.10",
-    "mongodb": "~1.3.23"
+    "mongodb": "~1.3.23",
+    "es6-promise": "^0.1.1",
+    "request": "^2.34.0"
   },
   "license": "MIT",
   "engines": {
@@ -24,7 +26,6 @@
     "gulp-coffee": "^1.4.1",
     "proxyquire": "^0.5.3",
     "gulp-nodemon": "^1.0.2",
-    "gulp-coffee": "^1.4.1",
     "frisby": "^0.7.9"
   }
 }

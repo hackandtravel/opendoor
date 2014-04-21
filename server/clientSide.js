@@ -134,7 +134,10 @@ app.get(config.path + '/createDevice', function (req, res) {
         });
     }
 );
-
+/**
+ * creates an admin account to create Devices
+ * TODO REMOVE for production
+ */
 app.get(config.path + '/createAdmin', function (req, res) {
         var query = url.parse(req.url, true).query;
         var pwd =  query.pwd;
@@ -164,13 +167,16 @@ app.post(config.path + '/generateKey', function (req, res) {
         {
             res.status(500).send();
         }
-        serverSide.generateKey(deviceid,doors, expire, limit,name, masterpwd,notify, function(err,suc)
+        else
         {
-            if(suc)
-                res.json(suc);
-            else
-                res.status(500).send(err);
-        });
+            serverSide.generateKey(deviceid,doors, expire, limit,name, masterpwd,notify, function(err,suc)
+            {
+                if(suc)
+                    res.json(suc);
+                else
+                    res.status(500).send(err);
+            });
+        }
     }
 );
 
