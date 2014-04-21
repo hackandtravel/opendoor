@@ -24,14 +24,16 @@ frisby.create('create Device')
     .expectHeaderContains('content-type', 'application/json')
     .expectJSON({
         keys: function (val) {
-            expect(val.length).toBe(0)
+            expect(val.length).toBe(0);
+
         }
     })
     .expectJSONTypes({
         deviceid: String,
         name: String,
         doors: function (val) {
-            expect(val.length).toBe(numDoors)
+            expect(val.length).toBe(numDoors);
+
         } // Custom matcher callback
     })
     .toss();
@@ -51,7 +53,6 @@ keyinfo.name = "test key";
  * @returns {Promise}
  */
 function generateKey(device) {
-    return new Promise(function (resolve, reject) {
         keyinfo.deviceid = device.deviceid;
         keyinfo.masterpwd = device.pw;
         frisby.create('create a key for the device')
@@ -63,17 +64,14 @@ function generateKey(device) {
                     expect(ex).toBeGreaterThan(new Date().getTime())
                 },
                 key: function (key) {
-                    keyinfo.key = key;
                     expect(key).toBeDefined();
-                    resolve(keyinfo);
                 }
             })
             .toss();
-    });
 }
 
 helpers.getDevice().then(generateKey);
-helpers.getDevice().then(helpers.getKey).then(loginToDevice).then(opendoor);
+helpers.getDevice().then(helpers.getKey).then(loginToDevice);
 
 
 /**
@@ -87,11 +85,16 @@ function loginToDevice(keyinfo) {
                 token: function (token) {
                     keyinfo.token = token;
                     expect(token).toBeDefined();
-                    resolve(keyinfo);
                 }
             })
             .expectStatus(200)
             .inspectBody()
+            .afterJSON(function(body)
+            {
+                keyinfo.token = body.token;
+                opendoor(keyinfo);
+                resolve(keyinfo);
+            })
             .toss();
     });
 }
