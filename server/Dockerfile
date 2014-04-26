@@ -2,6 +2,7 @@ FROM dockerfile/nodejs
 
 RUN apt-get install -y gcc make build-essential
 
+# http://bitjudo.com/blog/2014/03/13/building-efficient-dockerfiles-node-dot-js/
 ADD package.json /tmp/package.json
 RUN cd /tmp && npm install --production
 RUN mkdir -p /opt/app && cp -a /tmp/node_modules /opt/app
