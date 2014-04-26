@@ -16,10 +16,17 @@ var winston = require('./logger.js');
 // easier http://www.selfsignedcertificate.com/
 var options;
 try {
-    options = {
+    if (process.env.NODE_ENV === 'production') {
+      options = {
+        key: fs.readFileSync(__dirname + '/secret/opendoor-key.pem'),
+        cert: fs.readFileSync(__dirname + '/secret/opendoor-cert.pem')
+      };
+    } else {
+      options = {
         key: fs.readFileSync(__dirname + '/secret/ryans-key.pem'),
         cert: fs.readFileSync(__dirname + '/secret/ryans-cert.pem')
-    };
+      };
+    }
 } catch (ex) {
     throw new Error("SSL key missing. Create your own: http://nodejs.org/api/tls.html")
 }

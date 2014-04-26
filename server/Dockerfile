@@ -13,4 +13,4 @@ ADD . /opt/app
 EXPOSE 3000
 EXPOSE 3001
 
-CMD ["node", "/opt/app/server.js"]
+CMD ["NODE_ENV=production", "node", "/opt/app/server.js"]
