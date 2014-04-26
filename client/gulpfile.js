@@ -13,6 +13,9 @@ var prefix = require('gulp-autoprefixer');
 var minifyHTML = require('gulp-minify-html');
 var minifyCSS = require('gulp-minify-css');
 
+var http = require('http');
+var ecstatic = require('ecstatic');
+
 const SRC = 'src';
 const BUILD = 'www';
 
@@ -44,7 +47,6 @@ var paths = {
   spec: SRC + '/spec/*.coffee'
 };
 
-// TODO: don't copy unnecessary stuff
 gulp.task('bower', function () {
   return gulp.src(paths.bower)
     .pipe(gulp.dest(BUILD + '/bower_components'))
@@ -140,7 +142,7 @@ gulp.task('rjs', ['compile'], function () {
         exports: '_'
       }
     },
-    name: 'view/run',
+    name: 'view/launch',
     out: 'main.js'
   })
     .pipe(uglify())
@@ -158,8 +160,8 @@ gulp.task('copy', ['bower', 'index', 'css', 'requireConfig']);
 gulp.task('build', ['copy', 'rjs']);
 
 function server(root) {
-  require('http').createServer(
-    require('ecstatic')({ root: root })
+  http.createServer(
+    ecstatic({ root: root })
   ).listen(HTTP_PORT);
 
   gutil.log('Serving files at http://localhost:' + HTTP_PORT);
