@@ -7,14 +7,17 @@ define([
 ], function (React, FastClick, AppView) {
   React.initializeTouchEvents(true);
 
-  document.addEventListener("deviceready", function () {
+  function launch() {
     FastClick.attach(document.body);
     React.renderComponent(
       <AppView />, document.body
     );
-  }, false);
+  }
 
-  if (typeof navigator.notification === 'undefined') {
-    document.dispatchEvent(new CustomEvent("deviceready"));
+  var isCordova = document.URL.indexOf('http://') === -1 && document.URL.indexOf('https://') === -1;
+  if (isCordova) {
+    document.addEventListener("deviceready", launch, false);
+  } else {
+    launch();
   }
 });
