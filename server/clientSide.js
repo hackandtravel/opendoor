@@ -39,77 +39,57 @@ app.get(config.path + '/api', function (req, res) {
     res.send('OpenDoor API up and running');
 });
 
-app.get(config.path + '/login', function (req, res) {
-        var query = url.parse(req.url, true).query;
-        var key = query.key;
-        var deviceid = query.deviceid;
-        var notificationid = query.notificationid;
-        serverSide.login(deviceid, key, notificationid, function (deviceInfo) {
-                if (deviceInfo) {
-                    logger.info("user login: successful");
-                    res.send(deviceInfo);
-                }
-                else {
-                    res.status(401).send();
-                    logger.info("user login: bad key or deviceid");
-                }
-            }
-        );
+app.get(config.path + '/device', function (req, res) {
+    var query = url.parse(req.url, true).query;
+    if(checkJSON(['deviceid','token'],query)) {
+        serverSide.getDevice(query.deviceid, query.token).then(res.send)
     }
-);
+    else res.send(401);
+});
+app.get(config.path + '/login', function (req, res) {
+    var query = url.parse(req.url, true).query;
+    var key = query.key;
+    var deviceid = query.deviceid;
+    var notificationid = query.notificationid;
+    serverSide.login(deviceid, key, notificationid).then(function (deviceInfo) {
+        if (deviceInfo) {
+            logger.info("user login: successful");
+            res.send(deviceInfo);
+        }
+        else {
+            res.status(401).send();
+            logger.info("user login: bad key or deviceid");
+        }
+    });
+});
+
 
 app.get(config.path + '/opendoor', function (req, res) {
-        var query = url.parse(req.url, true).query;
-        var token = query.token;
-        var deviceid = query.deviceid;
-        var doorNumber = parseInt(query.doorNumber);
+    var query = url.parse(req.url, true).query;
+    var token = query.token;
+    var deviceid = query.deviceid;
+    var door = parseInt(query.door);
 
-        serverSide.opendoor(deviceid, doorNumber, token, function (success) {
-                if (success) {
-                    logger.info("user opened door " + deviceid + " door: " + doorNumber);
-                    res.send(
-                        {
-                            success: success
-                        }
-                    );
-                } else res.status(401).send(
-                    {
-                        success: success
-                    }
-                );
+    serverSide.opendoor(deviceid, door, token).then(function (success) {
+        logger.info("user opened door " + deviceid + " door: " + door);
+        res.send(
+            {
+                success: success
             }
         );
-    }
-);
-/**
-*	generates new devices, expected params:
-*   TODO only use in test/dev
-* 	@param numDevices has to be a number
-*	@param withKeys	 boolean
-*/
-app.get(config.path + '/generate', function (req, res) {
-        var query = url.parse(req.url, true).query;
-        var numDevices = parseInt(query.numDevices);
-        var withKeys = query.withKeys;
-        if (!numDevices) res.status(401).send()
-        else {
-            var devices = {};
-            if (withKeys)
-                devices = helpers.createDevices(numDevices, {amount: 5, limit: 999, days: 3},function(err,result)
-                {
-                    if(result) res.send(result);
-                });
-            else {
-                devices = helpers.createDevices(numDevices,false, function(err,result) {
-                    if(result) res.send(result);
-                });
+    }, function (success) {
+        res.status(401).send(
+            {
+                success: success
             }
-        }
+        );
+    });
     }
 );
 
+
 /**
-*	generates new devices, expected params:
+*	creates a new device
 * 	@param user
 *	@param pwd
 *	@param doors  : amount of dooors
@@ -125,7 +105,6 @@ app.get(config.path + '/createDevice', function (req, res) {
             res.status(401).send('must be more doors than 0');
         }
         serverSide.loginAdmin(user,pwd, function(success) {
-            //TODO change pwd to hash
             if(success) {
                 var device = serverSide.createDevice(doors);
                 res.send(device);
@@ -153,27 +132,20 @@ app.get(config.path + '/createAdmin', function (req, res) {
 *	@param doors  : amount of dooors
 */
 
-app.post(config.path + '/generateKey', function (req, res) {
+app.post(config.path + '/key', function (req, res) {
         var json = req.body;
-        var deviceid = json.deviceid;
-        var expire = json.expire;
-        var limit = json.limit;
-        var masterpwd = json.masterpwd;
-        var doors = json.doors;
-        var name = json.name;
-        var props = ['deviceid', 'doors', 'expire', 'limit', 'name', 'masterpwd'];
-        var notify = true;
+        var props = ['deviceid', 'doors', 'expire', 'limit', 'name', 'token'];
         if(!checkJSON(props, json))
         {
             res.status(500).send();
         }
         else
         {
-            serverSide.generateKey(deviceid,doors, expire, limit,name, masterpwd,notify, function(err,suc)
-            {
-                if(suc)
-                    res.json(suc);
-                else
+            serverSide.generateKey( json).then(function(suc) {
+                res.json(suc);
+            },
+                function (err)
+                {
                     res.status(500).send(err);
             });
         }
