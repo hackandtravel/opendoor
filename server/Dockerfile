@@ -13,5 +13,6 @@ ADD . /opt/app
 EXPOSE 3000
 EXPOSE 3001
 
-RUN NODE_ENV=production
+ENV NODE_ENV production
+
 CMD ["node", "/opt/app/server.js"]
