@@ -1,12 +1,12 @@
 define [
-  'httpRequest'
   'model/Device'
+  'controller/apiRequest'
   'controller/deviceStoreController'
-], (httpRequest, Device, deviceStoreController) ->
+], (apiRequest, Device, deviceStoreController) ->
   class InitController
     init: ->
       # make a fake api call so the next request executes faster
-      httpRequest
+      apiRequest
         method: 'GET'
         url: '/api'
 

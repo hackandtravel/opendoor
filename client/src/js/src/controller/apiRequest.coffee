@@ -3,7 +3,6 @@ define [
   'config'
   'evil-things'
 ], ($, CONFIG) ->
-
   addCORSHeaders = (request) ->
     request.crossDomain = true
     request.xhrFields = withCredentials: true

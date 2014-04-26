@@ -1,6 +1,6 @@
 define [
-  'httpRequest'
-], (httpRequest) ->
+  'controller/apiRequest'
+], (apiRequest) ->
   class OpenDoorController
     openDoor: (door, token, fs) ->
 
@@ -12,7 +12,7 @@ define [
       if fs.setStatus? then fs.setStatus(null)
       if fs.setLoading? then fs.setLoading(true)
 
-      httpRequest
+      apiRequest
         method: 'GET'
         url: '/openDoor'
         data:

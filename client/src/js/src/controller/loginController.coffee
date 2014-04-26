@@ -1,8 +1,8 @@
 define [
-  'httpRequest'
   'model/Device'
+  'controller/apiRequest'
   'controller/deviceStoreController'
-], (httpRequest, Device, deviceStoreController) ->
+], (apiRequest, Device, deviceStoreController) ->
   class LoginController
     login: (deviceId, key, fs) ->
       # TODO: Interface is too informal
@@ -15,7 +15,7 @@ define [
       if fs.setLoading? then fs.setLoading(true)
       if fs.setError? then fs.setError(false)
 
-      httpRequest
+      apiRequest
         method: 'GET'
         url: '/login'
         data:
