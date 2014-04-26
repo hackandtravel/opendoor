@@ -2,6 +2,7 @@
  * Created by Philipp on 21.04.2014.
  */
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 var Promise = require('es6-promise').Promise;
 var request = require('request');
@@ -31,7 +32,7 @@ exports.getKey = function (deviceinfo) {
     keyinfo.deviceid = deviceinfo.deviceid;
     keyinfo.masterpwd = deviceinfo.pw;
     return makeRequest({
-        url: url + "generateKey",
+        url:  url+ "generateKey",
         json: keyinfo,
         method: 'POST'
     }, deviceinfo.deviceid);

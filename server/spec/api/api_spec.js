@@ -10,9 +10,9 @@ frisby.create('RUNNING check')
 /**
  * Test for create Admin
  */
-frisby.create('create Admin')
+/*frisby.create('create Admin')
     .get(url + "createAdmin?user=" + helpers.admin + "&pwd=" + helpers.pwd)
-    .expectStatus(200).toss();
+    .expectStatus(200).toss();*/
 
 /**
  * testing create Device
