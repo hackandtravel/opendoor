@@ -2,7 +2,7 @@ define [
   'model/Device'
   'controller/apiRequest'
   'controller/deviceStoreController'
-], (apiRequest, Device, deviceStoreController) ->
+], (Device, apiRequest, deviceStoreController) ->
   class LoginController
     login: (deviceId, key, fs) ->
       # TODO: Interface is too informal
