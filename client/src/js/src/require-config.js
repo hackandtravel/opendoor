@@ -35,9 +35,6 @@ require.config({
   }
 });
 
-// TODO: Remove this, dont use global namespace
-var app = { location: "http://192.168.0.15:9000" };
-
 require(['main'], function () {
-  require(['view/run']);
+  require(['view/launch']);
 });
