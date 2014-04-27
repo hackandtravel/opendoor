@@ -61,7 +61,6 @@ function login(data, master) {
             masterToken: Boolean
         })
         .expectStatus(200)
-        .inspectBody()
             .afterJSON(function (body) {
             if(master) {
 
@@ -95,7 +94,6 @@ function getDevice(data)
             }
         })
         .expectStatus(200)
-        .inspectBody()
         .toss();
 }
 
@@ -108,6 +106,7 @@ function getDevice(data)
 function putDevice(data)
 {
     // TODO REFINE
+    console.log(data);
     frisby.create('PUT Device')
         .put(url + "device", data, {json:true})
         .expectJSON({
@@ -116,7 +115,6 @@ function putDevice(data)
             }
         })
         .expectStatus(200)
-        .inspectBody()
         .toss();
 }
 /**
@@ -146,6 +144,7 @@ function generateKey(data) {
             })
             .afterJSON(function(body)
             {
+                body.deviceid = data.deviceid;
                 login(body, false);
                 changeKey(body);
             })
@@ -162,7 +161,7 @@ function changeKey(data)
         keyinfo.token = data.token;
         keyinfo.key = data.key;
         keyinfo.name = "changed name";
-        frisby.create('create a key for the device')
+        frisby.create('change settings of key')
             .put(url + "key", keyinfo, {json: true})
             .expectStatus(200)
             .expectHeaderContains('content-type', 'application/json')
@@ -181,7 +180,6 @@ function changeKey(data)
  * @param data
  */
 function opendoor(data) {
-    console.log(data);
     frisby.create('try opening the door').
         get(url + "opendoor?deviceid=" + data.deviceid + "&token=" + data.token +"&door="+data.door)
         .expectStatus(200)
