@@ -8,7 +8,7 @@ define [
       doors: []
       limit: 1
       name: null
-      token: null
+      # token: null
 
     constructor: (args) ->
       _.extend this, @defaults(), args

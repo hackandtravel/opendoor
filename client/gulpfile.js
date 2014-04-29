@@ -82,7 +82,7 @@ gulp.task('images', function () {
     .pipe(gulp.dest(BUILD + '/img'));
 });
 
-gulp.task('compile', ['jsx', 'coffee', 'less', 'images']);
+gulp.task('compile', ['js', 'jsx', 'coffee', 'less', 'images']);
 
 // Rerun the task when a file changes
 gulp.task('watch', function () {
@@ -175,4 +175,4 @@ gulp.task('http-www', function () {
   server(BUILD)
 });
 
-gulp.task('development', ['watch', 'http']);
+gulp.task('development', ['compile', 'watch', 'http']);

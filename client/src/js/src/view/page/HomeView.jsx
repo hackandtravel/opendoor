@@ -2,8 +2,9 @@ define([
   'react',
   'pages',
   'view/page/header/HeaderView',
+  'view/component/DoorItem',
   'controller/controller',
-], function (React, PAGE, HeaderView, controller) {
+], function (React, PAGE, HeaderView, DoorItem, controller) {
   return React.createClass({
     getInitialState: function () {
       return {
@@ -14,11 +15,18 @@ define([
       }
     },
 
-    onOpenDoorClicked: function () {
-      if (!this.state.disabled) {
-        var i = this.refs.selectDoor.getDOMNode().selectedIndex;
-        var door = this.props.doors[i];
+    /**
+     * When a door in the list is clicked
+     */
+    onClick: function () {
 
+    },
+
+    /**
+     * When a door in the list should be opened
+     */
+    onOpenDoorClicked: function (door) {
+      if (!this.state.disabled) {
         controller.openDoor(door, controller.getToken(door.deviceid), {
           setStatus: this.setStatus,
           setLoading: this.setLoading,
@@ -65,44 +73,55 @@ define([
         'page-right': false
       });
 
-      var doors = this.props.doors.map(function (door) {
-        return (
-          <option value={door.number} data-deviceid={door.deviceid}>{door.name}</option>
-          );
-      });
+      var s = {textAlign: 'center'};
+      var doors = (this.props.doors.length > 0) ? (
+        this.props.doors.map(function (door) {
+          return (
+            <DoorItem
+            door={door}
+            onClick={this.onClick.bind(this, door)}
+            onOpenDoorClicked={this.onOpenDoorClicked.bind(this, door)}
+            />);
+        })) : (
+        <span className="list-group-item" style={s}>
+          <h4 className="list-group-item-heading">No Keys</h4>
+          <p className="list-group-item-text">
+            You don't have any valid keys at the moment
+          </p>
+          <br/>
+          <p className="list-group-item-text">
+            <a href="#/login" className="btn btn-lg btn-primary">Add key</a>
+          </p>
+        </span>
+        );
 
-      var buttonClasses = cx({
-        'btn': true,
-        'btn-primary': true,
-        'disabled': this.props.doors.length === 0 || this.state.disabled
-      });
+      /*
+       var buttonClasses = cx({
+       'btn': true,
+       'btn-primary': true,
+       'disabled': this.props.doors.length === 0 || this.state.disabled
+       });
 
-      var buttonIconClasses = cx({
-        'fa': true,
-        'fa-lock': !this.state.unlocked,
-        'fa-unlock': this.state.unlocked
-      });
+       var buttonIconClasses = cx({
+       'fa': true,
+       'fa-lock': !this.state.unlocked,
+       'fa-unlock': this.state.unlocked
+       });
+       */
 
       var style = { margin: 7 };
       return (
         <div id='page-open-door' className={classes}>
           <HeaderView loading={this.state.loading} header={this.state.status}>
-            <a id="btn-new" className="btn btn-default open-door-page pull-right" style={style} href={'#/' + PAGE.LOGIN}>
+            <a className="open-door-page button left">
+            </a>
+            <span class="middle">OpenDoor</span>
+            <a id="btn-new" className="open-door-page button right" href={'#/' + PAGE.LOGIN}>
               <span className="glyphicon glyphicon-plus"></span>
             </a>
           </HeaderView>
-          <div className="row">
-            <div className="col-md-12">
-              <div >
-                <label htmlFor="door-select">Choose a door:</label>
-                <select ref="selectDoor" id="select-door" className="form-control">
-                {doors}
-                </select>
-              </div>
-            </div>
-            <button id="btn-open-door" type="button" className={buttonClasses} onClick={this.onOpenDoorClicked}>
-              <span className={buttonIconClasses}></span>
-            </button>
+          <div className="list-group">
+            {doors}
           </div>
         </div>);
     }

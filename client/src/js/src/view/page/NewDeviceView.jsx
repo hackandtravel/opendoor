@@ -65,34 +65,30 @@ define([
       });
 
       var formGroupClasses = cx({
-        'form-group': true,
-        'door-form-group': true,
+        'list-item': true,
         'has-error': this.state.hasError
       });
 
-      var style = { margin: 7 };
       return (
         <div id='page-new-door' className={classes}>
           <HeaderView loading={this.state.loading} header={this.state.status}>
-            <a id="back-btn" className="btn btn-default new-door-page pull-left" style={style} href={'#/' + PAGE.HOME}>
+            <a id="back-btn" className="new-door-page button left" href={'#/' + PAGE.HOME}>
               <span className="glyphicon glyphicon-chevron-left"></span>
             </a>
-            <a id="login-btn" className="btn btn-primary new-door-page pull-right" style={style} onClick={this.onLoginClicked}>Add</a>
+            <span className="middle">Add Device</span>
+            <a className="button right"></a>
           </HeaderView>
-          <div className="row">
-            <div className="col-md-12">
-              <div className="new-door-page">
-                <div className={formGroupClasses}>
-                  <label htmlFor="door-select">Device ID:</label>
-                  <input ref="inputDeviceId" id="door-url" type="text" className="form-control" />
-                </div>
-                <div className={formGroupClasses}>
-                  <label htmlFor="passphrase">Key:</label>
-                  <input ref="inputKey" id="passphrase" type="password" className="form-control" />
-                </div>
-              </div>
+          <div className="list">
+            <div className={formGroupClasses}>
+              <input ref="inputDeviceId" id="door-url" type="text" placeholder="Device Id" />
+            </div>
+            <div className={formGroupClasses}>
+              <input ref="inputKey" id="passphrase" type="text" placeholder="Key" />
             </div>
           </div>
+          <footer>
+            <a className="button-full">Add</a>
+          </footer>
         </div>);
     }
   });

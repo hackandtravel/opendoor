@@ -12,10 +12,9 @@ define([
       }
 
       return (
-        <nav id="header" className="navbar navbar-default navbar-fixed-top" role="navigation">
-          <a id="new-door-brand" className="navbar-brand new-door-page">{header}</a>
+        <header id="header" role="navigation">
           {this.props.children}
-        </nav>);
+        </header>);
     }
   });
 });
