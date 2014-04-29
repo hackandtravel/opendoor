@@ -88,7 +88,7 @@ exports.login = function (deviceid, key, notificationid) {
                                 },
                                 {
                                     $push: {
-                                        'mastertoken': { token: token}
+                                        'mastertoken': { token: token , notificationid: notificationid}
                                     }
                                 },
                                 function (err, suc) {
@@ -147,7 +147,7 @@ exports.login = function (deviceid, key, notificationid) {
                             }
                         }
                     });
-                }
+                } else reject();
             });
     });
 };

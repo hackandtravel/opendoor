@@ -79,19 +79,23 @@ function getDevice(deviceid, token) {
  */
 function putDevice(device) {
     return new Promise(function (resolve, reject) {
-        hasMasterRights(device.deviceid, device.token).then(
+        var x = hasMasterRights(device.deviceid, device.token);
+            x.then(
             function (result) {
-                updateDevice(device.deviceid, device)
+                updateDevice(device.deviceid, device);
                 resolve(buildDeviceInfo(device, null));
             },
             reject);
     });
 }
 
-function updateDevice(deviceid, newdevice) {
+function updateDevice(deviceid, newDeviceInfo) {
     deviceCollection.update({ deviceid: deviceid},
         {
-            // TODO
+            $set: {
+                doors : newDeviceInfo.doors,
+                name : newDeviceInfo.name
+            }
         })
 }
 
@@ -162,7 +166,8 @@ function getMasterToken(device, token) {
 function hasMasterRights(deviceid, token) {
     return new Promise(function (resolve, reject) {
         getDeviceById(deviceid).then(function (device) {
-            if (getMasterToken(device, token).length > 0) resolve(true);
+            if (getMasterToken(device, token).length > 0)
+                resolve(true);
             else reject(false);
         });
     });

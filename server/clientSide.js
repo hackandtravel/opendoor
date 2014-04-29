@@ -32,7 +32,13 @@ var addCORSHeaders = function (req, res) {
 app.all(config.path + '/*', function (req, res, next) {
         logger.info(req.method, req.url, req.query, req.body);
         addCORSHeaders(req, res);
-        next();
+        if (endsWith(req.path, 'api') || endsWith(req.path, 'login') || endsWith(req.path, 'createDevice')) {
+            next();
+        }
+        else {
+            if (checkAuthentificationHeaders(req.query)) next();
+            else res.status(401).send('Params missing');
+        }
     }
 );
 app.get(config.path + '/api', function (req, res) {
@@ -40,57 +46,47 @@ app.get(config.path + '/api', function (req, res) {
 });
 
 app.get(config.path + '/device', function (req, res) {
-    var query = url.parse(req.url, true).query;
-    if (checkJSON(['deviceid', 'token'], query)) {
-        serverSide.getDevice(query.deviceid, query.token).then(
-            function (device) {
-                res.send(device);
-            },
-            function (error) {
-                res.send(401);
-            });
-    }
-    else res.send(401);
+    var query = req.query;
+    serverSide.getDevice(query.deviceid, query.token).then(
+        function (device) {
+            res.send(device);
+        },
+        function (error) {
+            res.send(401);
+        });
 });
 
 
 app.put(config.path + '/device', function (req, res) {
-    var json = req.body;
-    if (checkJSON(['deviceid', 'token'], json)) {
-        serverSide.putDevice(json.deviceid, json.token).then(
-            function (device) {
-                res.send(device);
-            },
-            function (error) {
-                res.send(401);
-            });
-    }
-    else res.send(401);
+    var query = req.query;
+    serverSide.putDevice(query.deviceid, query.token).then(
+        function (device) {
+            res.json(device);
+        },
+        function (error) {
+            res.send(401);
+        });
 });
 
 app.get(config.path + '/login', function (req, res) {
-    var query = url.parse(req.url, true).query;
-    var key = query.key;
-    var deviceid = query.deviceid;
-    var notificationid = query.notificationid;
+    var key = req.query.key;
+    var deviceid = req.query.deviceid;
+    var notificationid = req.query.notificationid;
     serverSide.login(deviceid, key, notificationid).then(function (deviceInfo) {
-        if (deviceInfo) {
             logger.info("user login: successful");
             res.send(deviceInfo);
-        }
-        else {
+        },
+        function (error) {
             res.status(401).send();
             logger.info("user login: bad key or deviceid");
-        }
-    });
+        });
 });
 
 
 app.get(config.path + '/opendoor', function (req, res) {
-        var query = url.parse(req.url, true).query;
-        var token = query.token;
-        var deviceid = query.deviceid;
-        var door = parseInt(query.door);
+        var token = req.query.token;
+        var deviceid = req.query.deviceid;
+        var door = parseInt(req.query.door);
 
         serverSide.opendoor(deviceid, door, token).then(function (success) {
             logger.info("user opened door " + deviceid + " door: " + door);
@@ -118,7 +114,7 @@ app.get(config.path + '/opendoor', function (req, res) {
  */
 
 app.get(config.path + '/createDevice', function (req, res) {
-        var query = url.parse(req.url, true).query;
+        var query = req.query;
         var doors = parseInt(query.doors);
         var user = query.user;
         var pwd = query.pwd;
@@ -154,22 +150,26 @@ app.get(config.path + '/createAdmin', function (req, res) {
  */
 
 app.post(config.path + '/key', function (req, res) {
-        var json = req.body;
-        var props = ['deviceid', 'doors', 'expire', 'limit', 'name', 'token'];
-        if (!checkJSON(props, json)) {
+        var query = req.body;
+        var props = [ 'doors', 'expire', 'limit', 'name'];
+        if (!checkJSON(props, query)) {
             res.status(500).send();
         }
         else {
-            serverSide.generateKey(json).then(function (suc) {
+            serverSide.generateKey(query).then(function (suc) {
                     res.json(suc);
                 },
                 function (err) {
-                    res.status(500).send(err);
+                    res.status(401).send(err);
                 });
         }
     }
 );
 
+function checkAuthentificationHeaders(query) {
+    var props = ['deviceid', 'token'];
+    return checkJSON(props, query);
+}
 function checkJSON(properties, json) {
     return properties.every(function (one) {
         return one in json
@@ -184,3 +184,6 @@ function checkJSON(properties, json) {
 
 exports.app = app;
 
+function endsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}

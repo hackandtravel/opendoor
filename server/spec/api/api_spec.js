@@ -108,7 +108,7 @@ function putDevice(data)
     // TODO REFINE
     console.log(data);
     frisby.create('PUT Device')
-        .put(url + "device", data, {json:true})
+        .put(url + "device?deviceid=" + data.deviceid +"&token="+data.token, data, {json:true})
         .expectJSON({
             deviceid: function (deviceid) {
                 expect(deviceid).toBeDefined();
@@ -131,7 +131,7 @@ function generateKey(data) {
         keyinfo.deviceid = data.deviceid;
         keyinfo.token = data.token;
         frisby.create('create a key for the device')
-            .post(url + "key", keyinfo, {json: true})
+            .post(url + "key" + "?deviceid=" +keyinfo.deviceid + "&token=" + keyinfo.token, keyinfo, {json: true})
             .expectStatus(200)
             .expectHeaderContains('content-type', 'application/json')
             .expectJSON({
@@ -145,6 +145,7 @@ function generateKey(data) {
             .afterJSON(function(body)
             {
                 body.deviceid = data.deviceid;
+                body.token = data.token;
                 login(body, false);
                 changeKey(body);
             })
@@ -162,7 +163,7 @@ function changeKey(data)
         keyinfo.key = data.key;
         keyinfo.name = "changed name";
         frisby.create('change settings of key')
-            .put(url + "key", keyinfo, {json: true})
+            .put(url + "key"+ "?deviceid=" +keyinfo.deviceid + "&token=" + keyinfo.token, keyinfo, {json: true})
             .expectStatus(200)
             .expectHeaderContains('content-type', 'application/json')
             .expectJSON({
