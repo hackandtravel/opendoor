@@ -1,6 +1,6 @@
 FROM dockerfile/nodejs
 
-RUN apt-get install -y gcc make build-essential
+RUN apt-get install -y gcc make build-essential python
 
 # http://bitjudo.com/blog/2014/03/13/building-efficient-dockerfiles-node-dot-js/
 ADD package.json /tmp/package.json
