@@ -16,8 +16,8 @@ var minifyCSS = require('gulp-minify-css');
 var http = require('http');
 var ecstatic = require('ecstatic');
 
-const SRC = 'src';
-const BUILD = 'www';
+const SRC = 'www';
+const BUILD = 'build';
 
 const HTTP_PORT = 8000;
 

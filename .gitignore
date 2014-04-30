@@ -1,8 +1,5 @@
 .DS_Store
 /opendoor/data
-/client/merges
-/client/plugins
-/client/platforms
 .idea
 *.iml
 secret/
