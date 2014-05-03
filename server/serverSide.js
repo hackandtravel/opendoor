@@ -123,7 +123,7 @@ exports.login = function (deviceid, key, notificationid) {
                                 // key found in user keys
                                 keyObj = filteredKeys[0];
                             }
-
+                            var test = keyObj && keyObj.expire > now && keyObj.limit >= 1;
                             if (keyObj && keyObj.expire > now && keyObj.limit >= 1) {
                                 deviceCollection.update(
                                     {
@@ -145,6 +145,7 @@ exports.login = function (deviceid, key, notificationid) {
                                 deviceInfo.masterToken = false;
                                 resolve(deviceInfo);
                             }
+                            else reject();
                         }
                     });
                 } else reject();

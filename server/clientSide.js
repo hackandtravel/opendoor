@@ -59,7 +59,7 @@ app.get(config.path + '/device', function (req, res) {
 
 app.put(config.path + '/device', function (req, res) {
     var query = req.query;
-    serverSide.putDevice(query.deviceid, query.token).then(
+    serverSide.putDevice(req.body, query.deviceid, query.token).then(
         function (device) {
             res.json(device);
         },

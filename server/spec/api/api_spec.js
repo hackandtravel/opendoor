@@ -124,7 +124,7 @@ function putDevice(data)
 
 var keyinfo = {};
 keyinfo.expire = new Date().getTime() + 1000 * 60 * 60 * 24 * 3; // 3 tage
-keyinfo.limit = 1;
+keyinfo.limit = 1000;
 keyinfo.doors = [1, 2];
 keyinfo.name = "test key";
 function generateKey(data) {
@@ -142,6 +142,7 @@ function generateKey(data) {
                     expect(key).toBeDefined();
                 }
             })
+            .inspectBody()
             .afterJSON(function(body)
             {
                 body.deviceid = data.deviceid;

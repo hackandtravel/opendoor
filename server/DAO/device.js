@@ -77,26 +77,35 @@ function getDevice(deviceid, token) {
  * put device
  * @param device
  */
-function putDevice(device) {
+function putDevice(device, deviceid, token) {
     return new Promise(function (resolve, reject) {
-        var x = hasMasterRights(device.deviceid, device.token);
-            x.then(
+        hasMasterRights(device.deviceid, token).then(
             function (result) {
-                updateDevice(device.deviceid, device);
-                resolve(buildDeviceInfo(device, null));
+                updateDevice(deviceid, device).then(function(deviceupdated) {
+                    resolve(buildDeviceInfo(deviceupdated, null));
+                });
             },
-            reject);
+            function(dummy)
+            {
+                reject();
+            });
     });
 }
 
 function updateDevice(deviceid, newDeviceInfo) {
-    deviceCollection.update({ deviceid: deviceid},
-        {
-            $set: {
-                doors : newDeviceInfo.doors,
-                name : newDeviceInfo.name
-            }
-        })
+    return new Promise(function(resolve, reject) {
+        deviceCollection.findAndModify({ deviceid: deviceid}, {},
+            {
+                $set: {
+                    doors: newDeviceInfo.doors,
+                    name: newDeviceInfo.name
+                }
+            },{}, function (err, suc) {
+                if(err)reject(err);
+                else if(suc) resolve(suc);
+                else reject();
+            });
+    });
 }
 
 function addKey(key, deviceid) {
@@ -128,8 +137,8 @@ function getDeviceById(deviceid) {
     return new Promise(function (resolve, reject) {
         deviceCollection.findOne({deviceid: deviceid}, function (err, suc) {
             if (err) reject(err);
-            if (suc) resolve(suc);
-            reject();
+            else if (suc) resolve(suc);
+            else reject();
         });
     });
 };
@@ -166,8 +175,9 @@ function getMasterToken(device, token) {
 function hasMasterRights(deviceid, token) {
     return new Promise(function (resolve, reject) {
         getDeviceById(deviceid).then(function (device) {
-            if (getMasterToken(device, token).length > 0)
-                resolve(true);
+            if (getMasterToken(device, token).length > 0) {
+                resolve("true");
+            }
             else reject(false);
         });
     });
