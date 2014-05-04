@@ -36,7 +36,6 @@ frisby.create('create Device')
 
         } // Custom matcher callback
     })
-    .inspectBody()
     .afterJSON(function (body) {
             // login in with master key
             body.key =body.masterkey;
@@ -106,7 +105,6 @@ function getDevice(data)
 function putDevice(data)
 {
     // TODO REFINE
-    console.log(data);
     frisby.create('PUT Device')
         .put(url + "device?deviceid=" + data.deviceid +"&token="+data.token, data, {json:true})
         .expectJSON({
@@ -142,7 +140,6 @@ function generateKey(data) {
                     expect(key).toBeDefined();
                 }
             })
-            .inspectBody()
             .afterJSON(function(body)
             {
                 body.deviceid = data.deviceid;
@@ -167,6 +164,7 @@ function changeKey(data)
             .put(url + "key"+ "?deviceid=" +keyinfo.deviceid + "&token=" + keyinfo.token, keyinfo, {json: true})
             .expectStatus(200)
             .expectHeaderContains('content-type', 'application/json')
+            .inspectBody()
             .expectJSON({
                 expire: function (ex) {
                     expect(ex).toBeGreaterThan(new Date().getTime())

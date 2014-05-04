@@ -32,6 +32,8 @@ exports.createDevice = deviceDAO.createDevice;
 exports.getDevice = deviceDAO.getDevice;
 exports.putDevice = deviceDAO.putDevice;
 exports.generateKey = keyDAO.generateKey;
+exports.putKey = keyDAO.changeKey;
+
 
 /**
  * token keys

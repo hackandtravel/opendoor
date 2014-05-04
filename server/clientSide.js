@@ -32,7 +32,8 @@ var addCORSHeaders = function (req, res) {
 app.all(config.path + '/*', function (req, res, next) {
         logger.info(req.method, req.url, req.query, req.body);
         addCORSHeaders(req, res);
-        if (endsWith(req.path, 'api') || endsWith(req.path, 'login') || endsWith(req.path, 'createDevice')) {
+        if (endsWith(req.path, 'api') || endsWith(req.path, 'login') ||
+            endsWith(req.path, 'createDevice') || endsWith(req.path, 'createAdmin')) {
             next();
         }
         else {
@@ -163,6 +164,16 @@ app.post(config.path + '/key', function (req, res) {
                     res.status(401).send(err);
                 });
         }
+    }
+);
+
+app.put(config.path + '/key', function (req, res) {
+        serverSide.putKey(req.body, req.query.deviceid, req.query.token).then(function (suc) {
+                res.json(suc);
+            },
+            function (err) {
+                res.status(401).send(err);
+            });
     }
 );
 

@@ -17,9 +17,9 @@ exports.putDevice = putDevice;
 exports.buildDeviceInfo = buildDeviceInfo;
 exports.checkToken = checkToken;
 exports.hasMasterRights = hasMasterRights;
-exports.addKey = addKey;
 exports.init = function (deviceCol) {
     deviceCollection = deviceCol;
+    exports.deviceCollection = deviceCollection;
 }
 /**
  * create a new device so the server can recognize it will
@@ -108,31 +108,6 @@ function updateDevice(deviceid, newDeviceInfo) {
     });
 }
 
-function addKey(key, deviceid) {
-    return new Promise(function (resolve, reject) {
-        deviceCollection.update(
-            {
-                deviceid: deviceid
-            },
-            {
-                $push: {
-                    keys: key
-                }
-            },
-            function (err, suc) {
-                if (err) {
-                    logger.info(err);
-                    reject(new Error("mongo error"));
-                }
-                if (suc) {
-                    logger.info("successfully added key");
-                    resolve(key);
-                }
-                else reject(new Error("update failed"));
-            }
-        );
-    });
-}
 function getDeviceById(deviceid) {
     return new Promise(function (resolve, reject) {
         deviceCollection.findOne({deviceid: deviceid}, function (err, suc) {
