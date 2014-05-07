@@ -17,13 +17,13 @@ define([
         setStatus: this.setStatus
       });
     },
-    
+
     defaults: {
       name: 'New Key',
       limit: 3,
-      expireDate: new Date(new Date().getTime() + 1000*60*60*24*356).toISOString().slice(0,10)
+      expireDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 356).toISOString().slice(0, 10)
     },
-    
+
     getInitialState: function () {
       return {
         status: 'Generate Key',
@@ -64,7 +64,7 @@ define([
         this.setState(obj);
       }.bind(this);
     },
-    
+
     render: function () {
       var cx = React.addons.classSet;
       var classes = cx({
@@ -80,13 +80,13 @@ define([
       });
 
       var status = <div className="center">{this.state.status}</div>;
-      
+
       var door = this.props.door;
 
       return (
         <div id='page-new-door' className={classes}>
           <HeaderView loading={this.state.loading} header={status}>
-            <a 
+            <a
             id="back-btn"
             className="new-door-page button button-normal left"
             href={['#', PAGE.DOOR, door.deviceid, door.number].join('/')}
