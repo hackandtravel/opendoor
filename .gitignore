@@ -6,3 +6,4 @@ secret/
 node_modules/
 *.bat
 *.log
+server/config.js

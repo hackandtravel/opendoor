@@ -4,7 +4,7 @@
 
 var deviceCollection;
 var helpers = require('../helpers.js');
-var hat = require('hat').rack(32, 16, 2);
+var hat = require('hat').rack(16, 16, 2);
 var bcrypt = require('bcrypt');
 var Promise = require('es6-promise').Promise;
 var logger = require('../logger.js');
@@ -110,21 +110,29 @@ function updateDevice(deviceid, newDeviceInfo) {
     });
 }
 
-function updateKey(deviceid, newDeviceInfo) {
+function updateKey( newDeviceInfo, deviceid) {
     return new Promise(function(resolve, reject) {
-        deviceCollection.findAndModify({ deviceid: deviceid }, {},
+        console.log(newDeviceInfo.name)
+        deviceCollection.findAndModify({ deviceid: deviceid, 'keys.key' : newDeviceInfo.key},
+            {},
             {
                 $set: {
-                    doors: newDeviceInfo.doors,
-                    name: newDeviceInfo.name
+                    'keys.$.name': newDeviceInfo.name,
+                    'keys.$.expire': newDeviceInfo.expire,
+                    'keys.$.doors': newDeviceInfo.doors,
+                    'keys.$.limit': newDeviceInfo.limit
                 }
-            },{}, function (err, suc) {
+            },
+            {new:true},
+            function (err, suc) {
                 if(err)reject(err);
                 else if(suc) resolve(suc);
                 else reject();
             });
     });
-}function addKey(key, deviceid) {
+}
+
+function addKey(key, deviceid) {
     return new Promise(function (resolve, reject) {
         deviceCollection.update(
             {
@@ -195,7 +203,8 @@ function hasMasterRights(deviceid, token) {
                 resolve("true");
             }
             else reject(false);
-        });
+        },
+            reject);
     });
 }
 
@@ -223,7 +232,7 @@ function buildDeviceInfo(device, key) {
     };
     if (key) {
         delete key.token;
-        deviceInfo.key = key;
+        deviceInfo.keys = key;
     }
     else {
         device.keys.map(function (value) {
