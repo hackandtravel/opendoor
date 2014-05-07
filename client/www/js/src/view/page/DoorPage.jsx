@@ -14,14 +14,15 @@ define([
       });
       
       var door = this.props.door;
+      
+      var header = <div className="center">{door.name}</div>;
 
       return (
         <div className={classes}>
-          <Header loading={false} header={door.name}>
+          <Header loading={false} header={header}>
             <a id="back-btn" className="new-door-page button button-normal left" href={'#/' + PAGE.HOME}>
               <span className="glyphicon glyphicon-chevron-left"></span>
             </a>
-            <span className="button right" />
           </Header>
           <footer>
             <a 
