@@ -31,16 +31,19 @@ exports.generateKey = function (keyInfo,deviceid, token) {
                     key.name = keyInfo.name;
                     key.key = randomKey;
                     resolve(deviceDAO.addKey(key,deviceid));
-                }, reject);
+                }, function(wrong)
+                {
+                    reject(wrong);
+                });
 
         });
     };
 
-exports.changeKeye = function (keyInfo,deviceid, token) {
+exports.changeKey = function (keyInfo,deviceid, token) {
         return new Promise(function (resolve, reject) {
             deviceDAO.hasMasterRights(deviceid, token).then(
                 function (bool) {
-                    resolve(deviceDAO.addKey(key,keyInfo.deviceid));
+                    resolve(deviceDAO.updateKey(keyInfo, deviceid));
                 }, reject);
 
         });

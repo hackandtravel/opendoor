@@ -133,7 +133,7 @@ function generateKey(data, isAllowed) {
        if(!isAllowed) {
            frisby.create('create a key for the device')
                .post(url + "key" + "?deviceid=" + keyinfo.deviceid + "&token=" + keyinfo.token, keyinfo, {json: true})
-               .expectStatus(404)
+               .expectStatus(401)
                .toss();
        }
     else {
@@ -174,16 +174,16 @@ function changeKey(data)
             .expectStatus(200)
             .expectHeaderContains('content-type', 'application/json')
             .expectJSON({
-                expire: function (ex) {
-                    expect(ex).toBeGreaterThan(new Date().getTime())
-                },
-                key: function (key) {
-                    expect(key).toBeDefined();
-                },
-                name : "changed name"
+                keys: function (keys) {
+                    expect(keys).toBeDefined();
+                    expect(keys[0].name).toBe("changed name")
+                    expect(keys[0].expire).toBeGreaterThan(new Date().getTime())
+                }
             })
             .toss();
-}/**
+}
+
+/**
  * data should contain device id and token and door
  * @param data
  */
