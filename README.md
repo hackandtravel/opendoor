@@ -14,6 +14,9 @@ I manage to open the door via ssh and was already very happy. When we went to Be
 A client and a server. The client authenticates with the server gets a token and from then on any door you add can be opened with a single button push. You can add multiple doors and choose between them.
 
 The server has the capabilities to generate passphrases with a masterpasswort. These passphrases can then be used to login to the server and obtain a secure token which will be used for authentication from this point on.
+#### API Documentation
+
+http://docs.opendoor.apiary.io/
 
 #### Setup
 ##### Requirements
@@ -32,18 +35,13 @@ Install git and node js on your raspberry pi.
 Type: 
 
     sudo apt-get install git node npm
-    git clone [TODO adress to repository]
+    git clone https://github.com/hackandtravel/opendoor.git
     cd opendoor
-    !!! IMPORTANT !!!
-    open the file server.js and change your masterpassword
-    !!! IMPORTANT !!!
 
 start the server with:
 
-    node server.js
+    node server/server.js
 
-Open your browser and go to ipadressofraspberry:8000/opendoor/generate?pw=THEPASSWORDYOUCHANGED
-you will receive a passphrase
 
 Now search for opendoor in the marketplace and download the app
 Open it and enter yourip:8000 in the first field

@@ -17,9 +17,9 @@ exports.init = function(deviceDA)
      * @param keyinfo
      * @param  cb
      */
-exports.generateKey = function (keyInfo) {
+exports.generateKey = function (keyInfo,deviceid, token) {
         return new Promise(function (resolve, reject) {
-            deviceDAO.hasMasterRights(keyInfo.deviceid, keyInfo.token).then(
+            deviceDAO.hasMasterRights(deviceid, token).then(
                 function (bool) {
                     var randomKey = helpers.generateRandomString(config.keyLength);
                     // add to database
@@ -29,6 +29,16 @@ exports.generateKey = function (keyInfo) {
                     key.limit = keyInfo.limit;
                     key.name = keyInfo.name;
                     key.key = randomKey;
+                    resolve(deviceDAO.addKey(key,deviceid));
+                }, reject);
+
+        });
+    };
+
+exports.changeKeye = function (keyInfo,deviceid, token) {
+        return new Promise(function (resolve, reject) {
+            deviceDAO.hasMasterRights(deviceid, token).then(
+                function (bool) {
                     resolve(deviceDAO.addKey(key,keyInfo.deviceid));
                 }, reject);
 

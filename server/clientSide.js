@@ -5,8 +5,8 @@ var serverSide = require('./serverSide.js');
 var helpers = require('./helpers');
 var logger = require('./logger.js');
 /** json api server
- *GET Methods:
-
+  look for docu at
+ http://docs.opendoor.apiary.io/
 
  */
 
@@ -17,14 +17,16 @@ app.use(express.json());
 var addCORSHeaders = function (req, res) {
     res.setHeader("Access-Control-Max-Age", "300")
     res.setHeader("Access-Control-Allow-Origin", req.headers['origin'])
-    res.setHeader("Access-Control-Allow-Credentials", "true")
+    res.setHeader("Access-Control-Allow-Credentials", "true");
 
-    if (req.headers.hasOwnProperty("access-control-request-method")) {
-        res.setHeader("Access-Control-Allow-Methods", req.header['access-control-request-method']);
+    var reqmethod =   req.header('access-control-request-method');
+    if (reqmethod != null) {
+        res.setHeader("Access-Control-Allow-Methods",reqmethod);
     }
 
-    if (req.headers.hasOwnProperty("access-control-request-headers")) {
-        res.setHeader("Access-Control-Allow-Headers", req.header['access-control-request-headers']);
+    var reqheaders = req.header("access-control-request-headers");
+    if (reqheaders != null) {
+        res.setHeader("Access-Control-Allow-Headers", reqheaders);
     }
 };
 
@@ -41,6 +43,10 @@ app.all(config.path + '/*', function (req, res, next) {
         }
     }
 );
+app.options(config.path + '*', function(req, res)
+{
+    res.send(200);
+});
 app.get(config.path + '/api', function (req, res) {
     res.send('OpenDoor API up and running');
 });
@@ -80,6 +86,7 @@ app.get(config.path + '/login', function (req, res) {
             res.status(401).send();
             logger.info("user login: bad key or deviceid");
         });
+
 });
 
 
@@ -142,12 +149,7 @@ app.get(config.path + '/createAdmin', function (req, res) {
         if (success) res.send('created admin accoun');
     });
 });
-/**
- *    generates new devices, expected params:
- *    @param user
- *    @param pwd
- *    @param doors  : amount of dooors
- */
+
 
 app.post(config.path + '/key', function (req, res) {
         var query = req.body;
@@ -156,7 +158,7 @@ app.post(config.path + '/key', function (req, res) {
             res.status(500).send();
         }
         else {
-            serverSide.generateKey(query).then(function (suc) {
+            serverSide.generateKey(query,req.query.deviceid, req.query.token).then(function (suc) {
                     res.json(suc);
                 },
                 function (err) {
@@ -166,7 +168,22 @@ app.post(config.path + '/key', function (req, res) {
     }
 );
 
-function checkAuthentificationHeaders(query) {
+app.put(config.path + '/key', function (req, res) {
+        var query = req.body;
+        var props = [ 'doors', 'expire', 'limit', 'name'];
+        if (!checkJSON(props, query)) {
+            res.status(500).send();
+        }
+        else {
+            serverSide.putKey(query, req.query.deviceid, req.query.token).then(function (suc) {
+                    res.json(suc);
+                },
+                function (err) {
+                    res.status(401).send(err);
+                });
+        }
+    }
+);function checkAuthentificationHeaders(query) {
     var props = ['deviceid', 'token'];
     return checkJSON(props, query);
 }

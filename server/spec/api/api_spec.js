@@ -66,7 +66,7 @@ function login(data, master) {
 
                 body.door = 1;
                 opendoor(body);
-                generateKey(body);
+                generateKey(body, true);
                 getDevice(body);
                 putDevice(body);
             }
@@ -74,6 +74,7 @@ function login(data, master) {
             {
                 body.door = 1;
                 opendoor(body);
+                generateKey(body, false)
                 getDevice(body);
             }
         })
@@ -81,39 +82,38 @@ function login(data, master) {
 }
 
 /**
- * testing get device
- */
+* testing get device
+*/
 
 function getDevice(data)
 {
-     frisby.create('GET Device')
-        .get(url + "device?deviceid=" + data.deviceid +"&token="+data.token)
-        .expectJSON({
-            deviceid: function (deviceid) {
-                expect(deviceid).toBeDefined();
-            }
-        })
-        .expectStatus(200)
-        .toss();
+ frisby.create('GET Device')
+    .get(url + "device?deviceid=" + data.deviceid +"&token="+data.token)
+    .expectJSON({
+        deviceid: function (deviceid) {
+            expect(deviceid).toBeDefined();
+        }
+    })
+    .expectStatus(200)
+    .toss();
 }
 
 
 
 /**
- * testing get device
- */
+* testing get device
+*/
 
 function putDevice(data)
 {
-    // TODO REFINE
-    console.log(data);
-    frisby.create('PUT Device')
-        .put(url + "device?deviceid=" + data.deviceid +"&token="+data.token, data, {json:true})
-        .expectJSON({
-            deviceid: function (deviceid) {
-                expect(deviceid).toBeDefined();
-            }
-        })
+// TODO REFINE
+frisby.create('PUT Device')
+    .put(url + "device?deviceid=" + data.deviceid +"&token="+data.token, data, {json:true})
+    .expectJSON({
+        deviceid: function (deviceid) {
+            expect(deviceid).toBeDefined();
+        }
+    })
         .expectStatus(200)
         .toss();
 }
@@ -127,30 +127,37 @@ keyinfo.expire = new Date().getTime() + 1000 * 60 * 60 * 24 * 3; // 3 tage
 keyinfo.limit = 1000;
 keyinfo.doors = [1, 2];
 keyinfo.name = "test key";
-function generateKey(data) {
+function generateKey(data, isAllowed) {
         keyinfo.deviceid = data.deviceid;
         keyinfo.token = data.token;
-        frisby.create('create a key for the device')
-            .post(url + "key" + "?deviceid=" +keyinfo.deviceid + "&token=" + keyinfo.token, keyinfo, {json: true})
-            .expectStatus(200)
-            .expectHeaderContains('content-type', 'application/json')
-            .expectJSON({
-                expire: function (ex) {
-                    expect(ex).toBeGreaterThan(new Date().getTime())
-                },
-                key: function (key) {
-                    expect(key).toBeDefined();
-                }
-            })
-            .inspectBody()
-            .afterJSON(function(body)
-            {
-                body.deviceid = data.deviceid;
-                body.token = data.token;
-                login(body, false);
-                changeKey(body);
-            })
-            .toss();
+
+       if(!isAllowed) {
+           frisby.create('create a key for the device')
+               .post(url + "key" + "?deviceid=" + keyinfo.deviceid + "&token=" + keyinfo.token, keyinfo, {json: true})
+               .expectStatus(404)
+               .toss();
+       }
+    else {
+           frisby.create('create a key for the device')
+               .post(url + "key" + "?deviceid=" + keyinfo.deviceid + "&token=" + keyinfo.token, keyinfo, {json: true})
+               .expectStatus(200)
+               .expectHeaderContains('content-type', 'application/json')
+               .expectJSON({
+                   expire: function (ex) {
+                       expect(ex).toBeGreaterThan(new Date().getTime())
+                   },
+                   key: function (key) {
+                       expect(key).toBeDefined();
+                   }
+               })
+               .afterJSON(function (body) {
+                   body.deviceid = data.deviceid;
+                   body.token = data.token;
+                   login(body, false);
+                   changeKey(body);
+               })
+               .toss();
+       }
 }
 
 /**

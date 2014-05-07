@@ -18,6 +18,7 @@ exports.buildDeviceInfo = buildDeviceInfo;
 exports.checkToken = checkToken;
 exports.hasMasterRights = hasMasterRights;
 exports.addKey = addKey;
+exports.updateKey = updateKey;
 exports.init = function (deviceCol) {
     deviceCollection = deviceCol;
 }
@@ -102,13 +103,27 @@ function updateDevice(deviceid, newDeviceInfo) {
                 }
             },{}, function (err, suc) {
                 if(err)reject(err);
-                else if(suc) resolve(suc);
+                else if(suc&& suc!= 0) resolve(suc);
                 else reject();
             });
     });
 }
 
-function addKey(key, deviceid) {
+function updateKey(deviceid, newDeviceInfo) {
+    return new Promise(function(resolve, reject) {
+        deviceCollection.findAndModify({ deviceid: deviceid }, {},
+            {
+                $set: {
+                    doors: newDeviceInfo.doors,
+                    name: newDeviceInfo.name
+                }
+            },{}, function (err, suc) {
+                if(err)reject(err);
+                else if(suc) resolve(suc);
+                else reject();
+            });
+    });
+}function addKey(key, deviceid) {
     return new Promise(function (resolve, reject) {
         deviceCollection.update(
             {
