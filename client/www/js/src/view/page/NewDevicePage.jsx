@@ -11,8 +11,8 @@ define([
         status: 'Add Key',
         hasError: false,
         loading: false,
-        inputDeviceId: '5b825e4d',
-        inputKey: 'f4cb1ff2432032bb1451'
+        inputDeviceId: '',
+        inputKey: ''
       }
     },
 
