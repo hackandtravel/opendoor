@@ -21,6 +21,7 @@ exports.addKey = addKey;
 exports.updateKey = updateKey;
 exports.init = function (deviceCol) {
     deviceCollection = deviceCol;
+    exports.deviceCollection = deviceCollection;
 }
 /**
  * create a new device so the server can recognize it will

@@ -36,7 +36,6 @@ frisby.create('create Device')
 
         } // Custom matcher callback
     })
-    .inspectBody()
     .afterJSON(function (body) {
             // login in with master key
             body.key =body.masterkey;

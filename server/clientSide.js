@@ -34,7 +34,8 @@ var addCORSHeaders = function (req, res) {
 app.all(config.path + '/*', function (req, res, next) {
         logger.info(req.method, req.url, req.query, req.body);
         addCORSHeaders(req, res);
-        if (endsWith(req.path, 'api') || endsWith(req.path, 'login') || endsWith(req.path, 'createDevice')) {
+        if (endsWith(req.path, 'api') || endsWith(req.path, 'login') ||
+            endsWith(req.path, 'createDevice') || endsWith(req.path, 'createAdmin')) {
             next();
         }
         else {

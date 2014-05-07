@@ -5,6 +5,7 @@
 var Promise = require('es6-promise').Promise;
 var config = require('../config.js');
 var helpers = require('../helpers.js');
+var logger = require('../logger.js');
 var deviceDAO;
 
 exports.init = function(deviceDA)
