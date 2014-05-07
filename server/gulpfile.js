@@ -5,19 +5,20 @@ var nodemon = require('gulp-nodemon');
 
 const paths = {
     specCoffee: 'spec/**/*.coffee',
-	specJs: 	'spec/**/api-spec.js'
+	specAPI: 	'spec/api/'
 };
 
 gulp.task('test', function () {
+
     gulp.src(paths.specCoffee)
         .pipe(coffee())
         .pipe(gulp.dest('spec'))
         .pipe(jasmine({verbose: true, includeStackTrace: true}));
 });
 
-gulp.task('testfrisby', function () {
-    gulp.src(paths.specJs)
-        .pipe(gulp.dest('spec'))
+gulp.task('testapi', function () {
+    gulp.src(paths.specAPI)
+        .pipe(gulp.dest(paths.specAPI))
         .pipe(jasmine({verbose: true, includeStackTrace: true}));
 });
 

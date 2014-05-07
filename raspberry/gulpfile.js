@@ -7,8 +7,8 @@ var tap = require('gulp-tap');
 var fs = require('fs');
 
 const RASPBERRY_USERNAME = 'pi';
-//const RASPBERRY_IP = '192.168.1.108';
-const RASPBERRY_IP = '192.168.0.26';
+//const RASPBERRY_IP = '192.168.1.10';
+const RASPBERRY_IP = '192.168.0.101';
 const RASPBERRY_FOLDER_NAME = 'raspberry';
 
 const paths = {

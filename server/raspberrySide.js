@@ -1,5 +1,7 @@
 var sockets = {};
 var logger = require("./logger.js");
+var Promise = require('es6-promise').Promise;
+
 function getIO(server) {
     var io = require('socket.io').listen(server);
     io.set('log level', 2);
@@ -14,16 +16,16 @@ function getIO(server) {
         socket.on('status', function (data) {
             if(socket)
             {
-                //var cb = socket.get("openDoorCallBack");
-                //cb(null, data);
-                // todo make callback somehow to client
-            }
-            if(data && data.status == "opened")
-            {
+            //var cb = socket.get("openDoorCallBack");
+            //cb(null, data);
+            // todo make callback somehow to client
+        }
+        if(data && data.status == "opened")
+        {
 
-                //cb(null, data);
-            }
-           // else //cb(new Error("something went wront opening the door"));
+            //cb(null, data);
+        }
+        // else //cb(new Error("something went wront opening the door"));
 
         });
 
@@ -37,14 +39,16 @@ function getIO(server) {
     return io;
 }
 
-function openDoor(deviceid, door, buzzTime, cb)
+function openDoor(deviceid, door, buzzTime)
 {
-    if(sockets[deviceid]) {
-        sockets[deviceid].set("openDoorCallBack", cb);
-        sockets[deviceid].emit('openDoor', {doorNumber: door, buzzTime: buzzTime});
-        cb(null, "it worked")
-    }
-    else cb(new Error("No device with this ID connected"))
+    return new Promise(function(resolve, reject)
+    {
+        if(sockets[deviceid]) {
+            sockets[deviceid].emit('openDoor', {doorNumber: door, buzzTime: buzzTime});
+            resolve("open door command sent");
+        }
+        else reject(new Error("No device with this ID connected"));
+    });
 }
 exports.openDoor = openDoor;
 exports.getIO = getIO;
