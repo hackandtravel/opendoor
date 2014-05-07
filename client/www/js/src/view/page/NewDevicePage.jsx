@@ -1,7 +1,7 @@
 define([
   'react',
   'pages',
-  'view/page/header/HeaderView',
+  'view/component/HeaderView',
   'controller/controller',
   'evil-things'
 ], function (React, PAGE, HeaderView, controller) {
@@ -10,7 +10,9 @@ define([
       return {
         status: 'Add Key',
         hasError: false,
-        loading: false
+        loading: false,
+        inputDeviceId: '5b825e4d',
+        inputKey: 'f4cb1ff2432032bb1451'
       }
     },
 
@@ -28,9 +30,6 @@ define([
         setRouteHome: this.props.route.bind(this, PAGE.HOME),
         addDevice: this.props.addDevice
       });
-
-      inputDeviceId.value = '';
-      inputKey.value = '';
     },
 
     setStatus: function (status) {
@@ -55,6 +54,14 @@ define([
       })
     },
 
+    setField: function (key) {
+      return function (e) {
+        var obj = {};
+        obj[key] = e.target.value;
+        this.setState(obj);
+      }
+    },
+
     render: function () {
       var cx = React.addons.classSet;
       var classes = cx({
@@ -69,7 +76,7 @@ define([
         'has-error': this.state.hasError
       });
 
-      var status = <div className="middle">{this.state.status}</div>;
+      var status = <div className="center">{this.state.status}</div>;
 
       return (
         <div id='page-new-door' className={classes}>
@@ -80,15 +87,29 @@ define([
           </HeaderView>
           <div className="list">
             <div className={formGroupClasses}>
-              <input ref="inputDeviceId" id="door-url" type="text" placeholder="Device Id" />
+              <input
+              type="text"
+              ref="inputDeviceId"
+              id="door-url"
+              placeholder="Device Id"
+              value={this.state.inputDeviceId}
+              onChange={this.setField('inputDeviceId')}
+              />
             </div>
             <div className={formGroupClasses}>
-              <input ref="inputKey" id="passphrase" type="text" placeholder="Key" />
-            </div>
-            <div className="list-item">
-              <a className="button-full button-primary" onClick={this.onLoginClicked}>Add</a>
+              <input
+              ref="inputKey"
+              id="passphrase"
+              type="text"
+              placeholder="Key"
+              value={this.state.inputKey}
+              onChange={this.setField('inputKey')}
+              />
             </div>
           </div>
+          <footer>
+            <a className="button-full button-primary" onClick={this.onLoginClicked}>Add</a>
+          </footer>
         </div>);
     }
   });

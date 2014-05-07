@@ -1,6 +1,8 @@
 define(function() {
   return Object.freeze({
     HOME: 'home',
-    LOGIN: 'login'
+    LOGIN: 'login',
+    DOOR: 'door',
+    NEW_KEY: 'generate'
   });
 });

@@ -19,4 +19,15 @@ define([
       }, []);
     };
   }
+  
+  if (typeof Array.prototype.find != 'function') {
+    Array.prototype.find = function (fun) {
+      var filtered = this.filter(fun);
+      if (filtered.length > 0) {
+        return filtered[0];
+      } else {
+        return null;
+      }
+    };
+  }
 });

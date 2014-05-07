@@ -17,7 +17,7 @@ define [
         url: '/openDoor'
         data:
           deviceid: door.deviceid
-          doorNumber: door.number
+          door: door.number
           token: token
 
         success: (res) ->

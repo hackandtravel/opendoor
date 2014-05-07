@@ -1,7 +1,7 @@
 define([
   'react',
   'pages',
-  'view/page/header/HeaderView',
+  'view/component/HeaderView',
   'view/component/DoorItem',
   'controller/controller',
 ], function (React, PAGE, HeaderView, DoorItem, controller) {
@@ -12,28 +12,20 @@ define([
         loading: false,
         disabled: false,
         unlocked: false
-      }
+      };
     },
 
-    /**
-     * When a door in the list is clicked
-     */
-    onClick: function () {
-
-    },
-
-    /**
-     * When a door in the list should be opened
-     */
     onOpenDoorClicked: function (door) {
-      if (!this.state.disabled) {
-        controller.openDoor(door, controller.getToken(door.deviceid), {
-          setStatus: this.setStatus,
-          setLoading: this.setLoading,
-          setDisabled: this.setDisabled,
-          setUnlocked: this.setUnlocked
-        });
-      }
+      return function (e) {
+        if (!this.state.disabled) {
+          controller.openDoor(door, controller.getToken(door.deviceid), {
+            setStatus: this.setStatus,
+            setLoading: this.setLoading,
+            setDisabled: this.setDisabled,
+            setUnlocked: this.setUnlocked
+          });
+        }
+      }.bind(this);
     },
 
     setStatus: function (status) {
@@ -43,7 +35,7 @@ define([
 
       this.setState({
         status: status
-      })
+      });
     },
 
     setLoading: function (loading) {
@@ -55,13 +47,13 @@ define([
     setDisabled: function (disabled) {
       this.setState({
         disabled: disabled
-      })
+      });
     },
 
     setUnlocked: function (unlocked) {
       this.setState({
         unlocked: unlocked
-      })
+      });
     },
 
     render: function () {
@@ -75,12 +67,12 @@ define([
 
       var doors = (this.props.doors.length > 0) ? (
         this.props.doors.map(function (door) {
-          console.log(this.props.doors);
           return (
             <DoorItem
+            key={door.id}
             door={door}
-            onClick={this.onClick.bind(this, door)}
-            onOpenDoorClicked={this.onOpenDoorClicked.bind(this, door)}
+            onClick={this.props.onDoorClicked(door)}
+            onOpenDoorClicked={this.onOpenDoorClicked(door)}
             />);
         }, this)) : ([
         <div className="helper">

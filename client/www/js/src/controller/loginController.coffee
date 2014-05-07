@@ -5,8 +5,6 @@ define [
 ], (Device, apiRequest, deviceStoreController) ->
   class LoginController
     login: (deviceId, key, fs) ->
-      # TODO: Interface is too informal
-
       unless fs?
         console.error("Must provide callback functions")
         return
@@ -27,6 +25,7 @@ define [
             if fs.setError? then fs.setError(true)
 
         success: (res) ->
+          console.log(res)
           device = new Device(res)
           deviceStoreController.save(device)
 

@@ -1,7 +1,8 @@
 define([
   'react',
-  'model/Door'
-], function (React, Door) {
+  'model/Door',
+  'pages'
+], function (React, Door, PAGE) {
   return React.createClass({
     propTypes: {
       door: React.PropTypes.instanceOf(Door).isRequired,
@@ -9,13 +10,17 @@ define([
       onOpenDoorClicked: React.PropTypes.func.isRequired
     },
     render: function () {
-      console.log(this.props.door);
+      //console.log(this.props.door);
+      var door = this.props.door;
       return (
-        <div className="list-item">
+        <div className="list-item door">
           <a className="button button-primary right" onClick={this.props.onOpenDoorClicked}>
             <span className="fa fa-lock"/>
           </a>
-          <a className="button-full button-normal center">
+          <a className="button-normal rest foo" href={["#", PAGE.DOOR, door.deviceid, door.number].join('/')}>
+            <span>{door.deviceName}</span>
+            <span>/</span>
+            <span>{door.name}</span>
           </a>
         </div>);
     }
