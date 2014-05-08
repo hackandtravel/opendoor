@@ -164,8 +164,9 @@ exports.login = function (deviceid, key, notificationid) {
 exports.opendoor = function (deviceid, doorNumber, token) {
     return new Promise(function (resolve, reject) {
         var now = new Date().getTime();
+        var door = null;
         deviceDAO.getDeviceById(deviceid).then(function (device) {
-            var door = device.doors.filter(function (obj) {
+            door = device.doors.filter(function (obj) {
                     return obj.number == doorNumber;
                 }
             );
@@ -182,7 +183,7 @@ exports.opendoor = function (deviceid, doorNumber, token) {
                 }
                 else resolve(true);
                 // todo change for production
-                raspberry.openDoor(deviceid, doorNumber, door.buzztime);
+                raspberry.openDoor(deviceid, doorNumber, door[0].buzztime);
                 resolve(true);
             },
                 reject);
