@@ -8,7 +8,7 @@ define([
       if (!this.props.loading) {
         header = this.props.header;
       } else {
-        header = <div className="rest"><div className="loading"/></div>;
+        header = <div className="center"><div className="loading"/></div>;
       }
 
       return (

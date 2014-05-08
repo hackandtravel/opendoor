@@ -11,8 +11,8 @@ define([
         status: 'Add Key',
         hasError: false,
         loading: false,
-        inputDeviceId: '',
-        inputKey: ''
+        inputDeviceId: null,
+        inputKey: null
       }
     },
 
@@ -54,12 +54,12 @@ define([
       })
     },
 
-    setField: function (key) {
+    handleChange: function (key) {
       return function (e) {
         var obj = {};
         obj[key] = e.target.value;
         this.setState(obj);
-      }
+      }.bind(this);
     },
 
     render: function () {
@@ -93,7 +93,7 @@ define([
               id="door-url"
               placeholder="Device Id"
               value={this.state.inputDeviceId}
-              onChange={this.setField('inputDeviceId')}
+              onChange={this.handleChange('inputDeviceId')}
               />
             </div>
             <div className={formGroupClasses}>
@@ -103,7 +103,7 @@ define([
               type="text"
               placeholder="Key"
               value={this.state.inputKey}
-              onChange={this.setField('inputKey')}
+              onChange={this.handleChange('inputKey')}
               />
             </div>
           </div>

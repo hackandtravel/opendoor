@@ -14,7 +14,7 @@ define [
 
       apiRequest
         method: 'GET'
-        url: '/openDoor'
+        url: '/opendoor'
         data:
           deviceid: door.deviceid
           door: door.number
