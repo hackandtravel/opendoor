@@ -19,6 +19,7 @@ exports.checkToken = checkToken;
 exports.hasMasterRights = hasMasterRights;
 exports.addKey = addKey;
 exports.updateKey = updateKey;
+exports.getNotificationIDs = getNotificationIDs
 exports.init = function (deviceCol) {
     deviceCollection = deviceCol;
     exports.deviceCollection = deviceCollection;
@@ -63,7 +64,6 @@ function createDevice(doors) {
 function getDevice(deviceid, token) {
     return new Promise(function (resolve, reject) {
         getDeviceById(deviceid).then(function (device) {
-            console.log("GET DEVICE")
             checkToken(device, token).then(
                 function (result) {
                     if (result.hasOwnProperty('key'))
@@ -176,12 +176,8 @@ function getDeviceById(deviceid) {
  */
 function checkToken(device, token) {
     return new Promise(function (resolve, reject) {
-        console.log("CHECK TOKEN");
-        console.log(device);
-        console.log("\n------------" + token)
         var user = getUserKey(device, token);
         var master = getMasterToken(device, token);
-        console.log("\n user = " + user.length + " master: " + master.length);
         if (user.length > 0) resolve(user[0]);
         else if (master.length > 0) resolve(master[0]);
         else reject();
@@ -249,4 +245,21 @@ function buildDeviceInfo(device, key) {
     }
 
     return deviceInfo;
+}
+
+function getNotificationIDs(deviceid)
+{
+    return new Promise (function(resolve, reject){
+    {
+        getDeviceById(deviceid).then(function (device) {
+            var validNotificationids = device.mastertoken.filter(function(tokenObj){
+                return tokenObj.notificationid != null;
+            });
+            validNotificationids.map(function(value){
+                return value.notificationid;
+            });
+
+            resolve(validNotificationids)
+        });
+    }});
 }
