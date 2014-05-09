@@ -8,6 +8,8 @@ exports.generateRandomString = function(length) {
     var myHasher = crypto.createHash('sha1');
     myHasher.update(randomBytes);
     var randomString = myHasher.digest('hex').substring(0, length);
+    //var randomString = myHasher.digest('binary')k;
+    var i = 0;
     return randomString;
 }
 

@@ -8,6 +8,8 @@ var helpers = require('./helpers.js');
 var config = require('./config.js');
 var winston = require('./logger.js');
 
+var debug = config.debug;
+
 // CONSTANTS
 
 // The 'secret' folder is not shared in git.
@@ -33,7 +35,9 @@ try {
 serverSide.init(cb);
 function cb()
 {
-var client = https.createServer(options, clientside.app).listen(config.portClient);
+    if (debug)
+            var client = http.createServer(clientside.app).listen(config.portClient);
+    else    var client = https.createServer(options, clientside.app).listen(config.portClient);
 
 winston.info('Startup');
 // call if you want to generate data

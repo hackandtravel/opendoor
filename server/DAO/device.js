@@ -29,7 +29,7 @@ exports.init = function (deviceCol) {
  * @param doors number of doors
  */
 function createDevice(doors) {
-    var randompw = helpers.generateRandomString(20);
+    var randompw = helpers.generateRandomString(6);
     var insert = {};
     insert.deviceid = hat(); // hat generates random hash which dont collide
     insert.name = 'new Device';
@@ -45,7 +45,7 @@ function createDevice(doors) {
     insert.keys = [];
     deviceCollection.insert(insert, function (err, success) {
         if (success) {
-            logger.info("created Device")
+            logger.info("created Device, id: " +  insert.deviceid);
         }
     });
     delete insert.masterkeyhash;
@@ -63,6 +63,7 @@ function createDevice(doors) {
 function getDevice(deviceid, token) {
     return new Promise(function (resolve, reject) {
         getDeviceById(deviceid).then(function (device) {
+            console.log("GET DEVICE")
             checkToken(device, token).then(
                 function (result) {
                     if (result.hasOwnProperty('key'))
@@ -175,8 +176,12 @@ function getDeviceById(deviceid) {
  */
 function checkToken(device, token) {
     return new Promise(function (resolve, reject) {
+        console.log("CHECK TOKEN");
+        console.log(device);
+        console.log("\n------------" + token)
         var user = getUserKey(device, token);
         var master = getMasterToken(device, token);
+        console.log("\n user = " + user.length + " master: " + master.length);
         if (user.length > 0) resolve(user[0]);
         else if (master.length > 0) resolve(master[0]);
         else reject();
@@ -185,9 +190,11 @@ function checkToken(device, token) {
 
 function getUserKey(device, token) {
     return device.keys.filter(function (key) {
-        return key.hasOwnProperty('token') && key.token.filter(function (tok) {
+        var foundKey = key.hasOwnProperty('token') && key.token.filter(function (tok) {
             return tok.token == token;
-        })
+        });
+        return foundKey.length > 0;
+
     });
 }
 

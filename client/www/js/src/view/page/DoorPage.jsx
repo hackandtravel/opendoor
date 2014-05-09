@@ -16,7 +16,18 @@ define([
       var door = this.props.door;
       
       var header = <div className="center">{door.name}</div>;
-
+      var footer;
+if(door.mastertoken) {
+    footer =
+        <footer>
+            <a
+            className="button-full button-primary"
+            href={['#', PAGE.DOOR, door.deviceid, door.number, PAGE.NEW_KEY].join('/')}
+            >
+            Generate Key
+            </a>
+        </footer>
+}
       return (
         <div className={classes}>
           <Header loading={false} header={header}>
@@ -24,14 +35,7 @@ define([
               <span className="glyphicon glyphicon-chevron-left"></span>
             </a>
           </Header>
-          <footer>
-            <a 
-            className="button-full button-primary"
-            href={['#', PAGE.DOOR, door.deviceid, door.number, PAGE.NEW_KEY].join('/')}
-            >
-            Generate Key
-            </a>
-          </footer>
+        {footer}
         </div>
         );
     }

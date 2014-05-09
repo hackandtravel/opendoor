@@ -4,7 +4,7 @@ var gutil = require('gulp-util');
 var react = require('gulp-react');
 var coffee = require('gulp-coffee');
 var less = require('gulp-less');
-var imagemin = require('gulp-imagemin');
+//var imagemin = require('gulp-imagemin');
 
 var rjs = require('gulp-requirejs');
 var uglify = require('gulp-uglify');
@@ -78,7 +78,7 @@ gulp.task('less', function () {
 
 gulp.task('images', function () {
   return gulp.src(paths.images)
-    .pipe(imagemin({optimizationLevel: 5}))
+    //.pipe(imagemin({optimizationLevel: 5}))
     .pipe(gulp.dest(BUILD + '/img'));
 });
 
