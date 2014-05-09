@@ -2,8 +2,9 @@ define([
   'react',
   'pages',
   'view/component/HeaderView',
+  'view/component/KeyItem',
   'controller/controller'
-], function (React, PAGE, Header, controller) {
+], function (React, PAGE, Header, KeyItem, controller) {
   return React.createClass({
     componentDidMount: function () {
       controller.updateDevice(this.props.device, this.props.forceUpdate);
@@ -19,7 +20,13 @@ define([
       });
 
       var door = this.props.door;
+      var device = this.props.device;
 
+      console.log(device)
+      var keyItems = device.keys.map(function(key) {
+        return <KeyItem keykey={key} />;
+      });
+      
       var header = <div className="center">{door.name}</div>;
 
       var footer;
@@ -42,6 +49,9 @@ define([
               <span className="glyphicon glyphicon-chevron-left"></span>
             </a>
           </Header>
+          <div className="list">
+            {keyItems}
+          </div>
           {footer}
         </div>
         );

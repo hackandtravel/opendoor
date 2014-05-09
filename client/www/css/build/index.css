@@ -187,10 +187,14 @@ h6 {
 }
 .item .center {
   width: 100%;
+  height: 60px;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 1;
+}
+.item .center.pl {
+  padding-left: 70px;
 }
 .item .foo {
   padding: 0 10px;
@@ -278,10 +282,14 @@ h6 {
 }
 .list-item .center {
   width: 100%;
+  height: 60px;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 1;
+}
+.list-item .center.pl {
+  padding-left: 70px;
 }
 .list-item .foo {
   padding: 0 10px;
@@ -401,10 +409,15 @@ footer .right {
 header .center,
 footer .center {
   width: 100%;
+  height: 60px;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 1;
+}
+header .center.pl,
+footer .center.pl {
+  padding-left: 70px;
 }
 header .foo,
 footer .foo {

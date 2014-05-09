@@ -15,6 +15,7 @@ define [
         success: (res) ->
           if fs.setLoading? then fs.setLoading(false)
           if fs.setStatus? then fs.setStatus(res.key)
+          #if fs.setKey? then fs.setKey(res.key)
           
         error: (res) ->
           if fs.setLoading? then fs.setLoading(false)

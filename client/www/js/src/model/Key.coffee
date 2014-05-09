@@ -3,11 +3,11 @@ define [
 ], (_) ->
   class Key
     defaults: ->
-      deviceid: null
-      # buzztime: 5000
-      # name: null
-      # number: 1
-      # expire: 0
+      doors: []
+      expire: -1
+      key: null
+      limit: -1
+      name: null
 
     constructor: (args) ->
       _.extend this, @defaults(), args

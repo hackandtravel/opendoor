@@ -15,7 +15,11 @@ define([
       var door = this.props.door;
       return (
         <div className="list-item door">
-          <UnlockButton onClick={this.props.onOpenDoorClicked} />
+          <UnlockButton 
+          onClick={this.props.onOpenDoorClicked}
+          setStatus={this.props.setStatus}
+          setLoading={this.props.setLoading}
+          />
           <a className="button-normal rest foo" href={["#", PAGE.DOOR, door.deviceid].join('/')}>
             <span>{door.deviceName}</span>
             <span>/</span>

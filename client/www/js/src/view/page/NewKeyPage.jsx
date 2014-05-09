@@ -14,7 +14,8 @@ define([
       };
       controller.generateKey(this.props.door, params, {
         setLoading: this.setLoading,
-        setStatus: this.setStatus
+        setStatus: this.setStatus,
+        setKey: this.props.setKey
       });
     },
 

@@ -3,6 +3,7 @@ define(function() {
     HOME: 'home',
     LOGIN: 'login',
     DOOR: 'device',
-    NEW_KEY: 'generate'
+    NEW_KEY: 'generate',
+    GENERATED_KEY: 'key'
   });
 });

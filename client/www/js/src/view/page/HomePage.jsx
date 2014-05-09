@@ -73,6 +73,8 @@ define([
             door={door}
             onClick={this.props.onDoorClicked(door)}
             onOpenDoorClicked={this.onOpenDoorClicked(door)}
+            setStatus={this.setStatus}
+            setLoading={this.setLoading}
             />);
         }, this)) : ([
         <div className="helper">

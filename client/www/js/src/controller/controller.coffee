@@ -1,11 +1,13 @@
 define [
+  'underscore'
   'controller/apiRequest'
   'controller/loginController'
   'controller/initController'
   'controller/deviceStoreController'
   'controller/openDoorController'
   'controller/keyController'
-], (apiRequest, loginController, initController, deviceStoreController, openDoorController, keyController) ->
+  'model/Device'
+], (_, apiRequest, loginController, initController, deviceStoreController, openDoorController, keyController, Device) ->
   class Controller
     init: initController.init
     login: loginController.login
@@ -19,8 +21,8 @@ define [
         method: 'GET'
         url: '/device?deviceid=' + device.deviceid + '&token=' + device.token
         success: (res) ->
-          console.log res
-          #deviceStoreController.save(new Device(res))
+          _.extend device, res
+          deviceStoreController.save(new Device(device))
           cb()
         error: ->
           

@@ -1,11 +1,13 @@
 define [
   'underscore'
   'model/Door'
-], (_, Door) ->
+  'model/Key'
+], (_, Door, Key) ->
   class Device
     defaults: ->
       deviceid: null
       doors: []
+      keys: []
       name: null
       token: null
       masterToken: false
@@ -25,3 +27,9 @@ define [
         door.masterToken = args.masterToken
         
         return new Door(door)
+        
+      if args.keys and _.isArray(args.keys)
+        @keys = args.keys.map (key, i) -> 
+          return new Key(key)
+      else
+        @keys = []

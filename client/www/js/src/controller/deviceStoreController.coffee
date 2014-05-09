@@ -17,11 +17,13 @@ define [
 
     save: (device) ->
       deviceIds = this.getItem(this.key) or []
+      this.setItem(device.deviceid, device)
+      
       if deviceIds.indexOf(device.deviceid) is -1
         deviceIds = deviceIds.concat(device.deviceid)
         this.setItem(this.key, deviceIds)
-        this.setItem(device.deviceid, device)
         return true
+        
       return false
 
     fetchAll: ->

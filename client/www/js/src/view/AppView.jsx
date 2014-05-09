@@ -8,8 +8,9 @@ define([
   'view/page/NewDevicePage',
   'view/page/DevicePage',
   'view/page/NewKeyPage',
+  'view/page/GeneratedKeyPage',
   'controller/controller'
-], function (React, Router, PAGE, HomePage, NewDevicePage, DevicePage, NewKeyPage, controller) {
+], function (React, Router, PAGE, HomePage, NewDevicePage, DevicePage, NewKeyPage, GeneratedKeyPage, controller) {
   return React.createClass({
     getInitialState: function () {
       return {
@@ -102,6 +103,7 @@ define([
             page={this.state.page}
             device={device}
             door={this.state.selectedDoor}
+            forceUpdate={this.forceUpdate.bind(this)}
             />;
           break;
         
@@ -121,6 +123,15 @@ define([
             <NewKeyPage
             page={this.state.page}
             door={this.state.selectedDoor}
+            setKey={this.setKey}
+            />;
+          break;
+        
+        case PAGE.GENERATED_KEY:
+          page =
+            <GeneratedKeyPage
+            page={this.state.page}
+            key={this.state.key}
             />;
           break;
       }
@@ -135,6 +146,13 @@ define([
           />
           {page}
         </div>);
+    }, 
+    
+    setKey: function(key) {
+      this.setState({
+        page: PAGE.GENERATED_KEY,
+        key: key
+      });
     }
   });
 });
