@@ -6,8 +6,8 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 var Promise = require('es6-promise').Promise;
 var request = require('request');
-exports.url = 'https://192.168.1.15:3001/opendoor/';
-var urli = 'https://192.168.1.15:3001/opendoor/';
+exports.url = 'http://localhost:3001/opendoor/';
+var urli = 'http://localhost:3001/opendoor/';
 exports.admin = "admin";
 var admin = "admin";
 exports.pwd = "password";

@@ -22,6 +22,7 @@ frisby.create('create Device')
     .get(url + 'createDevice?user=' + helpers.admin + '&pwd=' + helpers.pwd + '&doors=' + numDoors)
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
+    .inspectBody()
     .expectJSON({
         keys: function (val) {
             expect(val.length).toBe(0);
@@ -66,6 +67,7 @@ function login(data, master) {
                 body.door = 1;
                 opendoor(body);
                 generateKey(body, true);
+                console.log("get Device master")
                 getDevice(body);
                 putDevice(body);
             }
@@ -74,6 +76,7 @@ function login(data, master) {
                 body.door = 1;
                 opendoor(body);
                 generateKey(body, false)
+                console.log("get Device user")
                 getDevice(body);
             }
         })
@@ -140,6 +143,7 @@ function generateKey(data, isAllowed) {
            frisby.create('create a key for the device')
                .post(url + "key" + "?deviceid=" + keyinfo.deviceid + "&token=" + keyinfo.token, keyinfo, {json: true})
                .expectStatus(200)
+           .inspectBody()
                .expectHeaderContains('content-type', 'application/json')
                .expectJSON({
                    expire: function (ex) {
