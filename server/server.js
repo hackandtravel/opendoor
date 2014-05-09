@@ -21,7 +21,8 @@ try {
     if (process.env.NODE_ENV === 'production') {
       options = {
         key: fs.readFileSync(__dirname + '/secret/opendoor-key.pem'),
-        cert: fs.readFileSync(__dirname + '/secret/opendoor-cert.pem')
+        cert: fs.readFileSync(__dirname + '/secret/opendoor-cert.pem'),
+	ca: fs.readFileSync(__dirname + '/secret/AddTrustExternalCARoot.crt')
       };
     } else {
       options = {
