@@ -15,19 +15,6 @@ define([
       };
     },
 
-    onOpenDoorClicked: function (door) {
-      return function (e) {
-        if (!this.state.disabled) {
-          controller.openDoor(door, controller.getToken(door.deviceid), {
-            setStatus: this.setStatus,
-            setLoading: this.setLoading,
-            setDisabled: this.setDisabled,
-            setUnlocked: this.setUnlocked
-          });
-        }
-      }.bind(this);
-    },
-
     setStatus: function (status) {
       if (status === null) {
         status = this.getInitialState().status
@@ -72,7 +59,6 @@ define([
             key={door.id}
             door={door}
             onClick={this.props.onDoorClicked(door)}
-            onOpenDoorClicked={this.onOpenDoorClicked(door)}
             setStatus={this.setStatus}
             setLoading={this.setLoading}
             />);

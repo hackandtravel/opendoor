@@ -141,8 +141,31 @@ h1, h2, h3, h4, h5, h6 {
     width: @itemHeight;
     height: @itemHeight;
     text-align: center;
+    overflow: hidden;
+    
     .fa {
       font-size: 24px;
+    }
+    
+    &.disabled {
+      span.hour-glass {
+        transform: translateY(0%);
+      }
+    }
+    
+    span.hour-glass {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: @itemHeight;
+      height: @itemHeight;
+      background-color: rgba(0, 0, 0, 0.2);
+      transform: translateY(100%);
+      
+      &.move {
+        transform: translateY(100%)!important;
+      }
     }
   }
 
@@ -163,7 +186,7 @@ h1, h2, h3, h4, h5, h6 {
     color: #fff;
     background: @blue;
     &:hover, &:active {
-      background: darken(@blue, 10%);
+      background: darken(@blue, 5%);
     }
   }
 

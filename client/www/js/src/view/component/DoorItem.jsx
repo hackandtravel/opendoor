@@ -7,8 +7,7 @@ define([
   return React.createClass({
     propTypes: {
       door: React.PropTypes.instanceOf(Door).isRequired,
-      onClick: React.PropTypes.func.isRequired,
-      onOpenDoorClicked: React.PropTypes.func.isRequired
+      onClick: React.PropTypes.func.isRequired
     },
     render: function () {
       //console.log(this.props.door);
@@ -16,7 +15,7 @@ define([
       return (
         <div className="list-item door">
           <UnlockButton 
-          onClick={this.props.onOpenDoorClicked}
+          door={this.props.door}
           setStatus={this.props.setStatus}
           setLoading={this.props.setLoading}
           />

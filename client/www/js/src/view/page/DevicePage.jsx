@@ -22,7 +22,6 @@ define([
       var door = this.props.door;
       var device = this.props.device;
 
-      console.log(device)
       var keyItems = device.keys.map(function(key) {
         return <KeyItem keykey={key} />;
       });

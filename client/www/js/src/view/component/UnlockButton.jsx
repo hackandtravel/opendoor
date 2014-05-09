@@ -1,10 +1,11 @@
 define([
   'react',
-  'controller/controller'
-], function (React, controller) {
+  'controller/controller',
+  'model/Door'
+], function (React, controller, Door) {
   return React.createClass({
     propTypes: {
-      onClick: React.PropTypes.func.isRequired,
+      door: React.PropTypes.instanceOf(Door).isRequired,
       setStatus: React.PropTypes.func,
       setLoading: React.PropTypes.func
     },
@@ -16,9 +17,9 @@ define([
       }
     },
 
-    onClick: function (e) {
+    onClick: function () {
       if (!this.state.disabled) {
-        controller.openDoor(door, controller.getToken(door.deviceid), {
+        controller.openDoor(this.props.door, controller.getToken(this.props.door.deviceid), {
           setStatus: this.props.setStatus,
           setLoading: this.props.setLoading,
           setDisabled: this.setDisabled,
@@ -27,26 +28,49 @@ define([
       }
     },
 
-    setDisabled: function () {
-
+    setDisabled: function (disabled) {
+      this.setState({
+        disabled: disabled
+      })
     },
 
-    setUnlocked: function () {
-
+    setUnlocked: function (unlocked) {
+      this.setState({
+        unlocked: unlocked
+      })
+    },
+    
+    transition: function(value) {
+      return {
+        WebkitTransition: '-webkit-' + value,
+        transition: value
+      }
     },
 
     render: function () {
       var cx = React.addons.classSet;
-      var classes = cx({
-        'muted': this.state.disabled
-      });
+      
+      var move;
+      var style = this.transition('');
+      if (this.state.unlocked) {
+        move = 'move';
+        style = this.transition('transform ' + (this.props.door.buzztime) + 'ms linear');
+      }
+      
+      var dis;
+      if (this.state.disabled) {
+        dis = 'disabled';
+      }
+      
       var iconClasses = cx({
         'fa': true,
         'fa-unlock': this.state.unlocked,
         'fa-lock': !this.state.unlocked
       });
+      
       return (
-        <a className="button button-primary right" onClick={this.props.onClick}>
+        <a className={"button button-primary right " + dis} onClick={this.onClick}>
+          <span className={"hour-glass " + move} style={style} />
           <span className={iconClasses} />
         </a>);
     }
