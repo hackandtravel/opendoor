@@ -1,10 +1,11 @@
 define [
+  'controller/apiRequest'
   'controller/loginController'
   'controller/initController'
   'controller/deviceStoreController'
   'controller/openDoorController'
   'controller/keyController'
-], (loginController, initController, deviceStoreController, openDoorController, keyController) ->
+], (apiRequest, loginController, initController, deviceStoreController, openDoorController, keyController) ->
   class Controller
     init: initController.init
     login: loginController.login
@@ -12,6 +13,17 @@ define [
     getToken: (deviceid) -> deviceStoreController.fetch(deviceid)?.token
     openDoor: openDoorController.openDoor
     generateKey: keyController.generateKey
+    getDevice: (id) -> deviceStoreController.fetch(id)
+    updateDevice: (device, cb) ->
+      apiRequest
+        method: 'GET'
+        url: '/device?deviceid=' + device.deviceid + '&token=' + device.token
+        success: (res) ->
+          console.log res
+          #deviceStoreController.save(new Device(res))
+          cb()
+        error: ->
+          
 
   singleton = -> new Controller
   singleton()

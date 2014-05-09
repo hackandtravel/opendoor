@@ -11,25 +11,29 @@ define([
         status: 'Add Key',
         hasError: false,
         loading: false,
-        inputDeviceId: null,
-        inputKey: null
+        inputAll: null
       }
     },
 
     onLoginClicked: function () {
-      var inputDeviceId = this.refs.inputDeviceId.getDOMNode();
-      var inputKey = this.refs.inputKey.getDOMNode();
+      var inputAll = this.refs.inputAll.getDOMNode().value.trim();
 
-      var deviceId = inputDeviceId.value.trim();
-      var key = inputKey.value;
+      if (inputAll.length > 0 && inputAll.indexOf(':') > -1) {
+        var deviceId = inputAll.trim().split(':')[0];
+        var key = inputAll.trim().split(':')[1];
 
-      controller.login(deviceId, key, {
-        setLoading: this.setLoading,
-        setStatus: this.setStatus,
-        setError: this.setError,
-        setRouteHome: this.props.route.bind(this, PAGE.HOME),
-        addDevice: this.props.addDevice
-      });
+        controller.login(deviceId, key, {
+          setLoading: this.setLoading,
+          setStatus: this.setStatus,
+          setError: this.setError,
+          setRouteHome: this.props.route.bind(this, PAGE.HOME),
+          addDevice: this.props.addDevice
+        });
+      } else {
+        this.setState({
+          hasError: true
+        })
+      }
     },
 
     setStatus: function (status) {
@@ -88,23 +92,16 @@ define([
           <div className="list">
             <div className={formGroupClasses}>
               <input
-              type="text"
-              ref="inputDeviceId"
-              id="door-url"
-              placeholder="Device Id"
-              value={this.state.inputDeviceId}
-              onChange={this.handleChange('inputDeviceId')}
-              />
-            </div>
-            <div className={formGroupClasses}>
-              <input
-              ref="inputKey"
+              ref="inputAll"
               id="passphrase"
               type="text"
               placeholder="Key"
-              value={this.state.inputKey}
-              onChange={this.handleChange('inputKey')}
+              value={this.state.inputAll}
+              onChange={this.handleChange('inputAll')}
               />
+            </div>
+            <div className="helper">
+              <p>Enter a key that you have been provided with.</p>
             </div>
           </div>
           <footer>

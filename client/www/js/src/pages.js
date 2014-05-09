@@ -2,7 +2,7 @@ define(function() {
   return Object.freeze({
     HOME: 'home',
     LOGIN: 'login',
-    DOOR: 'door',
+    DOOR: 'device',
     NEW_KEY: 'generate'
   });
 });

@@ -25,12 +25,12 @@ define [
             if fs.setError? then fs.setError(true)
 
         success: (res) ->
-          console.log(res)
           device = new Device(res)
-          deviceStoreController.save(device)
+            
+          if deviceStoreController.save(device)
+            if fs.addDevice then fs.addDevice(device)
 
           if fs.setLoading? then fs.setLoading(false)
-          if fs.addDevice then fs.addDevice(device)
           if fs.setRouteHome then fs.setRouteHome()
 
         error: (res) ->

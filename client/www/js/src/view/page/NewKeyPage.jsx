@@ -89,7 +89,7 @@ define([
             <a
             id="back-btn"
             className="new-door-page button button-normal left"
-            href={['#', PAGE.DOOR, door.deviceid, door.number].join('/')}
+            href={['#', PAGE.DOOR, door.deviceid].join('/')}
             >
               <span className="glyphicon glyphicon-chevron-left"></span>
             </a>

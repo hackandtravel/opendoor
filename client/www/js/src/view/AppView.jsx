@@ -6,15 +6,17 @@ define([
   'pages',
   'view/page/HomePage',
   'view/page/NewDevicePage',
-  'view/page/DoorPage',
+  'view/page/DevicePage',
   'view/page/NewKeyPage',
   'controller/controller'
-], function (React, Router, PAGE, HomePage, NewDevicePage, DoorPage, NewKeyPage, controller) {
+], function (React, Router, PAGE, HomePage, NewDevicePage, DevicePage, NewKeyPage, controller) {
   return React.createClass({
     getInitialState: function () {
       return {
         page: PAGE.HOME,
-        doors: controller.getDoors()
+        doors: controller.getDoors(),
+        selectedDoor: null, // depricated
+        selectedDevice: null
       };
     },
 
@@ -37,25 +39,29 @@ define([
         '': this.setPage.bind(this, PAGE.HOME),
         'home': this.setPage.bind(this, PAGE.HOME),
         'login': this.setPage.bind(this, PAGE.LOGIN),
-        'door/:id/:num/generate': function (deviceid, num) {
+        'device/:id/generate': function (deviceid) {
           var door = this.state.doors.find(function (door) {
-            return deviceid === door.deviceid && Number(num) === door.number
+            return deviceid === door.deviceid && Number(1) === door.number
           });
+
           if (door != null) {
             this.setState({
               page: PAGE.NEW_KEY,
-              selectedDoor: door
+              selectedDoor: door,
+              selectedDevice: deviceid
             });
           }
         }.bind(this),
-        'door/:id/:num': function (deviceid, num) {
+        'device/:id': function (deviceid) {
           var door = this.state.doors.find(function (door) {
-            return deviceid === door.deviceid && Number(num) === door.number
+            return deviceid === door.deviceid && Number(1) === door.number
           });
+
           if (door != null) {
             this.setState({
               page: PAGE.DOOR,
-              selectedDoor: door
+              selectedDoor: door,
+              selectedDevice: deviceid
             });
           }
         }.bind(this)
@@ -86,12 +92,15 @@ define([
     },
 
     render: function () {
-      var page;
+
+      var device, page;
       switch (this.state.page) {
         case PAGE.DOOR:
+          device = controller.getDevice(this.state.selectedDevice);
           page =
-            <DoorPage
+            <DevicePage
             page={this.state.page}
+            device={device}
             door={this.state.selectedDoor}
             />;
           break;
@@ -107,6 +116,7 @@ define([
           break;
         
         case PAGE.NEW_KEY:
+          device = controller.getDevice(this.state.selectedDevice);
           page =
             <NewKeyPage
             page={this.state.page}

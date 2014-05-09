@@ -1,8 +1,9 @@
 define([
   'react',
   'model/Door',
+  'view/component/UnlockButton',
   'pages'
-], function (React, Door, PAGE) {
+], function (React, Door, UnlockButton, PAGE) {
   return React.createClass({
     propTypes: {
       door: React.PropTypes.instanceOf(Door).isRequired,
@@ -14,10 +15,8 @@ define([
       var door = this.props.door;
       return (
         <div className="list-item door">
-          <a className="button button-primary right" onClick={this.props.onOpenDoorClicked}>
-            <span className="fa fa-lock"/>
-          </a>
-          <a className="button-normal rest foo" href={["#", PAGE.DOOR, door.deviceid, door.number].join('/')}>
+          <UnlockButton onClick={this.props.onOpenDoorClicked} />
+          <a className="button-normal rest foo" href={["#", PAGE.DOOR, door.deviceid].join('/')}>
             <span>{door.deviceName}</span>
             <span>/</span>
             <span>{door.name}</span>

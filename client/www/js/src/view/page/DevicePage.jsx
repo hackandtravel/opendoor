@@ -2,8 +2,13 @@ define([
   'react',
   'pages',
   'view/component/HeaderView',
-], function (React, PAGE, Header) {
+  'controller/controller'
+], function (React, PAGE, Header, controller) {
   return React.createClass({
+    componentDidMount: function () {
+      controller.updateDevice(this.props.device, this.props.forceUpdate);
+    },
+    
     render: function () {
       var cx = React.addons.classSet;
       var classes = cx({
@@ -12,18 +17,18 @@ define([
         'page-middle': this.props.page === PAGE.DOOR,
         'page-right': this.props.page !== PAGE.DOOR
       });
-      
+
       var door = this.props.door;
-      
+
       var header = <div className="center">{door.name}</div>;
-      
+
       var footer;
       if (this.props.door.masterToken) {
         footer =
           <footer>
             <a
             className="button-full button-primary"
-            href={['#', PAGE.DOOR, door.deviceid, door.number, PAGE.NEW_KEY].join('/')}
+            href={['#', PAGE.DOOR, door.deviceid, PAGE.NEW_KEY].join('/')}
             >
             Generate Key
             </a>
