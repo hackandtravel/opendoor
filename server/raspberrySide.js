@@ -1,6 +1,7 @@
 var sockets = {};
 var logger = require("./logger.js");
 var Promise = require('es6-promise').Promise;
+var notification = require("./notifications.js");
 
 function getIO(server) {
     var io = require('socket.io').listen(server);
@@ -16,16 +17,12 @@ function getIO(server) {
         socket.on('status', function (data) {
             if(socket)
             {
-            //var cb = socket.get("openDoorCallBack");
-            //cb(null, data);
             // todo make callback somehow to client
         }
         if(data && data.status == "opened")
         {
 
-            //cb(null, data);
         }
-        // else //cb(new Error("something went wront opening the door"));
 
         });
 
@@ -39,12 +36,13 @@ function getIO(server) {
     return io;
 }
 
-function openDoor(deviceid, door, buzzTime)
+function openDoor(deviceid, door, buzzTime, notificationIDs)
 {
     return new Promise(function(resolve, reject)
     {
         if(sockets[deviceid]) {
             sockets[deviceid].emit('openDoor', {doorNumber: door, buzzTime: buzzTime});
+            notification.notifyIDs(deviceid,door,notificationIDs);
             resolve("open door command sent");
         }
         else reject(new Error("No device with this ID connected"));

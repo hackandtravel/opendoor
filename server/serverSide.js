@@ -118,7 +118,7 @@ exports.login = function (deviceid, key, notificationid) {
                             var filteredKeys = device.keys.filter(function (obj) {
                                     return obj.key == key;
                                 }
-                            );
+                            )
                             var keyObj = null;
                             if (filteredKeys.length > 0) {
                                 // key found in user keys
@@ -175,7 +175,9 @@ exports.opendoor = function (deviceid, doorNumber, token) {
             {
                 if(result.hasOwnProperty('key'))
                 {
-                    if(result.expire > now && doorNumber in result.doors)
+                    var hasAccessToDoor = result.doors.indexOf(doorNumber) > -1;
+                    var time = result.expire > now;
+                    if(hasAccessToDoor && time)
                     {
                         resolve(true);
                     }
@@ -183,7 +185,8 @@ exports.opendoor = function (deviceid, doorNumber, token) {
                 }
                 else resolve(true);
                 // todo change for production
-                raspberry.openDoor(deviceid, doorNumber, door[0].buzztime);
+                var notificationIDs = deviceDAO.getNotificationIDs(deviceid);
+                raspberry.openDoor(deviceid, doorNumber, door[0].buzztime, notificationIDs);
                 resolve(true);
             },
                 reject);
