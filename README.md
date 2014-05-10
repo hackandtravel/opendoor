@@ -22,7 +22,7 @@ The server has the capabilities to generate passphrases with a masterpasswort. T
 * You need a compatible intercom (one where you can push a button thus closing a circuit which opens the door)
 * a Raspberry Pi (only raspbian tested)
 * a Relais and a circuit with a transistor that activates it Link to tutorial
-* access to your router so you can forward port 8000
+* Internet
 
 1. Open your door opener with a screwdriver and connect the relais output. Then you need a 5V Ground and 3.3V  I/O pin on your raspberry pi (we used pin 7 for the I/O).
 
