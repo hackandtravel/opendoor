@@ -2,9 +2,10 @@ define([
   'react',
   'pages',
   'view/component/HeaderView',
+  'view/component/InputField',
   'controller/controller',
   'evil-things'
-], function (React, PAGE, HeaderView, controller) {
+], function (React, PAGE, HeaderView, InputField, controller) {
   return React.createClass({
     getInitialState: function () {
       return {
@@ -16,7 +17,7 @@ define([
     },
 
     onLoginClicked: function () {
-      var inputAll = this.refs.inputAll.getDOMNode().value.trim();
+      var inputAll = this.refs.inputAll.state.value.trim();
 
       if (inputAll.length > 0 && inputAll.indexOf(':') > -1) {
         var deviceId = inputAll.trim().split(':')[0];
@@ -75,11 +76,6 @@ define([
         'page-right': this.props.page !== PAGE.LOGIN
       });
 
-      var formGroupClasses = cx({
-        'list-item': true,
-        'has-error': this.state.hasError
-      });
-
       var status = <div className="center">{this.state.status}</div>;
 
       return (
@@ -90,19 +86,14 @@ define([
             </a>
           </HeaderView>
           <div className="list">
-            <div className={formGroupClasses}>
-              <input
-              ref="inputAll"
-              id="passphrase"
-              type="text"
-              placeholder="Key"
-              value={this.state.inputAll}
-              onChange={this.handleChange('inputAll')}
-              />
-            </div>
-            <div className="helper">
-              <p>Enter a key that you have been provided with.</p>
-            </div>
+            <InputField
+            ref="inputAll"
+            placeholder="Key"
+            helper={<p>Enter a key that you have been provided with.</p>}
+            hasError={this.state.hasError}
+            type="text"
+            tabIndex={1}
+            />
           </div>
           <footer>
             <a className="button-full button-primary" onClick={this.onLoginClicked}>Add</a>

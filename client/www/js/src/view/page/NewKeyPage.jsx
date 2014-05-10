@@ -2,14 +2,15 @@ define([
   'react',
   'pages',
   'view/component/HeaderView',
+  'view/component/InputField',
   'controller/controller'
-], function (React, PAGE, HeaderView, controller) {
+], function (React, PAGE, HeaderView, InputField, controller) {
   return React.createClass({
     generateKey: function () {
       var params = {
-        name: this.state.inputName || this.defaults.name,
-        expire: new Date(this.state.inputExpireDate || this.defaults.expireDate).getTime(),
-        limit: this.state.inputLimit || this.defaults.limit,
+        name: this.refs.inputName.state.value,
+        limit: Number(this.refs.inputLimit.state.value),
+        expire: new Date(this.refs.inputDate.state.value).getTime(),
         doors: [this.props.door.number]
       };
       controller.generateKey(this.props.door, params, {
@@ -21,7 +22,7 @@ define([
 
     defaults: {
       name: 'New Key',
-      limit: 3,
+      limit: '3',
       expireDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 356).toISOString().slice(0, 10)
     },
 
@@ -29,10 +30,7 @@ define([
       return {
         status: 'Generate Key',
         hasError: false,
-        loading: false,
-        inputName: null,
-        inputLimit: null,
-        inputExpireDate: null
+        loading: false
       }
     },
 
@@ -58,14 +56,6 @@ define([
       })
     },
 
-    handleChange: function (key) {
-      return function (e) {
-        var obj = {};
-        obj[key] = e.target.value;
-        this.setState(obj);
-      }.bind(this);
-    },
-
     render: function () {
       var cx = React.addons.classSet;
       var classes = cx({
@@ -75,13 +65,7 @@ define([
         'page-right': this.props.page !== PAGE.NEW_KEY
       });
 
-      var formGroupClasses = cx({
-        'list-item': true,
-        'has-error': this.state.hasError
-      });
-
       var status = <div className="center">{this.state.status}</div>;
-
       var door = this.props.door;
 
       return (
@@ -96,50 +80,40 @@ define([
             </a>
           </HeaderView>
           <div className="list">
-            <div className={formGroupClasses}>
-              <input
-              type="text"
-              ref="inputName"
-              placeholder="Name"
-              value={this.state.inputName}
-              onChange={this.handleChange('inputName')}
-              tabIndex='1'
-              />
-            </div>
-            <div className="helper">
-              <p>Provide a name for this key so you can remember to who it belongs.</p>
-            </div>
+
+            <InputField
+            type="text"
+            ref="inputName"
+            placeholder="Name"
+            helper={<p>Provide a name for this key so you can remember to who it belongs.</p>}
+            hasError={false}
+            tabIndex={1}
+            />
             <div className="divider" />
-            <div className={formGroupClasses}>
-              <input
-              type="number"
-              ref="inputLimit"
-              placeholder="Limit"
-              defaultValue={this.defaults.limit}
-              value={this.state.inputLimit}
-              onChange={this.handleChange('inputLimit')}
-              min='0'
-              tabIndex='2'
-              />
-            </div>
-            <div className="helper">
-              <p>{'On how many devices should this key be redeemable?'}</p>
-            </div>
+
+            <InputField
+            type="number"
+            ref="inputLimit"
+            placeholder="Limit"
+            defaultValue={this.defaults.limit}
+            helper={<p>On how many devices should this key be redeemable?</p>}
+            hasError={false}
+            min='1'
+            tabIndex={2}
+            />
             <div className="divider" />
-            <div className={formGroupClasses}>
-              <input
-              type="date"
-              ref="inputDate"
-              placeholder="Expire Date"
-              defaultValue={this.defaults.expireDate}
-              value={this.state.inputExpireDate}
-              onChange={this.handleChange('inputExpireDate')}
-              tabIndex='3'
-              />
-            </div>
-            <div className="helper">
-              <p>{'On which date should this key expire? Defaults to one year.'}</p>
-            </div>
+
+            <InputField
+            type="date"
+            ref="inputDate"
+            placeholder="Expire Date"
+            defaultValue={this.defaults.expireDate}
+            helper={<p>On which date should this key expire? Defaults to one year.</p>}
+            hasError={false}
+            tabIndex={3}
+            />
+            <div className="divider" />
+
           </div>
           <footer>
             <a className="button-full button-primary" onClick={this.generateKey}>Generate</a>
