@@ -2,7 +2,6 @@
 /opendoor/data
 .idea
 *.iml
-secret/
 node_modules/
 *.bat
 *.log
