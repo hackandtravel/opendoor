@@ -112,13 +112,13 @@ function updateKey(newDeviceInfo, deviceid) {
         deviceCollection.findAndModify({ deviceid: deviceid, 'keys.key': newDeviceInfo.key},
             {},
             {
-                $set:  updateObj
+                $set: updateObj
             },
             {new: true},
             function (err, suc) {
                 if (err)reject(err);
                 else if (suc) resolve(suc);
-                else reject();
+                else resolve();
             });
     });
 }

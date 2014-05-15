@@ -22,6 +22,7 @@ frisby.create('create Device')
     .get(url + 'createDevice?user=' + helpers.admin + '&pwd=' + helpers.pwd + '&doors=' + numDoors)
     .expectStatus(200)
     .expectHeaderContains('content-type', 'application/json')
+    .inspectBody()
     .expectJSON({
         keys: function (val) {
             expect(val.length).toBe(0);
@@ -173,6 +174,7 @@ function changeKey(data)
             .put(url + "key"+ "?deviceid=" +keyinfo.deviceid + "&token=" + keyinfo.token, keyinfo, {json: true})
             .expectStatus(200)
             .expectHeaderContains('content-type', 'application/json')
+            .inspectBody()
             .expectJSON({
                 keys: function (keys) {
                     expect(keys).toBeDefined();

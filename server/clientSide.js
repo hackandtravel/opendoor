@@ -31,6 +31,8 @@ var addCORSHeaders = function (req, res) {
     }
 };
 function authenticate(req, res, next) {
+
+    logger.info(req.method, req.url, req.query, req.body);
     if (endsWith(req.path, 'api') || endsWith(req.path, 'login') ||
         endsWith(req.path, 'createDevice') || endsWith(req.path, 'createAdmin')) {
         next();
@@ -60,7 +62,6 @@ function authenticate(req, res, next) {
 }
 // add CORS headers to every request
 app.all(config.path + '/*', function (req, res, next) {
-        logger.info(req.method, req.url, req.query, req.body);
         addCORSHeaders(req, res);
         next();
     }
@@ -115,7 +116,6 @@ app.get(config.path + '/login', function (req, res) {
 
 
 app.get(config.path + '/opendoor', function (req, res) {
-        var token = req.query.token;
         var deviceid = req.query.deviceid;
         var door = parseInt(req.query.door);
 
@@ -127,6 +127,7 @@ app.get(config.path + '/opendoor', function (req, res) {
                 }
             );
         }, function (success) {
+            console.log(success);
             res.status(401).send(
                 {
                     success: success
@@ -199,16 +200,21 @@ app.post(config.path + '/key', function (req, res) {
 
 app.put(config.path + '/key', function (req, res) {
         var query = req.body;
-        var props = [ 'doors', 'expire', 'limit', 'name'];
+        var props = [ 'doors', 'expire', 'limit', 'name', 'key'];
         if (!checkJSON(props, query)) {
             res.status(500).send();
         }
         else {
+        var key = {};
+        for(var k in query)
+        {
+            if(props.indexOf(k) > -1) key[k] = query[k];
+        }
             if (req.app.locals.auth.role != helpers.AUTH_STATE.MASTER) {
                 res.send(401);
             }
             else {
-                serverSide.putKey(query, req.query.deviceid, req.query.token).then(function (suc) {
+                serverSide.putKey(key, req.query.deviceid, req.query.token).then(function (suc) {
                         res.json(suc);
                     },
                     function (err) {
