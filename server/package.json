@@ -30,6 +30,6 @@
         "frisby": "^0.7.9"
     },
     "scripts": {
-        "test": "jasmine-node spec/api/"
+        "test": "jasmine-node --captureExceptions spec/api/"
     }
 }
