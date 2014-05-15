@@ -3,7 +3,9 @@ define(function() {
     HOME: 'home',
     LOGIN: 'login',
     DOOR: 'device',
-    NEW_KEY: 'generate',
+    NEW_KEY: 'new-key',
+    EDIT_KEY: 'edit-key',
+    DISABLE_KEY: 'disable-key',
     GENERATED_KEY: 'key'
   });
 });

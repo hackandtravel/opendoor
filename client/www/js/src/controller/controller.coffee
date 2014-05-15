@@ -15,6 +15,9 @@ define [
     getToken: (deviceid) -> deviceStoreController.fetch(deviceid)?.token
     openDoor: openDoorController.openDoor
     generateKey: keyController.generateKey
+    updateKey: keyController.updateKey
+    deleteKey: keyController.deleteKey
+    restoreKey: keyController.restoreKey
     getDevice: (id) -> deviceStoreController.fetch(id)
     updateDevice: (device, cb) ->
       apiRequest

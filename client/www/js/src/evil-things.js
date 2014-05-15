@@ -21,7 +21,10 @@ define([
   }
   
   if (typeof Array.prototype.find != 'function') {
-    Array.prototype.find = function (fun) {
+    Array.prototype.find = function (fun, context) {
+      if (typeof context !== 'undefined') {
+        fun = fun.bind(context)
+      }
       var filtered = this.filter(fun);
       if (filtered.length > 0) {
         return filtered[0];

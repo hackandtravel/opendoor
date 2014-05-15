@@ -17,9 +17,9 @@ define([
     },
 
     onLoginClicked: function () {
-      var inputAll = this.refs.inputAll.state.value.trim();
+      var inputAll = this.refs.inputAll.state.value;
 
-      if (inputAll.length > 0 && inputAll.indexOf(':') > -1) {
+      if (inputAll && inputAll.length > 0 && inputAll.indexOf(':') > -1) {
         var deviceId = inputAll.trim().split(':')[0];
         var key = inputAll.trim().split(':')[1];
 
@@ -27,7 +27,7 @@ define([
           setLoading: this.setLoading,
           setStatus: this.setStatus,
           setError: this.setError,
-          setRouteHome: this.props.route.bind(this, PAGE.HOME),
+          setRouteHome: this.props.setRoute.bind(this, PAGE.HOME),
           addDevice: this.props.addDevice
         });
       } else {
@@ -94,6 +94,7 @@ define([
             type="text"
             tabIndex={1}
             />
+            <div className="divider" />
           </div>
           <footer>
             <a className="button-full button-primary" onClick={this.onLoginClicked}>Add</a>

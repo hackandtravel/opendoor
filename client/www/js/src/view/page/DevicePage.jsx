@@ -6,10 +6,14 @@ define([
   'controller/controller'
 ], function (React, PAGE, Header, KeyItem, controller) {
   return React.createClass({
+    propTypes: {
+      onKeyClicked: React.PropTypes.func
+    },
+
     componentDidMount: function () {
       controller.updateDevice(this.props.device, this.props.forceUpdate);
     },
-    
+
     render: function () {
       var cx = React.addons.classSet;
       var classes = cx({
@@ -22,10 +26,24 @@ define([
       var door = this.props.door;
       var device = this.props.device;
 
-      var keyItems = device.keys.map(function(key) {
-        return <KeyItem keykey={key} />;
+      var keyGroup = _.groupBy(device.keys, function (key) {
+        return key.valid;
       });
-      
+
+      var keyItemsActive;
+      if (keyGroup.hasOwnProperty('true')) {
+        keyItemsActive = keyGroup['true'].map(function (key) {
+          return <KeyItem key={key.key} keykey={key} deviceid={door.deviceid} />;
+        }, this);
+      }
+
+      var keyItemsDisabled;
+      if (keyGroup.hasOwnProperty('false')) {
+        keyItemsDisabled = keyGroup['false'].map(function (key) {
+          return <KeyItem key={key.key} keykey={key} deviceid={door.deviceid} />;
+        }, this);
+      }
+
       var header = <div className="center">{door.name}</div>;
 
       var footer;
@@ -36,7 +54,7 @@ define([
             className="button-full button-primary"
             href={['#', PAGE.DOOR, door.deviceid, PAGE.NEW_KEY].join('/')}
             >
-            Generate Key
+            New Key
             </a>
           </footer>;
       }
@@ -48,8 +66,9 @@ define([
               <span className="glyphicon glyphicon-chevron-left"></span>
             </a>
           </Header>
-          <div className="list">
-            {keyItems}
+          <div className="list bottom">
+            {keyItemsActive}
+            {keyItemsDisabled}
           </div>
           {footer}
         </div>

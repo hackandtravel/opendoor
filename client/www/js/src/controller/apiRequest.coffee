@@ -11,6 +11,10 @@ define [
   return (request) ->
     unless request.url.startsWith(CONFIG.LOCATION)
       request.url = CONFIG.LOCATION + request.url
+
+    if request.device
+      device = request.device
+      request.url = request.url + '?deviceid=' + device.deviceid + '&token=' + device.token
       
     unless request.contentType
       request.contentType = 'application/json'

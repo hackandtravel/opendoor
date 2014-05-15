@@ -67,7 +67,6 @@ a:active {
   position: absolute;
   top: 0;
   left: 0;
-  padding-top: 60px;
   -webkit-transition: -webkit-transform 0.2s;
   transition: transform 0.2s;
   background-color: #f8f8f8;
@@ -99,7 +98,6 @@ h6 {
 .item-font {
   font-family: 'Montserrat', Helvetica, Arial, sans-serif;
   font-weight: bold;
-  text-transform: uppercase;
   font-size: 18px;
 }
 .item-size {
@@ -116,6 +114,11 @@ h6 {
   text-align: left;
   padding: 8px 10px;
 }
+label.helper {
+  display: block;
+  margin: 0;
+  font-weight: normal;
+}
 .helper hr {
   margin: 15px 0 15px 0;
   background-color: #428bca;
@@ -130,7 +133,6 @@ h6 {
 .item {
   font-family: 'Montserrat', Helvetica, Arial, sans-serif;
   font-weight: bold;
-  text-transform: uppercase;
   font-size: 18px;
   display: block;
   width: 100%;
@@ -174,6 +176,7 @@ h6 {
   width: 100%;
   height: 60px;
   text-align: center;
+  text-transform: uppercase;
 }
 .item .button-normal {
   color: #777777;
@@ -183,8 +186,16 @@ h6 {
   background-color: rgba(0, 0, 0, 0.05);
   border-color: #dadada;
 }
+.item .button-danger {
+  color: #ffffff;
+  background: #d2322d;
+}
+.item .button-danger:hover,
+.item .button-danger:active {
+  background: #bd2d29;
+}
 .item .button-primary {
-  color: #fff;
+  color: #ffffff;
   background: #428bca;
 }
 .item .button-primary:hover,
@@ -217,6 +228,7 @@ h6 {
   z-index: 1;
 }
 .item .center.pl {
+  color: #777777;
   padding-left: 70px;
 }
 .item .foo {
@@ -230,7 +242,6 @@ h6 {
   bottom: 0;
   overflow: hidden;
   top: 60px;
-  bottom: 60px;
   z-index: 1;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
@@ -239,6 +250,9 @@ h6 {
   height: 15px;
   width: 100%;
 }
+.list.bottom {
+  bottom: 60px;
+}
 .list-style {
   background: #fff;
   border-bottom: 1px solid #e7e7e7;
@@ -246,7 +260,6 @@ h6 {
 .list-item {
   font-family: 'Montserrat', Helvetica, Arial, sans-serif;
   font-weight: bold;
-  text-transform: uppercase;
   font-size: 18px;
   display: block;
   width: 100%;
@@ -292,6 +305,7 @@ h6 {
   width: 100%;
   height: 60px;
   text-align: center;
+  text-transform: uppercase;
 }
 .list-item .button-normal {
   color: #777777;
@@ -301,8 +315,16 @@ h6 {
   background-color: rgba(0, 0, 0, 0.05);
   border-color: #dadada;
 }
+.list-item .button-danger {
+  color: #ffffff;
+  background: #d2322d;
+}
+.list-item .button-danger:hover,
+.list-item .button-danger:active {
+  background: #bd2d29;
+}
 .list-item .button-primary {
-  color: #fff;
+  color: #ffffff;
   background: #428bca;
 }
 .list-item .button-primary:hover,
@@ -335,6 +357,7 @@ h6 {
   z-index: 1;
 }
 .list-item .center.pl {
+  color: #777777;
   padding-left: 70px;
 }
 .list-item .foo {
@@ -349,14 +372,13 @@ h6 {
 .list-item input {
   font-family: 'Montserrat', Helvetica, Arial, sans-serif;
   font-weight: bold;
-  text-transform: uppercase;
   font-size: 18px;
   border-radius: 0;
   width: 100%;
   height: 59px;
   border: 4px solid transparent;
   padding: 0 10px;
-  background: transparent;
+  background: #fefefe;
   -webkit-box-shadow: none;
   box-shadow: none;
   line-height: normal;
@@ -375,11 +397,13 @@ h6 {
   color: #db5b57;
   border-color: #db5b57;
 }
+.list-item.disabled {
+  opacity: 0.67;
+}
 header,
 footer {
   font-family: 'Montserrat', Helvetica, Arial, sans-serif;
   font-weight: bold;
-  text-transform: uppercase;
   font-size: 18px;
   display: block;
   width: 100%;
@@ -387,9 +411,9 @@ footer {
   position: relative;
   line-height: 59px;
   position: absolute;
+  z-index: 2;
   left: 0;
   background: #f8f8f8;
-  z-index: 2;
   text-align: center;
   color: #777777;
 }
@@ -435,6 +459,7 @@ footer .button-full {
   width: 100%;
   height: 60px;
   text-align: center;
+  text-transform: uppercase;
 }
 header .button-normal,
 footer .button-normal {
@@ -447,9 +472,20 @@ footer .button-normal:active {
   background-color: rgba(0, 0, 0, 0.05);
   border-color: #dadada;
 }
+header .button-danger,
+footer .button-danger {
+  color: #ffffff;
+  background: #d2322d;
+}
+header .button-danger:hover,
+footer .button-danger:hover,
+header .button-danger:active,
+footer .button-danger:active {
+  background: #bd2d29;
+}
 header .button-primary,
 footer .button-primary {
-  color: #fff;
+  color: #ffffff;
   background: #428bca;
 }
 header .button-primary:hover,
@@ -489,6 +525,7 @@ footer .center {
 }
 header .center.pl,
 footer .center.pl {
+  color: #777777;
   padding-left: 70px;
 }
 header .foo,
@@ -583,3 +620,9 @@ header {
   }
 }
 */
+.danger {
+  color: #d2322d;
+}
+.danger hr {
+  background-color: #d2322d;
+}

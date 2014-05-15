@@ -20,10 +20,7 @@ define([
     },
 
     onChange: function () {
-      var val = this.refs[this.props.ref].getDOMNode().value.trim();
-      if (val === '') {
-        val = this.props.defaultValue;
-      }
+      var val = this.refs[this.props.ref].getDOMNode().value;
       this.setState({
         value: val
       })
@@ -39,9 +36,9 @@ define([
       var helper;
       if (this.props.helper) {
         helper =
-          <div className="helper">
+          <label className="helper" htmlFor={this.props.ref}>
             {this.props.helper}
-          </div>;
+          </label>;
       }
 
       return (
@@ -49,6 +46,7 @@ define([
           {helper}
           <div className={formGroupClasses}>
             <input
+            id={this.props.ref}
             type={this.props.type}
             ref={this.props.ref}
             placeholder={this.props.placeholder}

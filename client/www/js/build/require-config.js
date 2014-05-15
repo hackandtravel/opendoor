@@ -8,7 +8,8 @@ require.config({
     jquery: '../../bower_components/jquery/dist/jquery',
     moment: '../../bower_components/moment/moment',
     react: '../../bower_components/react/react-with-addons',
-    underscore: '../../bower_components/underscore/underscore'
+    underscore: '../../bower_components/underscore/underscore',
+    Option: 'vendor/Option'
   },
   shim: {
     backbone: {

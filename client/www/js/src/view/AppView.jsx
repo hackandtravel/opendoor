@@ -8,9 +8,10 @@ define([
   'view/page/NewDevicePage',
   'view/page/DevicePage',
   'view/page/NewKeyPage',
+  'view/page/DangerZone',
   'view/page/GeneratedKeyPage',
   'controller/controller'
-], function (React, Router, PAGE, HomePage, NewDevicePage, DevicePage, NewKeyPage, GeneratedKeyPage, controller) {
+], function (React, Router, PAGE, HomePage, NewDevicePage, DevicePage, NewKeyPage, DangerZone, GeneratedKeyPage, controller) {
   return React.createClass({
     getInitialState: function () {
       return {
@@ -27,7 +28,7 @@ define([
       });
     },
 
-    route: function (href) {
+    setRoute: function (href) {
       this.router.setRoute(href);
     },
 
@@ -35,37 +36,71 @@ define([
       controller.init()
     },
 
+    routeDeviceNewKey: function (deviceid) {
+      var door = this.state.doors.find(function (door) {
+        return deviceid === door.deviceid && Number(1) === door.number
+      });
+
+      if (door != null) {
+        this.setState({
+          page: PAGE.NEW_KEY,
+          selectedDoor: door,
+          selectedDevice: deviceid
+        });
+      }
+    },
+
+    routeDeviceEditKey: function (deviceid, keyId) {
+      var door = this.state.doors.find(function (door) {
+        return deviceid === door.deviceid && Number(1) === door.number
+      });
+
+      if (door != null) {
+        this.setState({
+          page: PAGE.EDIT_KEY,
+          selectedDevice: deviceid,
+          selectedKey: keyId
+        });
+      }
+    },
+
+    routeDeviceDisableKey: function (deviceid, keyId) {
+      var door = this.state.doors.find(function (door) {
+        return deviceid === door.deviceid && Number(1) === door.number
+      });
+
+      if (door != null) {
+        this.setState({
+          page: PAGE.DISABLE_KEY,
+          selectedDevice: deviceid,
+          selectedKey: keyId
+        });
+      }
+    },
+
+    routeDevice: function (deviceid) {
+      var door = this.state.doors.find(function (door) {
+        return deviceid === door.deviceid && Number(1) === door.number
+      });
+
+      if (door != null) {
+        this.setState({
+          page: PAGE.DOOR,
+          selectedDoor: door,
+          selectedDevice: deviceid
+        });
+      }
+    },
+
     componentDidMount: function () {
       this.router = Router({
         '': this.setPage.bind(this, PAGE.HOME),
         'home': this.setPage.bind(this, PAGE.HOME),
         'login': this.setPage.bind(this, PAGE.LOGIN),
-        'device/:id/generate': function (deviceid) {
-          var door = this.state.doors.find(function (door) {
-            return deviceid === door.deviceid && Number(1) === door.number
-          });
-
-          if (door != null) {
-            this.setState({
-              page: PAGE.NEW_KEY,
-              selectedDoor: door,
-              selectedDevice: deviceid
-            });
-          }
-        }.bind(this),
-        'device/:id': function (deviceid) {
-          var door = this.state.doors.find(function (door) {
-            return deviceid === door.deviceid && Number(1) === door.number
-          });
-
-          if (door != null) {
-            this.setState({
-              page: PAGE.DOOR,
-              selectedDoor: door,
-              selectedDevice: deviceid
-            });
-          }
-        }.bind(this)
+        'device/:id/new-key': this.routeDeviceNewKey,
+        'device/:id/edit-key/:key': this.routeDeviceEditKey,
+        'device/:id/disable-key/:key': this.routeDeviceDisableKey,
+        'device/:id': this.routeDevice
       });
       this.router.init('');
 
@@ -94,7 +129,7 @@ define([
 
     render: function () {
 
-      var device, page;
+      var device, key, page;
       switch (this.state.page) {
         case PAGE.DOOR:
           device = controller.getDevice(this.state.selectedDevice);
@@ -106,53 +141,86 @@ define([
             forceUpdate={this.forceUpdate.bind(this)}
             />;
           break;
-        
+
         case PAGE.LOGIN:
           page =
             <NewDevicePage
             page={this.state.page}
-            addDevice={this.addDevice}
             setPage={this.setPage}
-            route={this.route}
+            addDevice={this.addDevice}
+            setRoute={this.setRoute}
             />;
           break;
-        
+
         case PAGE.NEW_KEY:
           device = controller.getDevice(this.state.selectedDevice);
           page =
             <NewKeyPage
+            show={true}
+            status="New Key"
             page={this.state.page}
+            setRoute={this.setRoute}
+            device={device}
             door={this.state.selectedDoor}
-            setKey={this.setKey}
+            buttonText={"Generate"}
             />;
           break;
-        
+
+        case PAGE.EDIT_KEY:
+          // TODO: selectedDevice
+
+          device = controller.getDevice(this.state.selectedDevice);
+          key = device.keys.find(function (key) {
+            return key.key === this.state.selectedKey
+          }, this);
+
+          page =
+            <NewKeyPage
+            show={true}
+            status={key.name}
+            page={this.state.page}
+            setRoute={this.setRoute}
+            device={device}
+            keykey={key}
+            buttonText={"Save"}
+            />;
+          break;
+
+        case PAGE.DISABLE_KEY:
+          device = controller.getDevice(this.state.selectedDevice);
+          key = device.keys.find(function (key) {
+            return key.key === this.state.selectedKey
+          }, this);
+
+          page =
+            <DangerZone
+            status={key.name}
+            page={this.state.page}
+            setRoute={this.setRoute}
+            device={device}
+            keykey={key}
+            />;
+          break;
+
         case PAGE.GENERATED_KEY:
           page =
             <GeneratedKeyPage
             page={this.state.page}
-            key={this.state.key}
+            key={this.state.selectedKey}
             />;
           break;
       }
-      
+
       return (
         <div id='app'>
           <HomePage
           page={this.state.page}
           doors={this.state.doors}
-          route={this.route}
+          route={this.setRoute}
           onDoorClicked={this.onDoorClicked}
           />
           {page}
         </div>);
-    }, 
-    
-    setKey: function(key) {
-      this.setState({
-        page: PAGE.GENERATED_KEY,
-        key: key
-      });
     }
   });
 });
