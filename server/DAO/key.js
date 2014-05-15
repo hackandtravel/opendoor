@@ -13,15 +13,14 @@ exports.init = function(deviceDA)
     deviceDAO = deviceDA;
 }
 
+exports.changeKey = changeKey;
+
     /**
      *
      * @param keyinfo
      * @param  cb
      */
-exports.generateKey = function (keyInfo,deviceid, token) {
-        return new Promise(function (resolve, reject) {
-            deviceDAO.hasMasterRights(deviceid, token).then(
-                function (bool) {
+exports.generateKey = function (keyInfo,deviceid) {
                     var randomKey = helpers.generateRandomString(config.keyLength);
                     // add to database
                     var key = {};
@@ -29,22 +28,18 @@ exports.generateKey = function (keyInfo,deviceid, token) {
                     key.doors = keyInfo.doors;
                     key.limit = keyInfo.limit;
                     key.name = keyInfo.name;
+                    key.valid = true;
                     key.key = randomKey;
-                    resolve(deviceDAO.addKey(key,deviceid));
-                }, function(wrong)
-                {
-                    reject(wrong);
-                });
-
-        });
+                    return deviceDAO.addKey(key,deviceid);
     };
 
-exports.changeKey = function (keyInfo,deviceid, token) {
-        return new Promise(function (resolve, reject) {
-            deviceDAO.hasMasterRights(deviceid, token).then(
-                function (bool) {
-                    resolve(deviceDAO.updateKey(keyInfo, deviceid));
-                }, reject);
-
-        });
+function changeKey(keyInfo,deviceid) {
+                    return(deviceDAO.updateKey(keyInfo, deviceid));
     };
+
+exports.deleteKey = function (keyInfo, deviceid)
+{
+    keyInfo.valid = false;
+    return changeKey(keyInfo, deviceid);
+}
+

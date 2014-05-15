@@ -6,19 +6,18 @@ var logger = require('./logger.js');
  *
  * @param notificationIDs must be array
  */
-exports.notifyIDs = function( deviceID, door, notificationIDs){
+exports.notifyIDs = function (deviceID, door, notificationIDs) {
     var message = new gcm.Message();
     message.addDataWithObject(
         {
             door: door,
             deviceid: deviceID
         });
-    message.collapseKey = "Door: " + door + " @"+deviceID+ " opened";
+    message.collapseKey = "Door: " + door + " @" + deviceID + " opened";
     message.delayWhileIdle = false;
     message.dryRun = true;
-    sender.send(message, notificationIDs, 4, function(err, result)
-    {
-        if(err) logger.error("couldn't  send notifications");
+    sender.send(message, notificationIDs, 4, function (err, result) {
+        if (err) logger.error("couldn't  send notifications");
         console.log(result);
     })
 }

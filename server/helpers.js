@@ -3,7 +3,7 @@ var logger = require("./logger.js");
 var crypto = require('crypto');
 
 
-exports.generateRandomString = function(length) {
+exports.generateRandomString = function (length) {
     var randomBytes = crypto.randomBytes(256);
     var myHasher = crypto.createHash('sha1');
     myHasher.update(randomBytes);
@@ -12,4 +12,10 @@ exports.generateRandomString = function(length) {
     var i = 0;
     return randomString;
 }
+
+exports.AUTH_STATE = Object.freeze({
+    NOT_AUTH: "notauth",
+    MASTER: "master",
+    USER: "user"
+})
 
