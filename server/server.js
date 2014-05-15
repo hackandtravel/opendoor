@@ -19,31 +19,30 @@ var debug = config.debug;
 var options;
 try {
     if (process.env.NODE_ENV === 'production') {
-      options = {
-        key: fs.readFileSync(__dirname + '/secret/opendoor-key.pem'),
-        cert: fs.readFileSync(__dirname + '/secret/opendoor-cert.pem'),
-	ca: fs.readFileSync(__dirname + '/secret/AddTrustExternalCARoot.crt')
-      };
+        options = {
+            key: fs.readFileSync(__dirname + '/secret/opendoor-key.pem'),
+            cert: fs.readFileSync(__dirname + '/secret/opendoor-cert.pem'),
+            ca: fs.readFileSync(__dirname + '/secret/AddTrustExternalCARoot.crt')
+        };
     } else {
-      options = {
-        key: fs.readFileSync(__dirname + '/secret/ryans-key.pem'),
-        cert: fs.readFileSync(__dirname + '/secret/ryans-cert.pem')
-      };
+        options = {
+            key: fs.readFileSync(__dirname + '/secret/ryans-key.pem'),
+            cert: fs.readFileSync(__dirname + '/secret/ryans-cert.pem')
+        };
     }
 } catch (ex) {
     throw new Error("SSL key missing. Create your own: http://nodejs.org/api/tls.html")
 }
 serverSide.init(cb);
-function cb()
-{
+function cb() {
     if (debug)
-            var client = http.createServer(clientside.app).listen(config.portClient);
+        var client = http.createServer(clientside.app).listen(config.portClient);
     else    var client = https.createServer(options, clientside.app).listen(config.portClient);
 
-winston.info('Startup');
+    winston.info('Startup');
 // call if you want to generate data
 
-var rasp = https.createServer(options);
-var io = raspberry.getIO(rasp);
-rasp.listen(config.portRasp);
+    var rasp = https.createServer(options);
+    var io = raspberry.getIO(rasp);
+    rasp.listen(config.portRasp);
 }
