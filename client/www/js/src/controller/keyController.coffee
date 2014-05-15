@@ -6,6 +6,7 @@ define [
       # console.log(door, params, fs)
       
       if fs.setLoading? then fs.setLoading(true)
+      if fs.setError? then fs.setError({})
         
       apiRequest
         method: 'POST'

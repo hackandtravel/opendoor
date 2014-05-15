@@ -7,9 +7,13 @@ define([
     propTypes: {
       keykey: React.PropTypes.instanceOf(Key).isRequired
     },
-    
+
+    onClick: function() {
+    },
+
     render: function () {
       var key = this.props.keykey;
+
       return (
         <div className="list-item key">
           <span className="button left muted">

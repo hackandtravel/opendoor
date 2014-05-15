@@ -13,15 +13,24 @@ define([
         expire: new Date(this.refs.inputDate.state.value).getTime(),
         doors: [this.props.door.number]
       };
-      controller.generateKey(this.props.door, params, {
-        setLoading: this.setLoading,
-        setStatus: this.setStatus,
-        setKey: this.props.setKey
-      });
+
+      if (params.name && params.name != '') {
+        controller.generateKey(this.props.door, params, {
+          setLoading: this.setLoading,
+          setStatus: this.setStatus,
+          setKey: this.props.setKey,
+          setError: this.setError
+        });
+      } else {
+        this.setState({
+          hasError: {
+            'inputName': true
+          }
+        })
+      }
     },
 
     defaults: {
-      name: 'New Key',
       limit: '3',
       expireDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 356).toISOString().slice(0, 10)
     },
@@ -29,7 +38,7 @@ define([
     getInitialState: function () {
       return {
         status: 'Generate Key',
-        hasError: false,
+        hasError: [],
         loading: false
       }
     },
@@ -86,7 +95,7 @@ define([
             ref="inputName"
             placeholder="Name"
             helper={<p>Provide a name for this key so you can remember to who it belongs.</p>}
-            hasError={false}
+            hasError={!!this.state.hasError['inputName']}
             tabIndex={1}
             />
             <div className="divider" />
@@ -96,8 +105,8 @@ define([
             ref="inputLimit"
             placeholder="Limit"
             defaultValue={this.defaults.limit}
-            helper={<p>On how many devices should this key be redeemable?</p>}
-            hasError={false}
+            helper={<p>{"On how many devices should this key be redeemable?"}</p>}
+            hasError={!!this.state.hasError['inputLimit']}
             min='1'
             tabIndex={2}
             />
@@ -108,8 +117,8 @@ define([
             ref="inputDate"
             placeholder="Expire Date"
             defaultValue={this.defaults.expireDate}
-            helper={<p>On which date should this key expire? Defaults to one year.</p>}
-            hasError={false}
+            helper={<p>{"On which date should this key expire? Defaults to one year."}</p>}
+            hasError={!!this.state.hasError['inputDate']}
             tabIndex={3}
             />
             <div className="divider" />
