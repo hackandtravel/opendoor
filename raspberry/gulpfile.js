@@ -78,3 +78,4 @@ gulp.task('test', function () {
 });
 
 gulp.task('development', ['watch']);
+gulp.task('default', ['development']);

@@ -176,3 +176,4 @@ gulp.task('http-www', function () {
 });
 
 gulp.task('development', ['compile', 'watch', 'http']);
+gulp.task('default', ['development']);

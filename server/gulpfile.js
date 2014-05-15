@@ -27,3 +27,4 @@ gulp.task('nodemon', function () {
 });
 
 gulp.task('development', ['nodemon']);
+gulp.task('default', ['development']);
