@@ -15,18 +15,16 @@ function getIO(server) {
         });
 
         socket.on('status', function (data) {
-            if(socket)
-            {
-            // todo make callback somehow to client
-        }
-        if(data && data.status == "opened")
-        {
+            if (socket) {
+                // todo make callback somehow to client
+            }
+            if (data && data.status == "opened") {
 
-        }
+            }
 
         });
 
-        socket.on('disconnect', function() {
+        socket.on('disconnect', function () {
             logger.info("device disconnected");
 
             //delete sockets[socket.get('deviceid')];
@@ -36,13 +34,11 @@ function getIO(server) {
     return io;
 }
 
-function openDoor(deviceid, door, buzzTime, notificationIDs)
-{
-    return new Promise(function(resolve, reject)
-    {
-        if(sockets[deviceid]) {
+function openDoor(deviceid, door, buzzTime, notificationIDs) {
+    return new Promise(function (resolve, reject) {
+        if (sockets[deviceid]) {
             sockets[deviceid].emit('openDoor', {doorNumber: door, buzzTime: buzzTime});
-            notification.notifyIDs(deviceid,door,notificationIDs);
+            notification.notifyIDs(deviceid, door, notificationIDs);
             resolve("open door command sent");
         }
         else reject(new Error("No device with this ID connected"));

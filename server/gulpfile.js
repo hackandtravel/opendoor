@@ -5,7 +5,7 @@ var nodemon = require('gulp-nodemon');
 
 const paths = {
     specCoffee: 'spec/**/*.coffee',
-	specAPI: 	'spec/api/'
+    specAPI: 'spec/api/'
 };
 
 gulp.task('test', function () {
@@ -23,7 +23,7 @@ gulp.task('testapi', function () {
 });
 
 gulp.task('nodemon', function () {
-  nodemon({ script: './server.js' })
+    nodemon({ script: './server.js' })
 });
 
 gulp.task('development', ['nodemon']);
