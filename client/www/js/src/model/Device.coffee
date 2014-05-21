@@ -29,7 +29,7 @@ define [
         return new Door(door)
         
       if args.keys and _.isArray(args.keys)
-        @keys = args.keys.map (key, i) -> 
+        @keys = args.keys.map (key, i) ->
           return new Key(key)
       else
         @keys = []

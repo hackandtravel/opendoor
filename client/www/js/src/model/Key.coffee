@@ -8,6 +8,7 @@ define [
       key: null
       limit: -1
       name: null
+      valid: true
 
     constructor: (args) ->
       _.extend this, @defaults(), args
